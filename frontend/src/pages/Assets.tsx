@@ -708,30 +708,20 @@ export default function AssetsPage() {
   const isOtherForm = formCategory === 'other';
 
   function applyPurchaseDate(date: string) {
-    if (isLaptopForm && date) {
-      const voidDate = warrantyVoidFromPurchase(date);
-      setForm((prev) => ({ ...prev, date, warranty: voidDate }));
-      if (voidDate) {
-        toast.info(
-          `Warranty void date set to ${formatDisplayDate(voidDate)} (2-year laptop warranty from purchase).`,
-        );
-      }
-      return;
-    }
-    if (isPcForm) {
+    if (isLaptopForm || isPcForm || (isPhoneForm && !isSimForm)) {
       setForm((prev) => {
-        const pcExpiry = date && prev.warranty_period
-          ? warrantyExpiryFromPeriod(date, prev.warranty_period)
-          : prev.warranty;
+        const period = prev.warranty_period;
+        const expiry =
+          date && period ? warrantyExpiryFromPeriod(date, period) : period === 'Expired' ? '' : prev.warranty;
         return {
           ...prev,
           date,
-          warranty: pcExpiry || '',
+          warranty: expiry || '',
         };
       });
       return;
     }
-    setForm((prev) => ({ ...prev, date, warranty: isLaptopForm ? '' : prev.warranty }));
+    setForm((prev) => ({ ...prev, date }));
   }
 
   async function loadMeta(force = false) {
@@ -1078,22 +1068,14 @@ export default function AssetsPage() {
     try {
       let warranty = form.warranty || null;
       let warrantyNote = '';
-      if (category === 'laptop' && form.date) {
-        warranty = warrantyVoidFromPurchase(form.date) || warranty;
-        if (warranty) {
-          warrantyNote = ` Warranty void date: ${formatDisplayDate(warranty)} (2 years).`;
-        }
-      }
-      if (category === 'mobile_phone' && !savingSim) {
-        const handoverAnchor = form.handed_over_on || form.date;
-        warranty = (handoverAnchor ? warrantyVoidFromHandover(handoverAnchor) : '') || warranty;
-        if (warranty) {
-          warrantyNote = ` Warranty void date: ${formatDisplayDate(warranty)} (1 year from handover).`;
-        }
-      }
-      if (category === 'other' || category === 'printer') {
+      if (
+        (category === 'laptop' || (category === 'mobile_phone' && !savingSim) || category === 'other' || category === 'printer')
+      ) {
         const period = form.warranty_period.trim();
-        if (form.date && period) {
+        if (period && period.toLowerCase() === 'expired') {
+          warranty = null;
+          warrantyNote = ' Warranty marked as expired.';
+        } else if (form.date && period) {
           warranty = warrantyExpiryFromPeriod(form.date, period) || warranty;
           if (warranty) {
             warrantyNote = ` Warranty void date: ${formatDisplayDate(warranty)} (${period} from purchase).`;
@@ -1253,6 +1235,16 @@ export default function AssetsPage() {
 
       if (category === 'laptop') {
         payload.has_mouse = form.has_mouse;
+        payload.warranty_period = form.warranty_period.trim() || null;
+        const laptopPeriod = form.warranty_period.trim();
+        if (!laptopPeriod || laptopPeriod.toLowerCase() === 'expired') {
+          payload.warranty = null;
+          payload.warranty_expires_on = null;
+        } else if (form.date.trim()) {
+          const laptopExpiry = warrantyExpiryFromPeriod(form.date, laptopPeriod);
+          payload.warranty = laptopExpiry || null;
+          payload.warranty_expires_on = laptopExpiry || null;
+        }
       }
 
       if (category === 'mobile_phone') {
@@ -1260,12 +1252,23 @@ export default function AssetsPage() {
           payload.has_charger = form.has_charger;
           payload.has_data_cable = form.has_data_cable;
           payload.has_back_cover = form.has_back_cover;
-          payload.warranty_period = '1 year';
+          payload.warranty_period = form.warranty_period.trim() || null;
+          const phonePeriod = form.warranty_period.trim();
+          if (!phonePeriod || phonePeriod.toLowerCase() === 'expired') {
+            payload.warranty = null;
+            payload.warranty_expires_on = null;
+          } else if (form.date.trim()) {
+            const phoneExpiry = warrantyExpiryFromPeriod(form.date, phonePeriod);
+            payload.warranty = phoneExpiry || null;
+            payload.warranty_expires_on = phoneExpiry || null;
+          }
         } else {
           payload.has_charger = false;
           payload.has_data_cable = false;
           payload.has_back_cover = false;
           payload.warranty_period = null;
+          payload.warranty = null;
+          payload.warranty_expires_on = null;
         }
       }
 
@@ -2939,12 +2942,14 @@ export default function AssetsPage() {
                             [
                               ['assignment', 'Assignment & Status'],
                               ['device', isSimForm ? 'SIM Details' : 'Device Specifications'],
-                              ['procurement', isSimForm ? 'Vendor & Cost' : 'Supplier & Financials'],
+                              ...(isSimForm
+                                ? []
+                                : [['procurement', 'Supplier & Financials'] as const]),
                               [
                                 'warranty',
                                 isSimForm ? 'Issue & Handover' : 'Purchase & Warranty',
-                              ],
-                              ['notes', 'Internal Notes'],
+                              ] as const,
+                              ['notes', 'Internal Notes'] as const,
                             ] as const
                           ).map(([id, label]) => (
                             <button
@@ -3059,22 +3064,11 @@ export default function AssetsPage() {
                               if (isPhoneForm) {
                                 const handed =
                                   prev.handed_over_on || new Date().toISOString().slice(0, 10);
-                                if (isSimForm) {
-                                  return {
-                                    ...prev,
-                                    name,
-                                    first_handover_person: name,
-                                    handed_over_on: handed,
-                                  };
-                                }
-                                const voidDate = warrantyVoidFromHandover(handed);
                                 return {
                                   ...prev,
                                   name,
                                   first_handover_person: name,
                                   handed_over_on: handed,
-                                  warranty: voidDate || prev.warranty,
-                                  warranty_period: voidDate ? '1 year' : prev.warranty_period,
                                 };
                               }
                               if (isLaptopForm) {
@@ -3158,14 +3152,16 @@ export default function AssetsPage() {
                           below (Available, Assigned, etc.) when adding.
                         </p>
                       ) : null}
-                      <Field label="S/N (Serial Number)" icon={<IconBarcode />}>
-                        <input
-                          className="asset-control bare"
-                          placeholder="Enter serial number"
-                          value={form.serial_number}
-                          onChange={(e) => setForm((prev) => ({ ...prev, serial_number: e.target.value }))}
-                        />
-                      </Field>
+                      {isSimForm ? null : (
+                        <Field label="S/N (Serial Number)" icon={<IconBarcode />}>
+                          <input
+                            className="asset-control bare"
+                            placeholder="Enter serial number"
+                            value={form.serial_number}
+                            onChange={(e) => setForm((prev) => ({ ...prev, serial_number: e.target.value }))}
+                          />
+                        </Field>
+                      )}
                       <Field label="Asset Status" icon={<IconTag />}>
                         <StatusSelect value={form.status} onChange={pickAssetStatus} />
                       </Field>
@@ -3243,15 +3239,25 @@ export default function AssetsPage() {
                         </div>
                       ) : null}
                       {isSimForm ? (
-                        <Field label="SIM number *" icon={<IconPhone />}>
-                          <input
-                            className="asset-control bare"
-                            required
-                            placeholder="Enter SIM / mobile number"
-                            value={form.phone_number}
-                            onChange={(e) => setForm((prev) => ({ ...prev, phone_number: e.target.value }))}
-                          />
-                        </Field>
+                        <>
+                          <Field label="SIM number *" icon={<IconPhone />}>
+                            <input
+                              className="asset-control bare"
+                              required
+                              placeholder="Enter SIM / mobile number"
+                              value={form.phone_number}
+                              onChange={(e) => setForm((prev) => ({ ...prev, phone_number: e.target.value }))}
+                            />
+                          </Field>
+                          <Field label="Package price (LKR)" icon={<IconCoin />}>
+                            <input
+                              className="asset-control bare"
+                              placeholder="Enter package price"
+                              value={form.amount}
+                              onChange={(e) => setForm((prev) => ({ ...prev, amount: e.target.value }))}
+                            />
+                          </Field>
+                        </>
                       ) : (
                         <>
                       <Field label="Brand" icon={<IconTag />}>
@@ -3538,9 +3544,10 @@ export default function AssetsPage() {
                       )}
                     </FormSection>
 
+                    {isSimForm ? null : (
                     <FormSection
                       id="aed-sec-procurement"
-                      title={isSimForm ? 'Vendor & Cost' : 'Procurement & Supplier Info'}
+                      title="Procurement & Supplier Info"
                       icon={<IconTruck />}
                       badge={
                         form.invoice_no.trim() ? (
@@ -3581,6 +3588,7 @@ export default function AssetsPage() {
                         />
                       </Field>
                     </FormSection>
+                    )}
 
                     <FormSection
                       id="aed-sec-warranty"
@@ -3659,23 +3667,12 @@ export default function AssetsPage() {
                                     !!(form.first_handover_person.trim() || form.name.trim())
                                   }
                                   value={form.handed_over_on}
-                                  onChange={(e) => {
-                                    const handed = e.target.value;
-                                    const voidDate = handed
-                                      ? warrantyVoidFromHandover(handed)
-                                      : '';
+                                  onChange={(e) =>
                                     setForm((prev) => ({
                                       ...prev,
-                                      handed_over_on: handed,
-                                      warranty: voidDate,
-                                      warranty_period: voidDate ? '1 year' : prev.warranty_period,
-                                    }));
-                                    if (voidDate) {
-                                      toast.info(
-                                        `Warranty void date set to ${formatDisplayDate(voidDate)} (1 year from handover).`,
-                                      );
-                                    }
-                                  }}
+                                      handed_over_on: e.target.value,
+                                    }))
+                                  }
                                 />
                               </Field>
                             </>
@@ -3689,24 +3686,55 @@ export default function AssetsPage() {
                             />
                           </Field>
                           <Field label="Warranty period" icon={<IconCalendar />}>
-                            <input
+                            <select
                               className="asset-control bare"
-                              readOnly
-                              value={form.warranty_period || '1 year'}
-                            />
+                              value={form.warranty_period}
+                              onChange={(e) => {
+                                const period = e.target.value;
+                                setForm((prev) => ({
+                                  ...prev,
+                                  warranty_period: period,
+                                  warranty:
+                                    prev.date && period
+                                      ? warrantyExpiryFromPeriod(prev.date, period)
+                                      : '',
+                                }));
+                              }}
+                            >
+                              <option value="">Select period</option>
+                              {WARRANTY_PERIOD_OPTIONS.map((p) => (
+                                <option key={p} value={p}>
+                                  {p}
+                                </option>
+                              ))}
+                            </select>
                           </Field>
                           <Field label="Warranty void date" icon={<IconCalendar />}>
-                            <input
-                              className="asset-control bare"
-                              type="date" min={DATE_MIN}
-                              readOnly
-                              value={
-                                form.warranty ||
-                                (form.handed_over_on
-                                  ? warrantyVoidFromHandover(form.handed_over_on)
-                                  : '')
-                              }
-                            />
+                            {form.warranty_period === 'Expired' ? (
+                              <input
+                                className="asset-control bare"
+                                readOnly
+                                value="Expired"
+                                title="Warranty marked as expired"
+                              />
+                            ) : (
+                              <input
+                                className="asset-control bare"
+                                type="date" min={DATE_MIN}
+                                readOnly
+                                value={
+                                  form.warranty ||
+                                  (form.date && form.warranty_period
+                                    ? warrantyExpiryFromPeriod(form.date, form.warranty_period)
+                                    : '')
+                                }
+                                title={
+                                  form.date && form.warranty_period
+                                    ? `Calculated from purchase date + ${form.warranty_period}`
+                                    : 'Select purchase date and warranty period'
+                                }
+                              />
+                            )}
                           </Field>
                         </>
                       ) : (
@@ -3722,19 +3750,12 @@ export default function AssetsPage() {
                               onChange={(e) => applyPurchaseDate(e.target.value)}
                             />
                           </Field>
-                          {isLaptopForm ? (
-                            <Field label="Warranty Expiration (2 yrs)" icon={<IconCalendar />}>
-                              <input
-                                className="asset-control bare"
-                                type="date" min={DATE_MIN}
-                                value={form.warranty}
-                                readOnly
-                                title="Automatically set to 2 years from purchase date"
-                              />
-                            </Field>
-                          ) : isPcForm ? (
+                          {isLaptopForm || isPcForm ? (
                             <>
-                              <Field label="PC warranty period" icon={<IconCalendar />}>
+                              <Field
+                                label={isLaptopForm ? 'Warranty period' : 'PC warranty period'}
+                                icon={<IconCalendar />}
+                              >
                                 <select
                                   className="asset-control bare"
                                   value={form.warranty_period}
@@ -3758,7 +3779,10 @@ export default function AssetsPage() {
                                   ))}
                                 </select>
                               </Field>
-                              <Field label="PC warranty expiry" icon={<IconCalendar />}>
+                              <Field
+                                label={isLaptopForm ? 'Warranty void date' : 'PC warranty expiry'}
+                                icon={<IconCalendar />}
+                              >
                                 {form.warranty_period === 'Expired' ? (
                                   <input
                                     className="asset-control bare"
@@ -3781,7 +3805,7 @@ export default function AssetsPage() {
                                   />
                                 )}
                               </Field>
-                              {form.has_ups ? (
+                              {isPcForm && form.has_ups ? (
                                 <>
                                   <Field label="UPS purchased date" icon={<IconCalendar />}>
                                     <input
@@ -6587,7 +6611,7 @@ function AssetViewModal({
               </div>
               <div className="avm-mini-grid">
                 <div className="avm-mini">
-                  <span>Purchase Value</span>
+                  <span>{asBool(asset.is_sim) ? 'Package price' : 'Purchase Value'}</span>
                   <strong>
                     {asset.purchase_amount_lkr != null && String(asset.purchase_amount_lkr) !== ''
                       ? `LKR ${Number(asset.purchase_amount_lkr).toLocaleString('en-LK')}`

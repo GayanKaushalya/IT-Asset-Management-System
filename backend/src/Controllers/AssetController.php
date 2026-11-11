@@ -28,7 +28,8 @@ final class AssetController
             'company_id', 'location_id', 'department_id', 'supplier_id', 'asset_tag', 'serial_number',
             'brand', 'model', 'status', 'pc_name', 'cpu', 'ram_gb', 'storage_gb', 'storage_type',
             'hdd_gb', 'ssd_gb',
-            'invoice_no', 'purchase_amount_lkr', 'purchase_date', 'warranty_expires_on', 'notes',
+            'invoice_no', 'purchase_amount_lkr', 'purchase_date',
+            'warranty_period', 'warranty_expires_on', 'notes',
             'handover_person_1', 'handover_person_2', 'handover_person_3', 'handover_person_4',
             'handover_person_5', 'handover_person_6', 'handover_person_7', 'handover_person_8',
             'handover_on_1', 'handover_on_2', 'handover_on_3', 'handover_on_4',
@@ -158,12 +159,9 @@ final class AssetController
                 // SIM tab: all SIM cards across ITL / IMS / ISP (and legacy SIM company)
                 $where[] = "{$alias}.is_sim = TRUE";
             } elseif ($companyId !== null) {
-                // Include assets that used to belong here (transferred away) so old company can still open them
-                if (in_array($cat, ['laptop', 'mobile_phone', 'pc', 'other', 'printer'], true)) {
-                    $where[] = "({$alias}.company_id = :company_id OR {$alias}.transferred_from_company_id = :company_id)";
-                } else {
-                    $where[] = "{$alias}.company_id = :company_id";
-                }
+                // Count / list only assets that currently belong to this company.
+                // After a company transfer the row moves with company_id (source tab loses it).
+                $where[] = "{$alias}.company_id = :company_id";
                 $params['company_id'] = $companyId;
                 // Keep SIMs off the regular ITL / IMS / ISP phone tabs
                 if ($cat === 'mobile_phone') {
@@ -186,18 +184,7 @@ final class AssetController
 
             if ($request->input('location_id')) {
                 $params['location_id'] = (int) $request->input('location_id');
-                // Still list assets transferred away from this company (any new location)
-                if (
-                    ! $isSimList
-                    && $companyId !== null
-                    && in_array($cat, ['laptop', 'mobile_phone', 'pc', 'other', 'printer'], true)
-                ) {
-                    $where[] = "({$alias}.location_id = :location_id
-                        OR ({$alias}.transferred_from_company_id = :company_id
-                            AND {$alias}.company_id <> :company_id))";
-                } else {
-                    $where[] = "{$alias}.location_id = :location_id";
-                }
+                $where[] = "{$alias}.location_id = :location_id";
             }
 
             if ($q = trim((string) $request->input('q', ''))) {
@@ -625,34 +612,21 @@ final class AssetController
             $body['supplier_id'] = $this->resolveSupplierId((int) $asset['company_id'], $request);
         }
 
-        // Laptops: always derive warranty void date = purchase date + 2 years
-        if ($category === 'laptop') {
-            $purchase = $body['purchase_date'] ?? $asset['purchase_date'] ?? null;
-            if (is_string($purchase) && $purchase !== '') {
-                $void = self::addYears($purchase, 2);
-                if ($void !== null) {
-                    $body['warranty_expires_on'] = $void;
-                }
-            }
-        }
-
-        // Mobile phones: warranty void = originally assigned handover date + 1 year
-        if ($category === 'mobile_phone') {
-            $anchor = $body['original_assigned_on']
-                ?? $asset['original_assigned_on']
-                ?? $body['handed_over_on']
-                ?? $asset['handed_over_on']
-                ?? $asset['handover_on_1']
-                ?? $body['purchase_date']
-                ?? $asset['purchase_date']
-                ?? null;
-            if (is_string($anchor) && $anchor !== '') {
-                $void = self::addYears($anchor, 1);
-                if ($void !== null) {
-                    $body['warranty_expires_on'] = $void;
-                    if (empty($body['warranty_period']) && empty($asset['warranty_period'])) {
-                        $body['warranty_period'] = '1 year';
+        // Laptops / mobile phones: derive warranty expiry from selected period + purchase date
+        if ($category === 'laptop' || $category === 'mobile_phone') {
+            $isSim = self::toBool($body['is_sim'] ?? false) || self::toBool($asset['is_sim'] ?? false);
+            if (! ($category === 'mobile_phone' && $isSim)) {
+                $purchase = $body['purchase_date'] ?? $asset['purchase_date'] ?? null;
+                $period = trim((string) ($body['warranty_period'] ?? $asset['warranty_period'] ?? ''));
+                if ($period !== '' && strcasecmp($period, 'Expired') === 0) {
+                    $body['warranty_expires_on'] = null;
+                } elseif (is_string($purchase) && $purchase !== '' && $period !== '') {
+                    $expiry = self::expiryFromPeriod($purchase, $period);
+                    if ($expiry !== null) {
+                        $body['warranty_expires_on'] = $expiry;
                     }
+                } elseif ($period === '') {
+                    $body['warranty_expires_on'] = null;
                 }
             }
         }
@@ -1110,7 +1084,7 @@ final class AssetController
                        {$alias}.original_assigned_person, {$alias}.original_assigned_on,
                        {$alias}.allocated_person, {$alias}.allocated_on,
                        NULL::varchar AS user_name, NULL::varchar AS item_name,
-                       NULL::varchar AS warranty_period, {$alias}.warranty_expires_on,
+                       {$alias}.warranty_period, {$alias}.warranty_expires_on,
                        NULL::text AS specification,
                        {$alias}.cpu, {$alias}.ram_gb, {$alias}.storage_gb, {$alias}.purchase_date,
                        {$alias}.hdd_gb, {$alias}.ssd_gb,
@@ -1710,28 +1684,24 @@ final class AssetController
             }
         }
 
-        // Laptops: fixed 2-year warranty from purchase date
-        if ($category === 'laptop' && ! empty($all['purchase_date'])) {
-            $void = self::addYears((string) $all['purchase_date'], 2);
-            if ($void !== null) {
-                $all['warranty_expires_on'] = $void;
-            }
-        }
-
-        // Mobile phones: fixed 1-year warranty from originally assigned handover date
-        if ($category === 'mobile_phone') {
-            $handoverAnchor = $all['original_assigned_on']
-                ?? $all['handed_over_on']
-                ?? $all['purchase_date']
-                ?? null;
-            if (is_string($handoverAnchor) && $handoverAnchor !== '') {
-                $void = self::addYears($handoverAnchor, 1);
-                if ($void !== null) {
-                    $all['warranty_expires_on'] = $void;
-                    if (empty($all['warranty_period'])) {
-                        $all['warranty_period'] = '1 year';
+        // Laptops / mobile phones: warranty from selected period + purchase date
+        if ($category === 'laptop' || $category === 'mobile_phone') {
+            $isSim = self::toBool($all['is_sim'] ?? false);
+            if (! ($category === 'mobile_phone' && $isSim)) {
+                $period = trim((string) ($all['warranty_period'] ?? ''));
+                if ($period !== '' && strcasecmp($period, 'Expired') === 0) {
+                    $all['warranty_expires_on'] = null;
+                } elseif (! empty($all['purchase_date']) && $period !== '') {
+                    $expiry = self::expiryFromPeriod((string) $all['purchase_date'], $period);
+                    if ($expiry !== null) {
+                        $all['warranty_expires_on'] = $expiry;
                     }
+                } elseif ($period === '') {
+                    $all['warranty_expires_on'] = null;
                 }
+            } else {
+                $all['warranty_period'] = null;
+                $all['warranty_expires_on'] = null;
             }
         }
 
