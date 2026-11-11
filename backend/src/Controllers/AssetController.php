@@ -3534,8 +3534,8 @@ final class AssetController
         }
         $userCompany = (int) ($user['company_id'] ?? 0);
         $current = (int) ($asset['company_id'] ?? 0);
-        $from = (int) ($asset['transferred_from_company_id'] ?? 0);
-        if ($userCompany === $current || ($from > 0 && $userCompany === $from)) {
+        // Only the company that currently owns the asset (post-transfer source loses access).
+        if ($userCompany === $current) {
             return;
         }
         Response::error('Cross-company access denied', 403);

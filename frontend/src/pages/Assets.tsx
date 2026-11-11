@@ -806,8 +806,14 @@ export default function AssetsPage() {
         signal: ac.signal,
       });
       if (gen !== assetsLoadGen.current || ac.signal.aborted) return 'aborted';
-      setRows(a.data);
-      const total = Number(a.meta?.total ?? a.data.length);
+      // Safety: never keep a row that belongs to another company tab after transfer.
+      const scoped = isSimTab
+        ? a.data
+        : activeCompany
+          ? a.data.filter((r) => Number(r.company_id) === Number(activeCompany.id))
+          : a.data;
+      setRows(scoped);
+      const total = Number(a.meta?.total ?? scoped.length);
       const pages = Math.max(1, Number(a.meta?.pages ?? Math.ceil(total / pageSize) ?? 1));
       setTotalRows(total);
       setTotalPages(pages);
