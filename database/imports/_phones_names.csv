@@ -1,0 +1,86 @@
+id,company_id,asset_tag,allocated_person,original_assigned_person,first_handover_person,handover_person_1,handover_person_2,handover_person_3,handover_person_4,location_id
+2,3,ISP-MB-0001,Ms Nishadi Maheshika Leasing,Mr Jayawardhana ISP Kandy,Mr Jayawardhana ISP Kandy,Mr Jayawardhana ISP Kandy,Ms Nishadi Maheshika Leasing,,,18
+3,1,IT-MB-0001,Mr Buweneka Colombo Sales,Mr Manesh HR Kandy,Mr Manesh HR Kandy,Mr Manesh HR Kandy,Mr Buweneka Colombo Sales,,,2
+4,1,IT-MB-0002,Mr Vimesh BYD,Mr Gayantha BYD Kandy,Mr Gayantha BYD Kandy,Mr Gayantha BYD Kandy,Mr Vimesh BYD,,,1
+5,3,ISP-MB-0002,Mr DM Rathnayaka ISP -Kandy,Mr Salinda ISP Kandy,Mr Salinda ISP Kandy,Mr Salinda ISP Kandy,Mr DM Rathnayaka ISP -Kandy,,,18
+6,3,ISP-MB-0003,Mr Mayura ISP Kandy,Mr Mayura ISP Kandy,Mr Mayura ISP Kandy,Mr Mayura ISP Kandy,,,,18
+7,3,ISP-MB-0004,Mr.Chathil Jayaranga,Mr Kelum ISP Kandy,Mr Kelum ISP Kandy,Mr Kelum ISP Kandy,Mr Nimesha Sandaruwan ISP,Mr.Chathil Jayaranga,,18
+8,1,IT-MB-0003,Mr Krish Sales Colombo,Mr Krish Sales Colombo,Mr Krish Sales Colombo,Mr Krish Sales Colombo,,,,2
+9,1,IT-MB-0004,Mr Lakshan BYD,Mr Lakshan BYD,Mr Lakshan BYD,Mr Lakshan BYD,,,,1
+10,1,IT-MB-0005,Ms Nilangi Nawarathna,Mr Lividu Call Center,Mr Lividu Call Center,Mr Lividu Call Center,Ms Hansanee Leeds,Ms Nilangi Nawarathna,,1
+11,1,IT-MB-0006,Mr Bandara IMP,Mr Bandara IMP,Mr Bandara IMP,Mr Bandara IMP,,,,1
+12,1,IT-MB-0007,Mr Dinesh IMP,Mr Dinesh IMP,Mr Dinesh IMP,Mr Dinesh IMP,,,,1
+13,1,IT-MB-0008,Mr Sasindu Hewage -MKT,Mr. Janith Admin,Mr. Janith Admin,Mr. Janith Admin,Mr Sasindu Hewage -MKT,,,1
+14,1,IT-MB-0009,Mr Rasika Colombo,Ms Sandali BYD,Ms Sandali BYD,Ms Sandali BYD,Mr Rasika Colombo,,,2
+15,1,IT-MB-0010,Ms Aruni BYD,Ms Aruni BYD,Ms Aruni BYD,Ms Aruni BYD,,,,1
+16,1,IT-MB-0011,Ms Poshini BYD,Ms Poshini BYD,Ms Poshini BYD,Ms Poshini BYD,,,,1
+17,1,IT-MB-0012,Mr Lankamal Acc-Colombo,Mr Lankamal Acc-Colombo,Mr Lankamal Acc-Colombo,Mr Lankamal Acc-Colombo,,,,2
+18,1,IT-MB-0013,Ms Apsara Sandamali- Kandy HO,Mr Ajithkumar Acc,Mr Ajithkumar Acc,Mr Ajithkumar Acc,Ms Apsara Sandamali- Kandy HO,,,1
+19,1,IT-MB-0014,Mr Prasad Maintanance Colombo,Mr Hashantha IT,Mr Hashantha IT,Mr Hashantha IT,Mr Prasad Maintanance Colombo,,,2
+20,1,IT-MB-0015,Mr Asitha Sales Kelaniya,Mr Asitha Sales Kelaniya,Mr Asitha Sales Kelaniya,Mr Asitha Sales Kelaniya,,,,14
+21,1,IT-MB-0016,Admin-Imesha,Mr Likshitha,Mr Likshitha,Mr Likshitha,Admin-Imesha,,,1
+22,2,IMS-MB-0001,Mr Pathirana IMS,Mr Pathirana IMS,Mr Pathirana IMS,Mr Pathirana IMS,,,,20
+23,3,ISP-MB-0005,Colombo Admin Yashendra Nalaka,Mr Chen Kelaniya,Mr Chen Kelaniya,Mr Chen Kelaniya,Colombo Admin Yashendra Nalaka,,,15
+24,3,ISP-MB-0006,Mr Nissanka Kandy,Mr Nissanka Kandy,Mr Nissanka Kandy,Mr Nissanka Kandy,,,,18
+25,2,IMS-MB-0002,Mr Nishan IMS 201,Mr Nishan IMS 201,Mr Nishan IMS 201,Mr Nishan IMS 201,,,,20
+26,3,ISP-MB-0007,Mr Chammi Kelaniya/W,Mr Chammi Kelaniya/W,Mr Chammi Kelaniya/W,Mr Chammi Kelaniya/W,,,,15
+27,3,ISP-MB-0008,Missing in Jaffna,Mr Kamal Kandy-Foton,Mr Kamal Kandy-Foton,Mr Kamal Kandy-Foton,Missing in Jaffna,,,18
+28,3,ISP-MB-0009,Ms Shanika Kandy/W,Ms Shanika Kandy/W,Ms Shanika Kandy/W,Ms Shanika Kandy/W,,,,18
+29,1,IT-MB-0017,Mr Shanuka Deshan PDI Ofc,Mr Tharaka Kandy,Mr Tharaka Kandy,Mr Tharaka Kandy,Mr Shanuka Deshan IPD H/O,,,1
+30,1,IT-MB-0018,BYD Shanika Dodanwala,Mr Rasika Colombo,Mr Rasika Colombo,Mr Rasika Colombo,BYD Shanika Dodanwala,,,2
+31,1,IT-MB-0019,Ms Yashodha Swarnahansi -Anuradhapura (Service Advisor),Ms Nishadi -DigitalMKT,Ms Nishadi -DigitalMKT,Ms Nishadi -DigitalMKT,Ms Yashodha Swarnahansi -Anuradhapura (Service Advisor),,,1
+32,1,IT-MB-0020,Mr Keshara -Account -Kandy,Mr Keshara -Account -Kandy,Mr Keshara -Account -Kandy,Mr Keshara -Account -Kandy,,,,1
+33,1,IT-MB-0021,Admin Lakshitha Kandy,Mr Mahesh Admin Colombo,Mr Mahesh Admin Colombo,Mr Mahesh Admin Colombo,Admin Lakshitha Kandy,,,2
+34,2,IMS-MB-0003,Mr Maneesha -201,Mr Maneesha -201,Mr Maneesha -201,Mr Maneesha -201,,,,20
+35,1,IT-MB-0022,Mr Shakila Kandy Sales,Mr Shakila Kandy Sales,Mr Shakila Kandy Sales,Mr Shakila Kandy Sales,,,,1
+36,1,IT-MB-0023,Mr Kapila Gayan,Mr BYD Chathulya Kandy Sales,Mr BYD Chathulya Kandy Sales,Mr BYD Chathulya Kandy Sales,Mr Kapila Gayan,,,1
+37,1,IT-MB-0024,Mr Chanupa Anuradhapura Sales,Mr Chanupa Anuradhapura Sales,Mr Chanupa Anuradhapura Sales,Mr Chanupa Anuradhapura Sales,,,,1
+38,1,IT-MB-0025,Imtiyas Sales Ramanayaka,Mr Danushka foton Sales,Mr Danushka foton Sales,Mr Danushka foton Sales,Imtiyas Sales Ramanayaka,,,2
+39,1,IT-MB-0026,Mr Dinesh IMP,"Import Dep Gayathri,Supun,Shiranthi","Import Dep Gayathri,Supun,Shiranthi","Import Dep Gayathri,Supun,Shiranthi",Mr Dinesh IMP,,,1
+40,1,IT-MB-0027,Mr Nethmina Sales Kandy,Mr Nethmina Sales Kandy,Mr Nethmina Sales Kandy,Mr Nethmina Sales Kandy,,,,1
+41,1,IT-MB-0028,Mr Isuru HR Dep,Mr Isuru HR Dep,Mr Isuru HR Dep,Mr Isuru HR Dep,,,,1
+42,3,ISP-MB-0010,,Mr.Ajith Subasinghe,Mr.Ajith Subasinghe,Mr.Ajith Subasinghe,,,,15
+43,3,ISP-MB-0011,ISP Account Team -Kaveesha/Ayesha/Hiruni,ISP Account Team -Kaveesha/Ayesha/Hiruni,ISP Account Team -Kaveesha/Ayesha/Hiruni,ISP Account Team -Kaveesha/Ayesha/Hiruni,,,,18
+44,3,ISP-MB-0012,ISP Machanical Advisor Matara,ISP Machanical Advisor Matara,ISP Machanical Advisor Matara,ISP Machanical Advisor Matara,,,,18
+45,1,IT-MB-0029,IMP Dep.,IMP Dep.,IMP Dep.,IMP Dep.,,,,1
+46,1,IT-MB-0030,Mr Danushka Foton,Mr Danushka Foton,Mr Danushka Foton,Mr Danushka Foton,,,,1
+47,1,IT-MB-0031,Mr Nimesh Shehan Foton Sales,Mr Nimesh Shehan Foton Sales,Mr Nimesh Shehan Foton Sales,Mr Nimesh Shehan Foton Sales,,,,1
+48,1,IT-MB-0032,Mr Chameera -Matara Sales,Mr Chameera -Matara Sales,Mr Chameera -Matara Sales,Mr Chameera -Matara Sales,,,,1
+49,3,ISP-MB-0013,Mr Diluk Maleesha Kelaniya (Service Advisor),Mr Diluk Maleesha Kelaniya (Service Advisor),Mr Diluk Maleesha Kelaniya (Service Advisor),Mr Diluk Maleesha Kelaniya (Service Advisor),,,,15
+50,3,ISP-MB-0014,Mr Anushan Kelaniya (Service Advisor),Mr Anushan Kelaniya (Service Advisor),Mr Anushan Kelaniya (Service Advisor),Mr Anushan Kelaniya (Service Advisor),,,,15
+51,1,IT-MB-0033,Mr Umesh Colombo Sales,Mr Umesh Colombo Sales,Mr Umesh Colombo Sales,Mr Umesh Colombo Sales,,,,2
+52,3,ISP-MB-0015,Missing - in Anuradhapura Branch,Ms Yashodha Swarnahansi -Anuradhapura (Service Advisor),Ms Yashodha Swarnahansi -Anuradhapura (Service Advisor),Ms Yashodha Swarnahansi -Anuradhapura (Service Advisor),Missing - in Anuradhapura Branch,,,18
+53,3,ISP-MB-0016,Ms Thisari Hansamali - Service Advisor,Mr Madushanka Naveen -BYD Kandy (Service Advisor),Mr Madushanka Naveen -BYD Kandy (Service Advisor),Mr Madushanka Naveen -BYD Kandy (Service Advisor),Ms Thisari Hansamali - Service Advisor,,,18
+54,1,IT-MB-0034,Mr Chethiya Senavirathne AGM,Mr Thuan Coporate Sales AGM,Mr Thuan Coporate Sales AGM,Mr Thuan Coporate Sales AGM,Mr Chethiya Senavirathne AGM,,,1
+55,1,IT-MB-0035,Mr Lal Jayalath -Admin Assistant Colombo,Mr Lal Jayalath -Admin Assistant Colombo,Mr Lal Jayalath -Admin Assistant Colombo,Mr Lal Jayalath -Admin Assistant Colombo,,,,2
+56,1,IT-MB-0036,Mr Mohomd Yoosuf-Admin Assistant Colombo,Mr Mohomd Yoosuf-Admin Assistant Colombo,Mr Mohomd Yoosuf-Admin Assistant Colombo,Mr Mohomd Yoosuf-Admin Assistant Colombo,,,,2
+57,1,IT-MB-0037,Mr A G Ravindu Sachinthaka- Customer Care Office,Mr A G Ravindu Sachinthaka- Customer Care Office,Mr A G Ravindu Sachinthaka- Customer Care Office,Mr A G Ravindu Sachinthaka- Customer Care Office,,,,1
+58,1,IT-MB-0038,Mr Dinesh Weerakumarage- Accountant,Mr Dinesh Weerakumarage- Accountant,Mr Dinesh Weerakumarage- Accountant,Mr Dinesh Weerakumarage- Accountant,,,,1
+59,3,ISP-MB-0017,Mr Nishadi Senavirathna- Digital MKT,Mr Nishadi Senavirathna- Digital MKT,Mr Nishadi Senavirathna- Digital MKT,Mr Nishadi Senavirathna- Digital MKT,,,,18
+60,1,IT-MB-0039,Mr Nismi Ahamed Sales -Matara,Mr Nismi Ahamed Sales -Matara,Mr Nismi Ahamed Sales -Matara,Mr Nismi Ahamed Sales -Matara,,,,1
+61,1,IT-MB-0040,Mr Samaitha Gunawardhana Sales -Matara,Mr Samaitha Gunawardhana Sales -Matara,Mr Samaitha Gunawardhana Sales -Matara,Mr Samaitha Gunawardhana Sales -Matara,,,,1
+62,1,IT-MB-0041,Mr Manesh HR Dep -Kandy,Mr Manesh HR Dep -Kandy,Mr Manesh HR Dep -Kandy,Mr Manesh HR Dep -Kandy,,,,1
+63,3,ISP-MB-0018,Mr Anuja Kelaniya ISP,Mr Anuja Kelaniya ISP,Mr Anuja Kelaniya ISP,Mr Anuja Kelaniya ISP,,,,15
+64,1,IT-MB-0042,Mr Pulasthi Morawaka Sales Kelaniya,Mr Pulasthi Morawaka Sales Kelaniya,Mr Pulasthi Morawaka Sales Kelaniya,Mr Pulasthi Morawaka Sales Kelaniya,,,,14
+65,1,IT-MB-0043,Ms Ilangasinha,Ms Ilangasinha,Ms Ilangasinha,Ms Ilangasinha,,,,1
+66,1,IT-MB-0044,"Import Dep Gayathri,Supun,Shiranthi","Import Dep Gayathri,Supun,Shiranthi","Import Dep Gayathri,Supun,Shiranthi","Import Dep Gayathri,Supun,Shiranthi",,,,1
+67,1,IT-MB-0045,IT Miran,IT Miran,IT Miran,IT Miran,,,,1
+68,1,IT-MB-0046,Mr Lakmal Chandrawansha,Mr Lakmal Chandrawansha,Mr Lakmal Chandrawansha,Mr Lakmal Chandrawansha,,,,2
+69,1,IT-MB-0047,Mr Suminda,Mr Suminda,Mr Suminda,Mr Suminda,,,,2
+70,2,IMS-MB-0004,Mr Nipun Ranasingha 201,Mr Nipun Ranasingha 201,Mr Nipun Ranasingha 201,Mr Nipun Ranasingha 201,,,,20
+71,1,IT-MB-0048,Mr Thusitha Dissanayaka,Mr Thusitha Dissanayaka,Mr Thusitha Dissanayaka,Mr Thusitha Dissanayaka,,,,1
+72,1,IT-MB-0049,Mr.Chathura Kavishka,Mr.Chathura Kavishka,Mr.Chathura Kavishka,Mr.Chathura Kavishka,,,,14
+73,1,IT-MB-0050,Ms Kaushalya Leasing,ITL Call Center MS.Hansenee,ITL Call Center MS.Hansenee,ITL Call Center MS.Hansenee,Ms Kaushalya Leasing,,,1
+74,1,IT-MB-0051,Mr.Rohitha Boyagama,IT Deshan Umayanga,IT Deshan Umayanga,IT Deshan Umayanga,Mr.Rohitha Boyagama,,,1
+75,1,IT-MB-0052,IT Mr Bandara,IT Mr Bandara,IT Mr Bandara,IT Mr Bandara,,,,1
+76,1,IT-MB-0053,Mr.Gayan Kawshalya,Mr.Rohitha Boyagama,Mr.Rohitha Boyagama,Mr.Rohitha Boyagama,Mr.Gayan Kawshalya,,,14
+77,3,ISP-MB-0019,Mr Umesh Bandara - Stors Kelaniya,Mr Umesh Bandara - Stors Kelaniya,Mr Umesh Bandara - Stors Kelaniya,Mr Umesh Bandara - Stors Kelaniya,,,,15
+78,3,ISP-MB-0020,Mr.Kanchana Jayasinshe,Mr.Kanchana Jayasinshe,Mr.Kanchana Jayasinshe,Mr.Kanchana Jayasinshe,,,,18
+79,1,IT-MB-0054,Ms Salmalee RMV,Ms Salmalee RMV,Ms Salmalee RMV,Ms Salmalee RMV,,,,1
+80,2,IMS-MB-0005,Mr Viduka -Embilipitiya,Mr Viduka -Embilipitiya,Mr Viduka -Embilipitiya,Mr Viduka -Embilipitiya,,,,23
+81,3,ISP-MB-0021,ISP Service Advisor Matara,ISP Service Advisor Matara,ISP Service Advisor Matara,ISP Service Advisor Matara,,,,18
+82,3,ISP-MB-0022,Mr.Chathura Bandara,Mr.Chathura Bandara,Mr.Chathura Bandara,Mr.Chathura Bandara,,,,
+83,3,ISP-MB-0023,Ms. Iresha Liyanage,Ms. Iresha Liyanage,Ms. Iresha Liyanage,Ms. Iresha Liyanage,,,,
+84,1,ITL-MB-0055,Mr.Omith Perera,Mr.Omith Perera,Mr.Omith Perera,Mr.Omith Perera,,,,1
+85,2,IMS-MB-0006,Mr.Nelson,Mr.Nelson,Mr.Nelson,Mr.Nelson,,,,9
+86,1,ITL-MB-0056,Mr.Niroshan,Mr.Niroshan,Mr.Niroshan,Mr.Niroshan,,,,26

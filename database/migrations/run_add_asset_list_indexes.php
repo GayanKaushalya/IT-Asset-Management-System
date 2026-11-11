@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+require dirname(__DIR__) . '/../backend/bootstrap.php';
+require dirname(__DIR__) . '/../backend/config/load_config.php';
+
+use Indra\Itam\Database\Connection;
+
+$pdo = Connection::make(itam_config()['db']);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$sql = file_get_contents(__DIR__ . '/add_asset_list_indexes.sql');
+if ($sql === false) {
+    fwrite(STDERR, "Missing migration SQL\n");
+    exit(1);
+}
+$pdo->exec($sql);
+echo "OK: asset list indexes applied.\n";

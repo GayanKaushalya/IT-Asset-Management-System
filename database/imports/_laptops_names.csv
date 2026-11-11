@@ -1,0 +1,78 @@
+id,company_id,asset_tag,allocated_person,original_assigned_person,handover_person_1,handover_person_2,handover_person_3,handover_person_4,location_id
+2,1,IT-LAP-0001,Mr Sumith,Mr Sumith,Mr Sumith,,,,1
+3,3,ISP-LAP-0001,Mr Gayantha,Mr Gayantha,Mr Gayantha,,,,18
+4,1,IT-LAP-0002,Mr Kavinga,Mr Kavinga,Mr Kavinga,,,,1
+5,1,IT-LAP-0003,Krishanthan,Krishanthan,Krishanthan,,,,2
+6,1,IT-LAP-0004,Mr Danushka,Mr Danushka,Mr Danushka,,,,1
+7,1,IT-LAP-0005,Mr Dinesh,Mr Dinesh,Mr Dinesh,,,,1
+8,1,IT-LAP-0006,Mr Bandara,Mr Bandara,Mr Bandara,,,,1
+9,1,IT-LAP-0007,Mr Lokitha,Mr Lokitha,Mr Lokitha,,,,1
+10,1,IT-LAP-0008,Mr Asitha,Mr Asitha,Mr Asitha,,,,1
+11,1,IT-LAP-0009,Mr Ajith,Mr Ajith,Mr Ajith,,,,1
+12,1,IT-LAP-0010,Mr Lakmal,Mr Lakmal,Mr Lakmal,,,,2
+13,1,IT-LAP-0011,Mr Hashantha,Mr Hashantha,Mr Hashantha,,,,1
+14,1,IT-LAP-0012,Mr Likshitha,Mr Likshitha,Mr Likshitha,,,,2
+15,1,IT-LAP-0013,Mr Manesh,Mr Manesh,Mr Manesh,,,,1
+16,3,ISP-LAP-0002,Mr Vimesh,Mr Vimesh,Mr Vimesh,,,,18
+17,3,ISP-LAP-0003,Ms Poshini,Ms Poshini,Ms Poshini,,,,18
+18,1,IT-LAP-0014,Mr Hasitha,Mr Hasitha,Mr Hasitha,,,,1
+19,1,IT-LAP-0015,Mr Chaminda,Mr Chaminda,Mr Chaminda,,,,1
+20,1,IT-LAP-0016,Mr Ravindra,Mr Ravindra,Mr Ravindra,,,,1
+21,1,IT-LAP-0017,Mr Amunugama,Mr Amunugama,Mr Amunugama,,,,1
+22,1,IT-LAP-0018,Mr Pulasthi,Mr Pulasthi,Mr Pulasthi,,,,14
+23,1,IT-LAP-0019,Ms Amasha,Ms Amasha,Ms Amasha,,,,1
+24,1,IT-LAP-0020,Mr Janaka,Mr Janaka,Mr Janaka,,,,14
+25,1,IT-LAP-0021,Mr Chiremen,Mr Chiremen,Mr Chiremen,,,,1
+26,1,IT-LAP-0022,Mr Thushara,Mr Thushara,Mr Thushara,,,,1
+27,1,IT-LAP-0023,Mr Rasika,Mr Rasika,Mr Rasika,,,,1
+28,1,IT-LAP-0024,Ms Ilangasingha,Ms Ilangasingha,Ms Ilangasingha,,,,1
+29,1,IT-LAP-0025,IT,IT,IT,,,,1
+30,1,IT-LAP-0026,Ms Salmalee,Ms Salmalee,Ms Salmalee,,,,1
+31,3,ISP-LAP-0004,Ms Aruni,Ms Aruni,Ms Aruni,,,,18
+32,3,ISP-LAP-0005,Mr Isuru,Mr Isuru,Mr Isuru,,,,18
+33,1,IT-LAP-0027,Mr Supun,Mr Supun,Mr Supun,,,,1
+34,2,IMS-LAP-0001,Mr Sanjeewa,Mr Sanjeewa,Mr Sanjeewa,,,,20
+35,2,IMS-LAP-0002,Mr Sahan,Mr Sahan,Mr Sahan,,,,20
+36,1,IT-LAP-0028,Mr Miyuru,Mr Miyuru,Mr Miyuru,,,,1
+37,2,IMS-LAP-0003,Mr Nalaka,Mr Nalaka,Mr Nalaka,,,,23
+38,1,IT-LAP-0029,Mr Jayantha,Mr Jayantha,Mr Jayantha,,,,10
+39,1,IT-LAP-0030,Mr Tharaka,Mr Tharaka,Mr Tharaka,,,,1
+40,1,IT-LAP-0031,Ms Leesha,Ms Leesha,Ms Leesha,,,,2
+41,1,IT-LAP-0032,,Mr.Nimesh,Mr.Nimesh,,,,1
+42,1,IT-LAP-0033,Mr Thuan,Mr Thuan,Mr Thuan,,,,1
+43,1,IT-LAP-0034,Ms Nishadi Senavirathna,Ms Nishadi Senavirathna,Ms Nishadi Senavirathna,,,,1
+44,1,IT-LAP-0035,Ms.Nimashi,Ms.Nimashi,Ms.Nimashi,,,,1
+45,1,IT-LAP-0036,Ms.Kaushalya Subashini,Ms.Kaushalya Subashini,Ms.Kaushalya Subashini,,,,1
+46,3,ISP-LAP-0006,Mr Chatulya Gamlath,Mr Chatulya Gamlath,Mr Chatulya Gamlath,,,,18
+47,1,IT-LAP-0037,Mr Pasan Perera,Mr Pasan Perera,Mr Pasan Perera,,,,1
+48,1,IT-LAP-0038,Mr Ifraz Yaheeya,Mr Ifraz Yaheeya,Mr Ifraz Yaheeya,,,,1
+49,1,IT-LAP-0039,MS Sanduni,MS Sanduni,MS Sanduni,,,,1
+50,1,IT-LAP-0040,MS Nilangi,MS Nilangi,MS Nilangi,,,,1
+51,1,IT-LAP-0041,MS Umesha,MS Umesha,MS Umesha,,,,1
+52,1,IT-LAP-0042,Ms.Moksha Karunathilaka,Ms.Hansani,Ms.Hansani,Ms.Moksha Karunathilaka,,,1
+53,1,IT-LAP-0043,Ms.Koshila,Ms.Manjali,Ms.Manjali,Ms.Koshila,,,1
+54,1,IT-LAP-0044,MS Netali,MS Netali,MS Netali,,,,1
+55,1,IT-LAP-0045,Mr Ravindu,Mr Ravindu,Mr Ravindu,,,,1
+56,1,IT-LAP-0046,Ms Yashodha,Ms Yashodha,Ms Yashodha,,,,1
+57,3,ISP-LAP-0007,Mr Madusanka,Mr Madusanka,Mr Madusanka,,,,18
+58,3,ISP-LAP-0008,Mr Chammi,Mr Chammi,Mr Chammi,,,,18
+59,3,ISP-LAP-0009,Mr Lakshan,Mr Lakshan,Mr Lakshan,,,,18
+60,1,IT-LAP-0047,Mr Shanuka,Mr Shanuka,Mr Shanuka,,,,1
+61,3,ISP-LAP-0010,Mr Anushan,Mr Anushan,Mr Anushan,,,,15
+62,1,IT-LAP-0048,Mr Anuradha,Mr Anuradha,Mr Anuradha,,,,1
+63,1,IT-LAP-0049,Mr Pulasthi,Mr Pulasthi,Mr Pulasthi,,,,1
+64,1,IT-LAP-0050,Ms Mahendrika,Ms Mahendrika,Ms Mahendrika,,,,1
+65,1,IT-LAP-0051,Mr Dinesh,Mr Dinesh,Mr Dinesh,,,,1
+66,3,ISP-LAP-0011,Mr Wasantha,Mr Wasantha,Mr Wasantha,,,,18
+67,1,IT-LAP-0052,Mr Thusitha,Mr Thusitha,Mr Thusitha,,,,1
+68,1,IT-LAP-0053,Mr Sameera,Mr Sameera,Mr Sameera,,,,1
+69,1,IT-LAP-0054,Mr Chathura,Mr Chathura,Mr Chathura,,,,14
+70,1,IT-LAP-0055,Mr Kamal,Mr Kamal,Mr Kamal,,,,1
+71,1,IT-LAP-0056,Mr Sanjeewa,Mr Sanjeewa,Mr Sanjeewa,,,,2
+72,1,IT-LAP-0057,Mr.Niroshan,Mr.Rohitha Boyagama,Mr.Rohitha Boyagama,Mr.Niroshan,,,14
+73,1,IT-LAP-0058,Mr Praveen Benadic,Mr Praveen Benadic,Mr Praveen Benadic,,,,14
+74,1,IT-LAP-0059,Mr Maneesha Bimsara,Mr Maneesha Bimsara,Mr Maneesha Bimsara,,,,14
+75,2,IMS-LAP-0004,Ms Geeshani Imali,Ms Geeshani Imali,Ms Geeshani Imali,,,,20
+77,3,ISP-LAP-0012,Mr.Chathura Bandara,Mr.Chathura Bandara,Mr.Chathura Bandara,,,,18
+78,3,ISP-LAP-0013,Mr.Sadir,Mr.Sadir,Mr.Sadir,,,,18
+79,1,ITL-LAP-0060,Mr.Sakun Bandara,Mr.Sakun Bandara,Mr.Sakun Bandara,,,,14

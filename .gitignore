@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+backend/config/config.php
+**/secrets/
+**/*.pem
+**/*.key
+
+# Build outputs
+frontend/dist/
+dist/
+build/
+*.tsbuildinfo
+
+# Logs & runtime
+logs/
+*.log
+backend/storage/logs/
+backend/storage/cache/
+backend/storage/uploads/
+!backend/storage/**/.gitkeep
+
+# Backups & dumps
+backups/
+*.sql.gz
+*.dump
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.local
+
+# Cursor (keep project rules)
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**

@@ -1,0 +1,22 @@
+# Optional Render Blueprint — you can also create the service in the dashboard.
+services:
+  - type: web
+    name: indra-itam-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: VAULT_ENCRYPTION_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: API_TOKENS
+        sync: false

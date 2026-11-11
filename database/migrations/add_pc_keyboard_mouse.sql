@@ -1,0 +1,4 @@
+-- PC accessories: keyboard + mouse checklist
+ALTER TABLE pcs
+    ADD COLUMN IF NOT EXISTS has_keyboard BOOLEAN NOT NULL DEFAULT FALSE,
+    ADD COLUMN IF NOT EXISTS has_mouse BOOLEAN NOT NULL DEFAULT FALSE;

@@ -1,0 +1,347 @@
+table,id,field,old,new,staff_id,score
+laptops,5,allocated_person,Krishanthan,Subramaniam Krishanthan,214,18
+laptops,5,original_assigned_person,Krishanthan,Subramaniam Krishanthan,214,18
+laptops,5,handover_person_1,Krishanthan,Subramaniam Krishanthan,214,18
+laptops,6,allocated_person,Mr Danushka,D.M. Danushka Bandara Senevirathne,23,15
+laptops,6,original_assigned_person,Mr Danushka,D.M. Danushka Bandara Senevirathne,23,15
+laptops,6,handover_person_1,Mr Danushka,D.M. Danushka Bandara Senevirathne,23,15
+laptops,9,allocated_person,Mr Lokitha,Y.M. Sathnidu Lokitha Yapa,203,14
+laptops,9,original_assigned_person,Mr Lokitha,Y.M. Sathnidu Lokitha Yapa,203,14
+laptops,9,handover_person_1,Mr Lokitha,Y.M. Sathnidu Lokitha Yapa,203,14
+laptops,10,allocated_person,Mr Asitha,P. Asitha Saranath Perera,238,13
+laptops,10,original_assigned_person,Mr Asitha,P. Asitha Saranath Perera,238,13
+laptops,10,handover_person_1,Mr Asitha,P. Asitha Saranath Perera,238,13
+laptops,11,allocated_person,Mr Ajith,H.M. Ajith Henatigala,69,12
+laptops,11,original_assigned_person,Mr Ajith,H.M. Ajith Henatigala,69,12
+laptops,11,handover_person_1,Mr Ajith,H.M. Ajith Henatigala,69,12
+laptops,12,allocated_person,Mr Lakmal,M. Lakmal Chandrawansha,289,13
+laptops,12,original_assigned_person,Mr Lakmal,M. Lakmal Chandrawansha,289,13
+laptops,12,handover_person_1,Mr Lakmal,M. Lakmal Chandrawansha,289,13
+laptops,15,allocated_person,Mr Manesh,B.H.M. Manesh Theranga Herath,191,13
+laptops,15,original_assigned_person,Mr Manesh,B.H.M. Manesh Theranga Herath,191,13
+laptops,15,handover_person_1,Mr Manesh,B.H.M. Manesh Theranga Herath,191,13
+laptops,16,allocated_person,Mr Vimesh,Vimesh Shiranga Abeyasinghe,275,13
+laptops,16,original_assigned_person,Mr Vimesh,Vimesh Shiranga Abeyasinghe,275,13
+laptops,16,handover_person_1,Mr Vimesh,Vimesh Shiranga Abeyasinghe,275,13
+laptops,17,allocated_person,Ms Poshini,Poshini Manohari Bandara Naranpanawa,271,14
+laptops,17,original_assigned_person,Ms Poshini,Poshini Manohari Bandara Naranpanawa,271,14
+laptops,17,handover_person_1,Ms Poshini,Poshini Manohari Bandara Naranpanawa,271,14
+laptops,18,allocated_person,Mr Hasitha,T. Hasitha Kushan Jayasundara,21,14
+laptops,18,original_assigned_person,Mr Hasitha,T. Hasitha Kushan Jayasundara,21,14
+laptops,18,handover_person_1,Mr Hasitha,T. Hasitha Kushan Jayasundara,21,14
+laptops,20,allocated_person,Mr Ravindra,A.T. Ravindra Saman,41,15
+laptops,20,original_assigned_person,Mr Ravindra,A.T. Ravindra Saman,41,15
+laptops,20,handover_person_1,Mr Ravindra,A.T. Ravindra Saman,41,15
+laptops,21,allocated_person,Mr Amunugama,A.R.W.M. Nalin Maliyadewa Weerasinghe Amunugama,6,16
+laptops,21,original_assigned_person,Mr Amunugama,A.R.W.M. Nalin Maliyadewa Weerasinghe Amunugama,6,16
+laptops,21,handover_person_1,Mr Amunugama,A.R.W.M. Nalin Maliyadewa Weerasinghe Amunugama,6,16
+laptops,22,allocated_person,Mr Pulasthi,P.S.S. Pulasthi Morawaka,72,15
+laptops,22,original_assigned_person,Mr Pulasthi,P.S.S. Pulasthi Morawaka,72,15
+laptops,22,handover_person_1,Mr Pulasthi,P.S.S. Pulasthi Morawaka,72,15
+laptops,23,allocated_person,Ms Amasha,P.G. Amasha Savindya Polgolla,202,13
+laptops,23,original_assigned_person,Ms Amasha,P.G. Amasha Savindya Polgolla,202,13
+laptops,23,handover_person_1,Ms Amasha,P.G. Amasha Savindya Polgolla,202,13
+laptops,26,allocated_person,Mr Thushara,K.A.D. Thushara Madhushanka Thilakarathna,44,15
+laptops,26,original_assigned_person,Mr Thushara,K.A.D. Thushara Madhushanka Thilakarathna,44,15
+laptops,26,handover_person_1,Mr Thushara,K.A.D. Thushara Madhushanka Thilakarathna,44,15
+laptops,27,allocated_person,Mr Rasika,M. Rasika Ranjieeva De Silva,10,13
+laptops,27,original_assigned_person,Mr Rasika,M. Rasika Ranjieeva De Silva,10,13
+laptops,27,handover_person_1,Mr Rasika,M. Rasika Ranjieeva De Silva,10,13
+laptops,30,allocated_person,Ms Salmalee,J.M.L. Salmalee Jayasooriya,14,15
+laptops,30,original_assigned_person,Ms Salmalee,J.M.L. Salmalee Jayasooriya,14,15
+laptops,30,handover_person_1,Ms Salmalee,J.M.L. Salmalee Jayasooriya,14,15
+laptops,31,allocated_person,Ms Aruni,T.A.V. . Aruni Vithanage,264,12
+laptops,31,original_assigned_person,Ms Aruni,T.A.V. . Aruni Vithanage,264,12
+laptops,31,handover_person_1,Ms Aruni,T.A.V. . Aruni Vithanage,264,12
+laptops,33,allocated_person,Mr Supun,I.M.G. Rashmika Supun Senanayaka,200,12
+laptops,33,original_assigned_person,Mr Supun,I.M.G. Rashmika Supun Senanayaka,200,12
+laptops,33,handover_person_1,Mr Supun,I.M.G. Rashmika Supun Senanayaka,200,12
+laptops,35,allocated_person,Mr Sahan,Sahan Herath,70,12
+laptops,35,original_assigned_person,Mr Sahan,Sahan Herath,70,12
+laptops,35,handover_person_1,Mr Sahan,Sahan Herath,70,12
+laptops,37,allocated_person,Mr Nalaka,W.  Nalaka,68,13
+laptops,37,original_assigned_person,Mr Nalaka,W.  Nalaka,68,13
+laptops,37,handover_person_1,Mr Nalaka,W.  Nalaka,68,13
+laptops,39,allocated_person,Mr Tharaka,S.W.N.W.S. Tharaka Dulaj Bandara Nuwarawewa,265,14
+laptops,39,original_assigned_person,Mr Tharaka,S.W.N.W.S. Tharaka Dulaj Bandara Nuwarawewa,265,14
+laptops,39,handover_person_1,Mr Tharaka,S.W.N.W.S. Tharaka Dulaj Bandara Nuwarawewa,265,14
+laptops,41,original_assigned_person,Mr.Nimesh,K.G. Nimesh Dilshika Rajapaksha,331,13
+laptops,41,handover_person_1,Mr.Nimesh,K.G. Nimesh Dilshika Rajapaksha,331,13
+laptops,43,allocated_person,Ms Nishadi Senavirathna,C.B.M. Nishadi Shashikala Senavirathne,207,9
+laptops,43,original_assigned_person,Ms Nishadi Senavirathna,C.B.M. Nishadi Shashikala Senavirathne,207,9
+laptops,43,handover_person_1,Ms Nishadi Senavirathna,C.B.M. Nishadi Shashikala Senavirathne,207,9
+laptops,48,allocated_person,Mr Ifraz Yaheeya,S. Omar Ifraz Yahiya,422,7
+laptops,48,original_assigned_person,Mr Ifraz Yaheeya,S. Omar Ifraz Yahiya,422,7
+laptops,48,handover_person_1,Mr Ifraz Yaheeya,S. Omar Ifraz Yahiya,422,7
+laptops,50,allocated_person,MS Nilangi,W.M. Rajitha Nilangi Nawarathne,56,14
+laptops,50,original_assigned_person,MS Nilangi,W.M. Rajitha Nilangi Nawarathne,56,14
+laptops,50,handover_person_1,MS Nilangi,W.M. Rajitha Nilangi Nawarathne,56,14
+laptops,51,allocated_person,MS Umesha,R.M. Umesha Sewmini Rathnayaka,145,13
+laptops,51,original_assigned_person,MS Umesha,R.M. Umesha Sewmini Rathnayaka,145,13
+laptops,51,handover_person_1,MS Umesha,R.M. Umesha Sewmini Rathnayaka,145,13
+laptops,52,allocated_person,Ms.Moksha Karunathilaka,K.G. Moksha Mandakini Karunathilaka,554,28
+laptops,52,handover_person_2,Ms.Moksha Karunathilaka,K.G. Moksha Mandakini Karunathilaka,554,28
+laptops,53,allocated_person,Ms.Koshila,P.M.A. Sawini Koshila Karunathilaka,552,14
+laptops,53,original_assigned_person,Ms.Manjali,Manjali Hansika Balasingham,286,14
+laptops,53,handover_person_1,Ms.Manjali,Manjali Hansika Balasingham,286,14
+laptops,53,handover_person_2,Ms.Koshila,P.M.A. Sawini Koshila Karunathilaka,552,14
+laptops,58,allocated_person,Mr Chammi,Chammi Wickramasinghe,125,13
+laptops,58,original_assigned_person,Mr Chammi,Chammi Wickramasinghe,125,13
+laptops,58,handover_person_1,Mr Chammi,Chammi Wickramasinghe,125,13
+laptops,61,allocated_person,Mr Anushan,Chandrakumar Anushan,350,14
+laptops,61,original_assigned_person,Mr Anushan,Chandrakumar Anushan,350,14
+laptops,61,handover_person_1,Mr Anushan,Chandrakumar Anushan,350,14
+laptops,62,allocated_person,Mr Anuradha,W.K. Anuradha Priyadharshana,36,15
+laptops,62,original_assigned_person,Mr Anuradha,W.K. Anuradha Priyadharshana,36,15
+laptops,62,handover_person_1,Mr Anuradha,W.K. Anuradha Priyadharshana,36,15
+laptops,63,allocated_person,Mr Pulasthi,P.S.S. Pulasthi Morawaka,72,15
+laptops,63,original_assigned_person,Mr Pulasthi,P.S.S. Pulasthi Morawaka,72,15
+laptops,63,handover_person_1,Mr Pulasthi,P.S.S. Pulasthi Morawaka,72,15
+laptops,67,allocated_person,Mr Thusitha,Thusitha Upendra Dissanayake,505,15
+laptops,67,original_assigned_person,Mr Thusitha,Thusitha Upendra Dissanayake,505,15
+laptops,67,handover_person_1,Mr Thusitha,Thusitha Upendra Dissanayake,505,15
+laptops,68,allocated_person,Mr Sameera,Sameera Madhubhashana Jayasundara,379,14
+laptops,68,original_assigned_person,Mr Sameera,Sameera Madhubhashana Jayasundara,379,14
+laptops,68,handover_person_1,Mr Sameera,Sameera Madhubhashana Jayasundara,379,14
+laptops,70,allocated_person,Mr Kamal,Jayakumaran Kamal,129,12
+laptops,70,original_assigned_person,Mr Kamal,Jayakumaran Kamal,129,12
+laptops,70,handover_person_1,Mr Kamal,Jayakumaran Kamal,129,12
+laptops,71,allocated_person,Mr Sanjeewa,A.D. Dammika Sanjeewa Abagahakotuwa,60,15
+laptops,71,original_assigned_person,Mr Sanjeewa,A.D. Dammika Sanjeewa Abagahakotuwa,60,15
+laptops,71,handover_person_1,Mr Sanjeewa,A.D. Dammika Sanjeewa Abagahakotuwa,60,15
+laptops,73,allocated_person,Mr Praveen Benadic,Benadic Praveen,544,23
+laptops,73,original_assigned_person,Mr Praveen Benadic,Benadic Praveen,544,23
+laptops,73,handover_person_1,Mr Praveen Benadic,Benadic Praveen,544,23
+laptops,74,allocated_person,Mr Maneesha Bimsara,B.A. Maneesha Bimsara,540,24
+laptops,74,original_assigned_person,Mr Maneesha Bimsara,B.A. Maneesha Bimsara,540,24
+laptops,74,handover_person_1,Mr Maneesha Bimsara,B.A. Maneesha Bimsara,540,24
+laptops,75,allocated_person,Ms Geeshani Imali,Geeshani Sasikala,85,10
+laptops,75,original_assigned_person,Ms Geeshani Imali,Geeshani Sasikala,85,10
+laptops,75,handover_person_1,Ms Geeshani Imali,Geeshani Sasikala,85,10
+laptops,77,allocated_person,Mr.Chathura Bandara,T.M. Kaushalya Chathura Bandara Thennakoon,549,24
+laptops,77,original_assigned_person,Mr.Chathura Bandara,T.M. Kaushalya Chathura Bandara Thennakoon,549,24
+laptops,77,handover_person_1,Mr.Chathura Bandara,T.M. Kaushalya Chathura Bandara Thennakoon,549,24
+mobile_phones,3,original_assigned_person,Mr Manesh HR Kandy,B.H.M. Manesh Theranga Herath,191,11
+mobile_phones,3,first_handover_person,Mr Manesh HR Kandy,B.H.M. Manesh Theranga Herath,191,11
+mobile_phones,3,handover_person_1,Mr Manesh HR Kandy,B.H.M. Manesh Theranga Herath,191,11
+mobile_phones,4,allocated_person,Mr Vimesh BYD,Vimesh Shiranga Abeyasinghe,275,13
+mobile_phones,4,handover_person_2,Mr Vimesh BYD,Vimesh Shiranga Abeyasinghe,275,13
+mobile_phones,5,allocated_person,Mr DM Rathnayaka ISP -Kandy,D.G. Dushan Madhusanka Rathnayaka,142,20
+mobile_phones,5,original_assigned_person,Mr Salinda ISP Kandy,K. Shehan Salinda Kumara,366,17
+mobile_phones,5,first_handover_person,Mr Salinda ISP Kandy,K. Shehan Salinda Kumara,366,17
+mobile_phones,5,handover_person_1,Mr Salinda ISP Kandy,K. Shehan Salinda Kumara,366,17
+mobile_phones,5,handover_person_2,Mr DM Rathnayaka ISP -Kandy,D.G. Dushan Madhusanka Rathnayaka,142,20
+mobile_phones,6,allocated_person,Mr Mayura ISP Kandy,W.A. Mayura Srinath Rajapaksha,173,16
+mobile_phones,6,original_assigned_person,Mr Mayura ISP Kandy,W.A. Mayura Srinath Rajapaksha,173,16
+mobile_phones,6,first_handover_person,Mr Mayura ISP Kandy,W.A. Mayura Srinath Rajapaksha,173,16
+mobile_phones,6,handover_person_1,Mr Mayura ISP Kandy,W.A. Mayura Srinath Rajapaksha,173,16
+mobile_phones,7,allocated_person,Mr.Chathil Jayaranga,D.M. Chathil Kumudesh Jayaranga,492,25
+mobile_phones,7,handover_person_3,Mr.Chathil Jayaranga,D.M. Chathil Kumudesh Jayaranga,492,25
+mobile_phones,9,allocated_person,Mr Lakshan BYD,N.M.A.G. Lakshan Bandara Munasinghe,212,14
+mobile_phones,9,original_assigned_person,Mr Lakshan BYD,N.M.A.G. Lakshan Bandara Munasinghe,212,14
+mobile_phones,9,first_handover_person,Mr Lakshan BYD,N.M.A.G. Lakshan Bandara Munasinghe,212,14
+mobile_phones,9,handover_person_1,Mr Lakshan BYD,N.M.A.G. Lakshan Bandara Munasinghe,212,14
+mobile_phones,10,allocated_person,Ms Nilangi Nawarathna,Y.M. Upamali Lasanthika Nawarathna Yapa,283,17
+mobile_phones,10,handover_person_3,Ms Nilangi Nawarathna,Y.M. Upamali Lasanthika Nawarathna Yapa,283,17
+mobile_phones,13,allocated_person,Mr Sasindu Hewage -MKT,I.H. Sasindu Madhushan,516,9
+mobile_phones,13,original_assigned_person,Mr. Janith Admin,W.A.  Janith,103,13
+mobile_phones,13,first_handover_person,Mr. Janith Admin,W.A.  Janith,103,13
+mobile_phones,13,handover_person_1,Mr. Janith Admin,W.A.  Janith,103,13
+mobile_phones,13,handover_person_2,Mr Sasindu Hewage -MKT,I.H. Sasindu Madhushan,516,9
+mobile_phones,14,allocated_person,Mr Rasika Colombo,M. Rasika Ranjieeva De Silva,10,16
+mobile_phones,14,handover_person_2,Mr Rasika Colombo,M. Rasika Ranjieeva De Silva,10,16
+mobile_phones,15,allocated_person,Ms Aruni BYD,T.A.V. . Aruni Vithanage,264,12
+mobile_phones,15,original_assigned_person,Ms Aruni BYD,T.A.V. . Aruni Vithanage,264,12
+mobile_phones,15,first_handover_person,Ms Aruni BYD,T.A.V. . Aruni Vithanage,264,12
+mobile_phones,15,handover_person_1,Ms Aruni BYD,T.A.V. . Aruni Vithanage,264,12
+mobile_phones,16,allocated_person,Ms Poshini BYD,Poshini Manohari Bandara Naranpanawa,271,14
+mobile_phones,16,original_assigned_person,Ms Poshini BYD,Poshini Manohari Bandara Naranpanawa,271,14
+mobile_phones,16,first_handover_person,Ms Poshini BYD,Poshini Manohari Bandara Naranpanawa,271,14
+mobile_phones,16,handover_person_1,Ms Poshini BYD,Poshini Manohari Bandara Naranpanawa,271,14
+mobile_phones,20,allocated_person,Mr Asitha Sales Kelaniya,P. Asitha Saranath Perera,238,16
+mobile_phones,20,original_assigned_person,Mr Asitha Sales Kelaniya,P. Asitha Saranath Perera,238,16
+mobile_phones,20,first_handover_person,Mr Asitha Sales Kelaniya,P. Asitha Saranath Perera,238,16
+mobile_phones,20,handover_person_1,Mr Asitha Sales Kelaniya,P. Asitha Saranath Perera,238,16
+mobile_phones,21,allocated_person,Admin-Imesha,H.G. Imesha Sandamini Wijewardhana,291,13
+mobile_phones,21,handover_person_2,Admin-Imesha,H.G. Imesha Sandamini Wijewardhana,291,13
+mobile_phones,22,allocated_person,Mr Pathirana IMS,G.P. Thusith Chaminda Pathirana,25,16
+mobile_phones,22,original_assigned_person,Mr Pathirana IMS,G.P. Thusith Chaminda Pathirana,25,16
+mobile_phones,22,first_handover_person,Mr Pathirana IMS,G.P. Thusith Chaminda Pathirana,25,16
+mobile_phones,22,handover_person_1,Mr Pathirana IMS,G.P. Thusith Chaminda Pathirana,25,16
+mobile_phones,23,allocated_person,Colombo Admin Yashendra Nalaka,K.M. Kasun Nalaka Bandara,351,13
+mobile_phones,23,handover_person_2,Colombo Admin Yashendra Nalaka,K.M. Kasun Nalaka Bandara,351,13
+mobile_phones,24,allocated_person,Mr Nissanka Kandy,R. Aruna Prasad Nissanka,98,18
+mobile_phones,24,original_assigned_person,Mr Nissanka Kandy,R. Aruna Prasad Nissanka,98,18
+mobile_phones,24,first_handover_person,Mr Nissanka Kandy,R. Aruna Prasad Nissanka,98,18
+mobile_phones,24,handover_person_1,Mr Nissanka Kandy,R. Aruna Prasad Nissanka,98,18
+mobile_phones,25,allocated_person,Mr Nishan IMS 201,R.P.G. Nishan Lakmal Darmarathna,29,16
+mobile_phones,25,original_assigned_person,Mr Nishan IMS 201,R.P.G. Nishan Lakmal Darmarathna,29,16
+mobile_phones,25,first_handover_person,Mr Nishan IMS 201,R.P.G. Nishan Lakmal Darmarathna,29,16
+mobile_phones,25,handover_person_1,Mr Nishan IMS 201,R.P.G. Nishan Lakmal Darmarathna,29,16
+mobile_phones,27,original_assigned_person,Mr Kamal Kandy-Foton,Jayakumaran Kamal,129,15
+mobile_phones,27,first_handover_person,Mr Kamal Kandy-Foton,Jayakumaran Kamal,129,15
+mobile_phones,27,handover_person_1,Mr Kamal Kandy-Foton,Jayakumaran Kamal,129,15
+mobile_phones,29,allocated_person,Mr Shanuka Deshan PDI Ofc,W.M.H.H.W. Shanuka Deshan Bandara Wijekoon,449,17
+mobile_phones,29,original_assigned_person,Mr Tharaka Kandy,S.W.N.W.S. Tharaka Dulaj Bandara Nuwarawewa,265,17
+mobile_phones,29,first_handover_person,Mr Tharaka Kandy,S.W.N.W.S. Tharaka Dulaj Bandara Nuwarawewa,265,17
+mobile_phones,29,handover_person_1,Mr Tharaka Kandy,S.W.N.W.S. Tharaka Dulaj Bandara Nuwarawewa,265,17
+mobile_phones,30,allocated_person,BYD Shanika Dodanwala,R.B. Shanika Lakmali Dodanwala,266,25
+mobile_phones,30,original_assigned_person,Mr Rasika Colombo,M. Rasika Ranjieeva De Silva,10,16
+mobile_phones,30,first_handover_person,Mr Rasika Colombo,M. Rasika Ranjieeva De Silva,10,16
+mobile_phones,30,handover_person_1,Mr Rasika Colombo,M. Rasika Ranjieeva De Silva,10,16
+mobile_phones,30,handover_person_2,BYD Shanika Dodanwala,R.B. Shanika Lakmali Dodanwala,266,25
+mobile_phones,31,original_assigned_person,Ms Nishadi -DigitalMKT,C.B.M. Nishadi Shashikala Senavirathne,207,9
+mobile_phones,31,first_handover_person,Ms Nishadi -DigitalMKT,C.B.M. Nishadi Shashikala Senavirathne,207,9
+mobile_phones,31,handover_person_1,Ms Nishadi -DigitalMKT,C.B.M. Nishadi Shashikala Senavirathne,207,9
+mobile_phones,32,allocated_person,Mr Keshara -Account -Kandy,N.A. Keshara Gihan Nishshanka,313,12
+mobile_phones,32,original_assigned_person,Mr Keshara -Account -Kandy,N.A. Keshara Gihan Nishshanka,313,12
+mobile_phones,32,first_handover_person,Mr Keshara -Account -Kandy,N.A. Keshara Gihan Nishshanka,313,12
+mobile_phones,32,handover_person_1,Mr Keshara -Account -Kandy,N.A. Keshara Gihan Nishshanka,313,12
+mobile_phones,33,allocated_person,Admin Lakshitha Kandy,M.D.M. Lakshitha Raweendra Bandara Dissanayaka,386,19
+mobile_phones,33,handover_person_2,Admin Lakshitha Kandy,M.D.M. Lakshitha Raweendra Bandara Dissanayaka,386,19
+mobile_phones,34,allocated_person,Mr Maneesha -201,B.A. Maneesha Bimsara,540,15
+mobile_phones,34,original_assigned_person,Mr Maneesha -201,B.A. Maneesha Bimsara,540,15
+mobile_phones,34,first_handover_person,Mr Maneesha -201,B.A. Maneesha Bimsara,540,15
+mobile_phones,34,handover_person_1,Mr Maneesha -201,B.A. Maneesha Bimsara,540,15
+mobile_phones,35,allocated_person,Mr Shakila Kandy Sales,C.B.M. Shakila Shewanthini Bandara,314,17
+mobile_phones,35,original_assigned_person,Mr Shakila Kandy Sales,C.B.M. Shakila Shewanthini Bandara,314,17
+mobile_phones,35,first_handover_person,Mr Shakila Kandy Sales,C.B.M. Shakila Shewanthini Bandara,314,17
+mobile_phones,35,handover_person_1,Mr Shakila Kandy Sales,C.B.M. Shakila Shewanthini Bandara,314,17
+mobile_phones,36,allocated_person,Mr Kapila Gayan,W.T. Gayan Kapila Wickramasinghe,494,20
+mobile_phones,36,handover_person_2,Mr Kapila Gayan,W.T. Gayan Kapila Wickramasinghe,494,20
+mobile_phones,37,allocated_person,Mr Chanupa Anuradhapura Sales,M. Chanupa Dewnith Herath,294,17
+mobile_phones,37,original_assigned_person,Mr Chanupa Anuradhapura Sales,M. Chanupa Dewnith Herath,294,17
+mobile_phones,37,first_handover_person,Mr Chanupa Anuradhapura Sales,M. Chanupa Dewnith Herath,294,17
+mobile_phones,37,handover_person_1,Mr Chanupa Anuradhapura Sales,M. Chanupa Dewnith Herath,294,17
+mobile_phones,38,original_assigned_person,Mr Danushka foton Sales,D.M. Danushka Bandara Senevirathne,23,15
+mobile_phones,38,first_handover_person,Mr Danushka foton Sales,D.M. Danushka Bandara Senevirathne,23,15
+mobile_phones,38,handover_person_1,Mr Danushka foton Sales,D.M. Danushka Bandara Senevirathne,23,15
+mobile_phones,39,original_assigned_person,"Import Dep Gayathri,Supun,Shiranthi",D.M. Gayathri Menaka Dissanayaka,97,10
+mobile_phones,39,first_handover_person,"Import Dep Gayathri,Supun,Shiranthi",D.M. Gayathri Menaka Dissanayaka,97,10
+mobile_phones,39,handover_person_1,"Import Dep Gayathri,Supun,Shiranthi",D.M. Gayathri Menaka Dissanayaka,97,10
+mobile_phones,40,allocated_person,Mr Nethmina Sales Kandy,H.G. Nethmina Shalinda Rajapaksha,344,18
+mobile_phones,40,original_assigned_person,Mr Nethmina Sales Kandy,H.G. Nethmina Shalinda Rajapaksha,344,18
+mobile_phones,40,first_handover_person,Mr Nethmina Sales Kandy,H.G. Nethmina Shalinda Rajapaksha,344,18
+mobile_phones,40,handover_person_1,Mr Nethmina Sales Kandy,H.G. Nethmina Shalinda Rajapaksha,344,18
+mobile_phones,41,allocated_person,Mr Isuru HR Dep,W. Isuru Tharanga Perera,45,7
+mobile_phones,41,original_assigned_person,Mr Isuru HR Dep,W. Isuru Tharanga Perera,45,7
+mobile_phones,41,first_handover_person,Mr Isuru HR Dep,W. Isuru Tharanga Perera,45,7
+mobile_phones,41,handover_person_1,Mr Isuru HR Dep,W. Isuru Tharanga Perera,45,7
+mobile_phones,42,original_assigned_person,Mr.Ajith Subasinghe,D.G. Ajith Chandana Kumara,99,7
+mobile_phones,42,first_handover_person,Mr.Ajith Subasinghe,D.G. Ajith Chandana Kumara,99,7
+mobile_phones,42,handover_person_1,Mr.Ajith Subasinghe,D.G. Ajith Chandana Kumara,99,7
+mobile_phones,46,allocated_person,Mr Danushka Foton,D.M. Danushka Bandara Senevirathne,23,15
+mobile_phones,46,original_assigned_person,Mr Danushka Foton,D.M. Danushka Bandara Senevirathne,23,15
+mobile_phones,46,first_handover_person,Mr Danushka Foton,D.M. Danushka Bandara Senevirathne,23,15
+mobile_phones,46,handover_person_1,Mr Danushka Foton,D.M. Danushka Bandara Senevirathne,23,15
+mobile_phones,47,allocated_person,Mr Nimesh Shehan Foton Sales,K. Shehan Salinda Kumara,366,13
+mobile_phones,47,original_assigned_person,Mr Nimesh Shehan Foton Sales,K. Shehan Salinda Kumara,366,13
+mobile_phones,47,first_handover_person,Mr Nimesh Shehan Foton Sales,K. Shehan Salinda Kumara,366,13
+mobile_phones,47,handover_person_1,Mr Nimesh Shehan Foton Sales,K. Shehan Salinda Kumara,366,13
+mobile_phones,48,allocated_person,Mr Chameera -Matara Sales,H.M. Chameera Madhushanka,19,15
+mobile_phones,48,original_assigned_person,Mr Chameera -Matara Sales,H.M. Chameera Madhushanka,19,15
+mobile_phones,48,first_handover_person,Mr Chameera -Matara Sales,H.M. Chameera Madhushanka,19,15
+mobile_phones,48,handover_person_1,Mr Chameera -Matara Sales,H.M. Chameera Madhushanka,19,15
+mobile_phones,49,allocated_person,Mr Diluk Maleesha Kelaniya (Service Advisor),P.G. Diluck Maleesha Silva,335,13
+mobile_phones,49,original_assigned_person,Mr Diluk Maleesha Kelaniya (Service Advisor),P.G. Diluck Maleesha Silva,335,13
+mobile_phones,49,first_handover_person,Mr Diluk Maleesha Kelaniya (Service Advisor),P.G. Diluck Maleesha Silva,335,13
+mobile_phones,49,handover_person_1,Mr Diluk Maleesha Kelaniya (Service Advisor),P.G. Diluck Maleesha Silva,335,13
+mobile_phones,50,allocated_person,Mr Anushan Kelaniya (Service Advisor),Chandrakumar Anushan,350,12
+mobile_phones,50,original_assigned_person,Mr Anushan Kelaniya (Service Advisor),Chandrakumar Anushan,350,12
+mobile_phones,50,first_handover_person,Mr Anushan Kelaniya (Service Advisor),Chandrakumar Anushan,350,12
+mobile_phones,50,handover_person_1,Mr Anushan Kelaniya (Service Advisor),Chandrakumar Anushan,350,12
+mobile_phones,51,allocated_person,Mr Umesh Colombo Sales,K.M.D.L.G. Umesh Buddhika Bandara,458,12
+mobile_phones,51,original_assigned_person,Mr Umesh Colombo Sales,K.M.D.L.G. Umesh Buddhika Bandara,458,12
+mobile_phones,51,first_handover_person,Mr Umesh Colombo Sales,K.M.D.L.G. Umesh Buddhika Bandara,458,12
+mobile_phones,51,handover_person_1,Mr Umesh Colombo Sales,K.M.D.L.G. Umesh Buddhika Bandara,458,12
+mobile_phones,53,allocated_person,Ms Thisari Hansamali - Service Advisor,W.J.M. Thisari Hansamali,512,20
+mobile_phones,53,handover_person_2,Ms Thisari Hansamali - Service Advisor,W.J.M. Thisari Hansamali,512,20
+mobile_phones,54,allocated_person,Mr Chethiya Senavirathne AGM,C.B.M. Nishadi Shashikala Senavirathne,207,14
+mobile_phones,54,handover_person_2,Mr Chethiya Senavirathne AGM,C.B.M. Nishadi Shashikala Senavirathne,207,14
+mobile_phones,55,allocated_person,Mr Lal Jayalath -Admin Assistant Colombo,Wijesiri Lal Chandra Jayalath,280,18
+mobile_phones,55,original_assigned_person,Mr Lal Jayalath -Admin Assistant Colombo,Wijesiri Lal Chandra Jayalath,280,18
+mobile_phones,55,first_handover_person,Mr Lal Jayalath -Admin Assistant Colombo,Wijesiri Lal Chandra Jayalath,280,18
+mobile_phones,55,handover_person_1,Mr Lal Jayalath -Admin Assistant Colombo,Wijesiri Lal Chandra Jayalath,280,18
+mobile_phones,56,allocated_person,Mr Mohomd Yoosuf-Admin Assistant Colombo,M. Razan Yoosuf,411,11
+mobile_phones,56,original_assigned_person,Mr Mohomd Yoosuf-Admin Assistant Colombo,M. Razan Yoosuf,411,11
+mobile_phones,56,first_handover_person,Mr Mohomd Yoosuf-Admin Assistant Colombo,M. Razan Yoosuf,411,11
+mobile_phones,56,handover_person_1,Mr Mohomd Yoosuf-Admin Assistant Colombo,M. Razan Yoosuf,411,11
+mobile_phones,57,allocated_person,Mr A G Ravindu Sachinthaka- Customer Care Office,A.G. Ravindu Sachinthaka,436,22
+mobile_phones,57,original_assigned_person,Mr A G Ravindu Sachinthaka- Customer Care Office,A.G. Ravindu Sachinthaka,436,22
+mobile_phones,57,first_handover_person,Mr A G Ravindu Sachinthaka- Customer Care Office,A.G. Ravindu Sachinthaka,436,22
+mobile_phones,57,handover_person_1,Mr A G Ravindu Sachinthaka- Customer Care Office,A.G. Ravindu Sachinthaka,436,22
+mobile_phones,58,allocated_person,Mr Dinesh Weerakumarage- Accountant,Dinesh Weerakumarage,37,28
+mobile_phones,58,original_assigned_person,Mr Dinesh Weerakumarage- Accountant,Dinesh Weerakumarage,37,28
+mobile_phones,58,first_handover_person,Mr Dinesh Weerakumarage- Accountant,Dinesh Weerakumarage,37,28
+mobile_phones,58,handover_person_1,Mr Dinesh Weerakumarage- Accountant,Dinesh Weerakumarage,37,28
+mobile_phones,59,allocated_person,Mr Nishadi Senavirathna- Digital MKT,C.B.M. Nishadi Shashikala Senavirathne,207,9
+mobile_phones,59,original_assigned_person,Mr Nishadi Senavirathna- Digital MKT,C.B.M. Nishadi Shashikala Senavirathne,207,9
+mobile_phones,59,first_handover_person,Mr Nishadi Senavirathna- Digital MKT,C.B.M. Nishadi Shashikala Senavirathne,207,9
+mobile_phones,59,handover_person_1,Mr Nishadi Senavirathna- Digital MKT,C.B.M. Nishadi Shashikala Senavirathne,207,9
+mobile_phones,60,allocated_person,Mr Nismi Ahamed Sales -Matara,M. Nismi Nimzi Ahemed,417,7
+mobile_phones,60,original_assigned_person,Mr Nismi Ahamed Sales -Matara,M. Nismi Nimzi Ahemed,417,7
+mobile_phones,60,first_handover_person,Mr Nismi Ahamed Sales -Matara,M. Nismi Nimzi Ahemed,417,7
+mobile_phones,60,handover_person_1,Mr Nismi Ahamed Sales -Matara,M. Nismi Nimzi Ahemed,417,7
+mobile_phones,62,allocated_person,Mr Manesh HR Dep -Kandy,B.H.M. Manesh Theranga Herath,191,11
+mobile_phones,62,original_assigned_person,Mr Manesh HR Dep -Kandy,B.H.M. Manesh Theranga Herath,191,11
+mobile_phones,62,first_handover_person,Mr Manesh HR Dep -Kandy,B.H.M. Manesh Theranga Herath,191,11
+mobile_phones,62,handover_person_1,Mr Manesh HR Dep -Kandy,B.H.M. Manesh Theranga Herath,191,11
+mobile_phones,63,allocated_person,Mr Anuja Kelaniya ISP,K. Anuja Indira,421,15
+mobile_phones,63,original_assigned_person,Mr Anuja Kelaniya ISP,K. Anuja Indira,421,15
+mobile_phones,63,first_handover_person,Mr Anuja Kelaniya ISP,K. Anuja Indira,421,15
+mobile_phones,63,handover_person_1,Mr Anuja Kelaniya ISP,K. Anuja Indira,421,15
+mobile_phones,64,allocated_person,Mr Pulasthi Morawaka Sales Kelaniya,P.S.S. Pulasthi Morawaka,72,25
+mobile_phones,64,original_assigned_person,Mr Pulasthi Morawaka Sales Kelaniya,P.S.S. Pulasthi Morawaka,72,25
+mobile_phones,64,first_handover_person,Mr Pulasthi Morawaka Sales Kelaniya,P.S.S. Pulasthi Morawaka,72,25
+mobile_phones,64,handover_person_1,Mr Pulasthi Morawaka Sales Kelaniya,P.S.S. Pulasthi Morawaka,72,25
+mobile_phones,66,allocated_person,"Import Dep Gayathri,Supun,Shiranthi",D.M. Gayathri Menaka Dissanayaka,97,10
+mobile_phones,66,original_assigned_person,"Import Dep Gayathri,Supun,Shiranthi",D.M. Gayathri Menaka Dissanayaka,97,10
+mobile_phones,66,first_handover_person,"Import Dep Gayathri,Supun,Shiranthi",D.M. Gayathri Menaka Dissanayaka,97,10
+mobile_phones,66,handover_person_1,"Import Dep Gayathri,Supun,Shiranthi",D.M. Gayathri Menaka Dissanayaka,97,10
+mobile_phones,67,allocated_person,IT Miran,M.R. Miran Wellahewa,185,12
+mobile_phones,67,original_assigned_person,IT Miran,M.R. Miran Wellahewa,185,12
+mobile_phones,67,first_handover_person,IT Miran,M.R. Miran Wellahewa,185,12
+mobile_phones,67,handover_person_1,IT Miran,M.R. Miran Wellahewa,185,12
+mobile_phones,68,allocated_person,Mr Lakmal Chandrawansha,M. Lakmal Chandrawansha,289,28
+mobile_phones,68,original_assigned_person,Mr Lakmal Chandrawansha,M. Lakmal Chandrawansha,289,28
+mobile_phones,68,first_handover_person,Mr Lakmal Chandrawansha,M. Lakmal Chandrawansha,289,28
+mobile_phones,68,handover_person_1,Mr Lakmal Chandrawansha,M. Lakmal Chandrawansha,289,28
+mobile_phones,69,allocated_person,Mr Suminda,I.G. Suminda Somakeerthi Amarasooriya,495,14
+mobile_phones,69,original_assigned_person,Mr Suminda,I.G. Suminda Somakeerthi Amarasooriya,495,14
+mobile_phones,69,first_handover_person,Mr Suminda,I.G. Suminda Somakeerthi Amarasooriya,495,14
+mobile_phones,69,handover_person_1,Mr Suminda,I.G. Suminda Somakeerthi Amarasooriya,495,14
+mobile_phones,72,allocated_person,Mr.Chathura Kavishka,W. Chathura Kavishka,485,25
+mobile_phones,72,original_assigned_person,Mr.Chathura Kavishka,W. Chathura Kavishka,485,25
+mobile_phones,72,first_handover_person,Mr.Chathura Kavishka,W. Chathura Kavishka,485,25
+mobile_phones,72,handover_person_1,Mr.Chathura Kavishka,W. Chathura Kavishka,485,25
+mobile_phones,74,original_assigned_person,IT Deshan Umayanga,K.L.A. Deshan Umayanga,347,23
+mobile_phones,74,first_handover_person,IT Deshan Umayanga,K.L.A. Deshan Umayanga,347,23
+mobile_phones,74,handover_person_1,IT Deshan Umayanga,K.L.A. Deshan Umayanga,347,23
+mobile_phones,77,allocated_person,Mr Umesh Bandara - Stors Kelaniya,K.M.D.L.G. Umesh Buddhika Bandara,458,19
+mobile_phones,77,original_assigned_person,Mr Umesh Bandara - Stors Kelaniya,K.M.D.L.G. Umesh Buddhika Bandara,458,19
+mobile_phones,77,first_handover_person,Mr Umesh Bandara - Stors Kelaniya,K.M.D.L.G. Umesh Buddhika Bandara,458,19
+mobile_phones,77,handover_person_1,Mr Umesh Bandara - Stors Kelaniya,K.M.D.L.G. Umesh Buddhika Bandara,458,19
+mobile_phones,78,allocated_person,Mr.Kanchana Jayasinshe,K. Kanchana Lakshan Jayasinghe,415,10
+mobile_phones,78,original_assigned_person,Mr.Kanchana Jayasinshe,K. Kanchana Lakshan Jayasinghe,415,10
+mobile_phones,78,first_handover_person,Mr.Kanchana Jayasinshe,K. Kanchana Lakshan Jayasinghe,415,10
+mobile_phones,78,handover_person_1,Mr.Kanchana Jayasinshe,K. Kanchana Lakshan Jayasinghe,415,10
+mobile_phones,79,allocated_person,Ms Salmalee RMV,J.M.L. Salmalee Jayasooriya,14,10
+mobile_phones,79,original_assigned_person,Ms Salmalee RMV,J.M.L. Salmalee Jayasooriya,14,10
+mobile_phones,79,first_handover_person,Ms Salmalee RMV,J.M.L. Salmalee Jayasooriya,14,10
+mobile_phones,79,handover_person_1,Ms Salmalee RMV,J.M.L. Salmalee Jayasooriya,14,10
+mobile_phones,82,allocated_person,Mr.Chathura Bandara,T.M. Kaushalya Chathura Bandara Thennakoon,549,24
+mobile_phones,82,original_assigned_person,Mr.Chathura Bandara,T.M. Kaushalya Chathura Bandara Thennakoon,549,24
+mobile_phones,82,first_handover_person,Mr.Chathura Bandara,T.M. Kaushalya Chathura Bandara Thennakoon,549,24
+mobile_phones,82,handover_person_1,Mr.Chathura Bandara,T.M. Kaushalya Chathura Bandara Thennakoon,549,24
+mobile_phones,83,allocated_person,Ms. Iresha Liyanage,L.L. Iresha Madhusani Liyanage,504,23
+mobile_phones,83,original_assigned_person,Ms. Iresha Liyanage,L.L. Iresha Madhusani Liyanage,504,23
+mobile_phones,83,first_handover_person,Ms. Iresha Liyanage,L.L. Iresha Madhusani Liyanage,504,23
+mobile_phones,83,handover_person_1,Ms. Iresha Liyanage,L.L. Iresha Madhusani Liyanage,504,23
+mobile_phones,84,allocated_person,Mr.Omith Perera,H.D. Omith Sensith Perera,268,20
+mobile_phones,84,original_assigned_person,Mr.Omith Perera,H.D. Omith Sensith Perera,268,20
+mobile_phones,84,first_handover_person,Mr.Omith Perera,H.D. Omith Sensith Perera,268,20
+mobile_phones,84,handover_person_1,Mr.Omith Perera,H.D. Omith Sensith Perera,268,20
+mobile_phones,85,allocated_person,Mr.Nelson,W.P. Nelson Silva,42,13
+mobile_phones,85,original_assigned_person,Mr.Nelson,W.P. Nelson Silva,42,13
+mobile_phones,85,first_handover_person,Mr.Nelson,W.P. Nelson Silva,42,13
+mobile_phones,85,handover_person_1,Mr.Nelson,W.P. Nelson Silva,42,13

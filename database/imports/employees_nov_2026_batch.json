@@ -1,0 +1,101 @@
+[
+  {
+    "company_code": "IMS",
+    "staff_id": "581",
+    "name": "D.M. Rashmi Imalsha Disanayaka",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Cashier",
+    "work_location": "IMS - Gampola",
+    "department_name": "Accounts"
+  },
+  {
+    "company_code": "IT",
+    "staff_id": "582",
+    "name": "K.M. Thilini Akalankika Hapugoda",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Management Assistant",
+    "work_location": "Head Office - Kandy",
+    "department_name": "Support Services"
+  },
+  {
+    "company_code": "ISP",
+    "staff_id": "583",
+    "name": "R.M. Malinga Sathsara Rathnayaka",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Interior Cleaner",
+    "work_location": "ISP - Anuradhapura",
+    "department_name": "Operation"
+  },
+  {
+    "company_code": "IMS",
+    "staff_id": "584",
+    "name": "D.G. Nipun Randika Senarathna",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Trainee Sales Officer",
+    "work_location": "IMS - 140",
+    "department_name": "Sales"
+  },
+  {
+    "company_code": "IMS",
+    "staff_id": "585",
+    "name": "M.H.G. Thilina Sandaruwan Ranaweera",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Trainee Sales Officer",
+    "work_location": "IMS - 140",
+    "department_name": "Sales"
+  },
+  {
+    "company_code": "IT",
+    "staff_id": "586",
+    "name": "W. Sandun Tharaka",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Washman",
+    "work_location": "ITL - Mathara",
+    "department_name": "Support Services"
+  },
+  {
+    "company_code": "ISP",
+    "staff_id": "587",
+    "name": "A.S. Shrimal Madushanka",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Washman",
+    "work_location": "ISP - Anuradhapura",
+    "department_name": "Operation"
+  },
+  {
+    "company_code": "IMS",
+    "staff_id": "588",
+    "name": "D.M.G. Imesha Pathum",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Trainee Sales Officer",
+    "work_location": "IMS - Gampola",
+    "department_name": "Sales"
+  },
+  {
+    "company_code": "IT",
+    "staff_id": "589",
+    "name": "R.B. Anuththara Chathurangi Wijerathne",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Management Assistant",
+    "work_location": "Head Office - Kandy",
+    "department_name": "Support Services"
+  }
+]

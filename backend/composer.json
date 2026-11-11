@@ -1,0 +1,17 @@
+{
+    "name": "indra/itam-api",
+    "description": "Indra Group ITAM — pure PHP API (MySQL)",
+    "type": "project",
+    "require": {
+        "php": ">=8.2",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-pdo_pgsql": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Indra\\Itam\\": "src/"
+        }
+    }
+}

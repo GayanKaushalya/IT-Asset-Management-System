@@ -1,0 +1,16 @@
+---
+description: Always push ITAMS source to the developer's GitHub after every update
+alwaysApply: true
+---
+
+# GitHub push (mandatory)
+
+- Remote repository (only this one): https://github.com/GayanKaushalya/IT-Asset-Management-System.git
+- Owner / developer: **GayanKaushalya** — treat as the sole collaborator; do not add or use any other GitHub account or collaborator.
+- After **every** code update the user asks for in this project, when the work is done:
+  1. Stage relevant source changes (never `.env`, `config.php`, secrets, `node_modules`, `vendor`, `logs`, or backup dumps).
+  2. Create a git commit with a clear message (only if there are changes).
+  3. **Push** to `origin` on the current branch (usually `main`).
+- This push step is required — do not wait to be asked again after an update.
+- Never force-push to `main`/`master` unless the user explicitly requests it.
+- Never change git `user.name` / `user.email` config.

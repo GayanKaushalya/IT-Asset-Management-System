@@ -1,0 +1,27 @@
+id,company_id,code,name
+1,1,KANDY_HO,Kandy Head Office
+2,1,CMB_BR,Colombo Branch
+3,2,KANDY_HO,Kandy Head Office
+4,2,CMB_BR,Colombo Branch
+5,3,KANDY_HO,Kandy Head Office
+6,3,CMB_BR,Colombo Branch
+7,4,KANDY_HO,Kandy Head Office
+8,4,CMB_BR,Colombo Branch
+10,1,NEGOMBO,Negombo
+11,1,RAMANAYAKE,Ramanayake
+12,1,ANURADHAPURA,Anuradhapura
+13,1,MATHARA,Mathara
+14,1,KELANI,Kelani
+15,3,KELANI,Kelani
+16,3,MATHARA,Mathara
+17,3,ANURADHAPURA,Anuradhapura
+18,3,KANDY,Kandy
+19,2,MATHARA,Mathara
+20,2,BR_201,201
+21,2,BR_140,140
+22,2,GAMPOLA,Gampola
+23,2,EMBILIPITIYA,Embilipitiya
+24,2,BR_43,43
+25,5,EXTERNAL,External / Personal
+26,1,JA_ELA,Ja-ela
+9,2,HYDEPARK,Hydepark
