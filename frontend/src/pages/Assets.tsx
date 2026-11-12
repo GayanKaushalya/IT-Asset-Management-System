@@ -32,6 +32,7 @@ import AssetLifecycleTimeline from './AssetLifecycleTimeline';
 import PcKitPanel from './PcKitPanel';
 import PcReplaceHardwareModal from './PcReplaceHardwareModal';
 import { DATE_INPUT_MIN as DATE_MIN } from '../lib/dateInput';
+import { copyToClipboard } from '../utils/clipboard';
 
 const PAGE_SIZE_KEY = 'itams.assets.pageSize';
 
@@ -6530,12 +6531,9 @@ function AssetViewModal({
 
   async function copyText(text: string, label: string) {
     if (!text) return;
-    try {
-      await navigator.clipboard.writeText(text);
-      toast.success(`${label} copied`);
-    } catch {
-      toast.error('Could not copy');
-    }
+    const ok = await copyToClipboard(text);
+    if (ok) toast.success(`${label} copied`);
+    else toast.error('Could not copy');
   }
 
   const registeredLine = locationName

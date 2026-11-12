@@ -11,6 +11,7 @@ import { api } from '../services/client';
 import { getOrgMeta } from '../services/metaCache';
 import { useAuth } from '../auth/AuthContext';
 import { useToast } from '../components/ui/Toast';
+import { copyToClipboard } from '../utils/clipboard';
 
 function EyeIcon({ open }: { open: boolean }): ReactNode {
   if (open) {
@@ -423,12 +424,9 @@ export default function CredentialsPage() {
       toast.error('Nothing to copy');
       return;
     }
-    try {
-      await navigator.clipboard.writeText(value);
-      toast.success('Password copied');
-    } catch {
-      toast.error('Could not copy password');
-    }
+    const ok = await copyToClipboard(value);
+    if (ok) toast.success('Password copied');
+    else toast.error('Could not copy password — select the password and press Ctrl+C');
   }
 
   function openAdd() {

@@ -811,7 +811,7 @@ final class ReportController
     }
 
     /**
-     * GET /api/reports/branch-assets/items?location_id=&company=&category=
+     * GET /api/reports/branch-assets/items?location_id=&company=&category=&department_id=
      * Asset rows for one branch (click-through from branch counts).
      */
     public function branchAssetItems(Request $request, array $user): void
@@ -849,6 +849,11 @@ final class ReportController
             $where[] = 'a.company_id = :cid';
             $params['cid'] = $companyId;
         }
+        $departmentId = (int) $request->input('department_id', 0);
+        if ($departmentId > 0) {
+            $where[] = 'a.department_id = :did';
+            $params['did'] = $departmentId;
+        }
         $category = trim((string) $request->input('category', ''));
         $printerFromOther = "EXISTS (
             SELECT 1 FROM other_assets oa
@@ -874,11 +879,14 @@ final class ReportController
                            END AS category,
                            a.brand, a.model, a.serial_number, a.status,
                            a.pc_name,
+                           a.department_id,
+                           d.name AS department_name,
                            c.code AS company_code, c.short_name AS company,
                            loc.name AS location_name
                     FROM v_assets a
                     JOIN companies c ON c.id = a.company_id
                     LEFT JOIN locations loc ON loc.id = a.location_id
+                    LEFT JOIN departments d ON d.id = a.department_id
                     WHERE " . implode(' AND ', $where) . '
                     ORDER BY category, a.asset_tag
                     LIMIT 3000';

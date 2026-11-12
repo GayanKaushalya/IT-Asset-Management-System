@@ -7,7 +7,12 @@ import { EmptyState, ErrorState, LoadingSkeleton } from '../components/ui/EmptyS
 import PaginationBar from '../components/ui/PaginationBar';
 import TableSettingsMenu, { type PageSize } from '../components/ui/TableSettingsMenu';
 import { api } from '../services/client';
-import { getOrgMeta, type MetaCompany, type MetaLocation } from '../services/metaCache';
+import {
+  getOrgMeta,
+  type MetaCompany,
+  type MetaDepartment,
+  type MetaLocation,
+} from '../services/metaCache';
 
 const PAGE_SIZE_KEY = 'itams.reports.branchAssets.pageSize';
 
@@ -46,6 +51,8 @@ type AssetItem = {
   company_code?: string | null;
   company?: string | null;
   location_name?: string | null;
+  department_id?: number | null;
+  department_name?: string | null;
 };
 
 const COMPANY_OPTIONS: { id: CompanyTab; label: string }[] = [
@@ -115,8 +122,10 @@ export default function BranchAssetReportPage() {
   const navigate = useNavigate();
   const [companies, setCompanies] = useState<MetaCompany[]>([]);
   const [locations, setLocations] = useState<MetaLocation[]>([]);
+  const [departments, setDepartments] = useState<MetaDepartment[]>([]);
   const [company, setCompany] = useState<CompanyTab>('IT');
   const [locationId, setLocationId] = useState('');
+  const [departmentId, setDepartmentId] = useState('');
   const [locationReady, setLocationReady] = useState(false);
   const [q, setQ] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -132,6 +141,7 @@ export default function BranchAssetReportPage() {
     void getOrgMeta(true).then((m) => {
       setCompanies(m.companies.filter((c) => ['IT', 'IMS', 'ISP'].includes(c.code)));
       setLocations(m.locations);
+      setDepartments(m.departments ?? []);
     });
   }, []);
 
@@ -148,11 +158,26 @@ export default function BranchAssetReportPage() {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [locations, companyId]);
 
+  const companyDepartments = useMemo(() => {
+    if (companyId == null) return [];
+    const lid = locationId ? Number(locationId) : null;
+    return departments
+      .filter((d) => Number(d.company_id) === companyId)
+      .filter((d) => {
+        if (lid == null || !Number.isFinite(lid)) return true;
+        // Prefer departments tied to this branch; keep company-wide (no location) too
+        if (d.location_id == null) return true;
+        return Number(d.location_id) === lid;
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [departments, companyId, locationId]);
+
   // Default branch: Head Office - Kandy (ITL) / company head office
   useEffect(() => {
     if (companyLocations.length === 0) return;
     const next = pickDefaultLocation(companyLocations, company);
     setLocationId(next);
+    setDepartmentId('');
     setLocationReady(true);
     setCategoryFilter('all');
     setQ('');
@@ -197,6 +222,7 @@ export default function BranchAssetReportPage() {
       const params = new URLSearchParams();
       params.set('location_id', locationId);
       params.set('company', company);
+      if (departmentId) params.set('department_id', departmentId);
       const itemsRes = await api<{ data: AssetItem[] }>(
         `/api/reports/branch-assets/items?${params.toString()}`,
       );
@@ -208,7 +234,7 @@ export default function BranchAssetReportPage() {
     } finally {
       setLoading(false);
     }
-  }, [company, locationId, locationReady, selectedLocation?.name]);
+  }, [company, locationId, departmentId, locationReady, selectedLocation?.name]);
 
   useEffect(() => {
     void load();
@@ -222,7 +248,7 @@ export default function BranchAssetReportPage() {
     const other = Number(fromMeta.other ?? 0);
     const printer = Number(fromMeta.printer ?? 0);
     // Prefer live list counts when loaded so cards match the table
-    if (items.length > 0) {
+    if (items.length > 0 || departmentId) {
       const live: Record<string, number> = {
         laptop: 0,
         mobile_phone: 0,
@@ -251,7 +277,7 @@ export default function BranchAssetReportPage() {
       printer,
       all: laptop + mobile + pc + other + printer,
     };
-  }, [branchMeta, items]);
+  }, [branchMeta, items, departmentId]);
 
   const filteredItems = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -267,6 +293,7 @@ export default function BranchAssetReportPage() {
         r.allocated_person,
         r.original_assigned_person,
         r.location_name,
+        r.department_name,
         r.category,
       ].some((v) => String(v ?? '').toLowerCase().includes(term));
     });
@@ -274,7 +301,7 @@ export default function BranchAssetReportPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [q, categoryFilter, locationId, company, pageSize]);
+  }, [q, categoryFilter, locationId, departmentId, company, pageSize]);
 
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / pageSize) || 1);
   const safePage = Math.min(page, totalPages);
@@ -344,6 +371,7 @@ export default function BranchAssetReportPage() {
                 value={locationId}
                 onChange={(e) => {
                   setLocationId(e.target.value);
+                  setDepartmentId('');
                   setCategoryFilter('all');
                   setQ('');
                 }}
@@ -359,7 +387,25 @@ export default function BranchAssetReportPage() {
                 )}
               </select>
             </label>
-            <label className="asset-filter-field" style={{ gridColumn: 'span 2' }}>
+            <label className="asset-filter-field">
+              <span className="asset-filter-label">Department</span>
+              <select
+                className="asset-filter-control"
+                value={departmentId}
+                onChange={(e) => {
+                  setDepartmentId(e.target.value);
+                  setCategoryFilter('all');
+                }}
+              >
+                <option value="">All departments</option>
+                {companyDepartments.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="asset-filter-field">
               <span className="asset-filter-label">Search</span>
               <input
                 className="asset-filter-control"
@@ -373,13 +419,14 @@ export default function BranchAssetReportPage() {
             <button
               type="button"
               className="asset-filter-clear"
-              disabled={!q && categoryFilter === 'all'}
+              disabled={!q && categoryFilter === 'all' && !departmentId}
               onClick={() => {
                 setQ('');
                 setCategoryFilter('all');
+                setDepartmentId('');
               }}
             >
-              Clear search / type filter
+              Clear search / filters
             </button>
             <button type="button" className="btn btn-primary" onClick={() => void load()}>
               Refresh
@@ -432,6 +479,16 @@ export default function BranchAssetReportPage() {
               <div>
                 <h3 style={{ margin: 0 }}>
                   {selectedLocation?.name || 'Branch'} assets
+                  {departmentId
+                    ? (
+                      <span style={{ color: 'var(--muted)', fontWeight: 500, fontSize: '0.95rem' }}>
+                        {' '}
+                        ·{' '}
+                        {companyDepartments.find((d) => String(d.id) === departmentId)?.name ||
+                          'Department'}
+                      </span>
+                      )
+                    : null}
                   {categoryFilter !== 'all' ? (
                     <span style={{ color: 'var(--muted)', fontWeight: 500, fontSize: '0.95rem' }}>
                       {' '}
@@ -440,7 +497,7 @@ export default function BranchAssetReportPage() {
                   ) : null}
                 </h3>
                 <p style={{ margin: '0.25rem 0 0', color: 'var(--muted)', fontSize: '0.85rem' }}>
-                  Click a card above to filter by type. Click a row to open the asset view.
+                  Filter by department above or click a card for type. Click a row to open the asset.
                 </p>
               </div>
               <div className="asset-filter-actions" style={{ margin: 0 }}>
@@ -483,6 +540,7 @@ export default function BranchAssetReportPage() {
                       <th>Type</th>
                       <th>Asset ID</th>
                       <th>Name / holder</th>
+                      <th>Department</th>
                       <th>Brand</th>
                       <th>S/N</th>
                       <th>Status</th>
@@ -516,6 +574,7 @@ export default function BranchAssetReportPage() {
                           <strong>{r.asset_tag}</strong>
                         </td>
                         <td>{dash(holderName(r))}</td>
+                        <td>{dash(r.department_name)}</td>
                         <td>{dash(r.brand)}</td>
                         <td>{dash(r.serial_number)}</td>
                         <td>
