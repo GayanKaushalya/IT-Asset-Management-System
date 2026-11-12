@@ -866,7 +866,10 @@ export default function AssetsPage() {
 
       setRows(scoped);
       const total = Number(a.meta?.total ?? scoped.length);
-      const pages = Math.max(1, Number(a.meta?.pages ?? Math.ceil(total / reqPageSize) || 1));
+        const pages = Math.max(
+          1,
+          Number(a.meta?.pages ?? Math.ceil(total / reqPageSize) ?? 1),
+        );
       setTotalRows(total);
       setTotalPages(pages);
       setNewCount(Number(a.meta?.new_count ?? 0));
