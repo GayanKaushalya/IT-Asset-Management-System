@@ -1186,7 +1186,7 @@ final class AssetController
         }
 
         // Always join real company — needed so transferred-away rows show destination (ISP), not the filter tab
-        $companySelect = 'c.short_name AS company_short, c.code AS company_code';
+        $companySelect = "{$alias}.company_id, {$alias}.location_id, c.short_name AS company_short, c.code AS company_code";
         $companyJoin = "JOIN companies c ON c.id = {$alias}.company_id";
 
         $deptSelect = in_array($category, ['other', 'mobile_phone'], true)

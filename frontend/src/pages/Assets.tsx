@@ -25,7 +25,7 @@ import StatusBadge, {
 import TableSettingsMenu, { type PageSize } from '../components/ui/TableSettingsMenu';
 import PaginationBar from '../components/ui/PaginationBar';
 import { api } from '../services/client';
-import { clearOrgMetaCache, getOrgMeta } from '../services/metaCache';
+import { getOrgMeta } from '../services/metaCache';
 import { useAuth } from '../auth/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import AssetLifecycleTimeline from './AssetLifecycleTimeline';
@@ -563,6 +563,10 @@ export default function AssetsPage() {
   const [oldStockFromPage, setOldStockFromPage] = useState<number | null>(null);
   const assetsAbort = useRef<AbortController | null>(null);
   const assetsLoadGen = useRef(0);
+  /** When true, the page-dep load effect is skipped once (avoids double fetch after tab reset / clamp). */
+  const skipPageEffect = useRef(false);
+  /** Skip the debounced search effect once after a tab reset clears `q`. */
+  const skipSearchEffect = useRef(true);
 
   const isSimTab = categoryTab === 'mobile_phone' && companyTab === 'SIM';
 
@@ -743,7 +747,16 @@ export default function AssetsPage() {
   }
 
   /** @returns outcome so refresh can toast only on real success/failure */
-  async function loadAssets(): Promise<'ok' | 'skipped' | 'aborted' | 'error'> {
+  async function loadAssets(overrides?: {
+    page?: number;
+    companyTab?: CompanyTab;
+    category?: CategoryTab;
+    locationTab?: number | null;
+    locationFilter?: string;
+    statusFilter?: string;
+    q?: string;
+    pageSize?: PageSize;
+  }): Promise<'ok' | 'skipped' | 'aborted' | 'error'> {
     const gen = ++assetsLoadGen.current;
 
     assetsAbort.current?.abort();
@@ -751,43 +764,76 @@ export default function AssetsPage() {
     assetsAbort.current = ac;
     setListLoading(true);
 
+    const reqCategory = overrides?.category ?? activeCategory;
+    const reqCompanyTab = overrides?.companyTab ?? companyTab;
+    const reqPage = overrides?.page ?? page;
+    const reqLocationTab = overrides?.locationTab !== undefined ? overrides.locationTab : locationTab;
+    const reqLocationFilter = overrides?.locationFilter ?? locationFilter;
+    const reqStatusFilter = overrides?.statusFilter ?? statusFilter;
+    const reqQ = overrides?.q ?? q;
+    const reqPageSize = overrides?.pageSize ?? pageSize;
+    const reqIsSim = reqCategory === 'mobile_phone' && reqCompanyTab === 'SIM';
+    const reqIsAll = reqCategory === 'all';
+    const reqIsOthers = reqCategory === 'others';
+    const reqIsPcStock = reqCategory === 'pc';
+    const reqCompany =
+      companies.find((c) => c.code === reqCompanyTab) ??
+      (reqCompanyTab === 'IT'
+        ? companies.find((c) => String(c.code).toUpperCase() === 'ITL')
+        : null);
+
+    // Wait briefly for org meta on first paint so company_id is available
+    if (!reqIsSim && !reqCompany && companies.length === 0) {
+      try {
+        await loadMeta(false);
+      } catch {
+        /* continue with company_code fallback */
+      }
+      if (gen !== assetsLoadGen.current) return 'aborted';
+    }
+    const resolvedCompany =
+      reqCompany ??
+      companies.find((c) => c.code === reqCompanyTab) ??
+      (reqCompanyTab === 'IT'
+        ? companies.find((c) => String(c.code).toUpperCase() === 'ITL')
+        : null);
+
     try {
       const params = new URLSearchParams();
-      params.set('category', activeCategory);
-      if (isSimTab) {
+      params.set('category', reqCategory);
+      if (reqIsSim) {
         params.set('is_sim', '1');
         params.set('company_code', 'SIM');
-      } else if (activeCompany) {
-        params.set('company_id', String(activeCompany.id));
-        params.set('company_code', activeCompany.code || companyTab);
+      } else if (resolvedCompany) {
+        params.set('company_id', String(resolvedCompany.id));
+        params.set('company_code', resolvedCompany.code || reqCompanyTab);
       } else {
-        params.set('company_code', companyTab);
+        params.set('company_code', reqCompanyTab);
       }
-      if ((isAllView || isOthersView) && locationTab != null) {
-        params.set('location_id', String(locationTab));
+      if ((reqIsAll || reqIsOthers) && reqLocationTab != null) {
+        params.set('location_id', String(reqLocationTab));
       } else if (
-        (activeCategory === 'laptop' || activeCategory === 'mobile_phone' || isPcStockView) &&
-        locationFilter
+        (reqCategory === 'laptop' || reqCategory === 'mobile_phone' || reqIsPcStock) &&
+        reqLocationFilter
       ) {
-        params.set('location_id', locationFilter);
+        params.set('location_id', reqLocationFilter);
       }
-      if (isPcStockView) {
-        // Newly purchased register — includes Assigned purchases tagged on create
+      if (reqIsPcStock) {
         params.set('newly_purchased', '1');
       }
       if (
-        (activeCategory === 'laptop' ||
-          activeCategory === 'mobile_phone' ||
-          isPcStockView ||
-          isAllView ||
-          isOthersView) &&
-        statusFilter
+        (reqCategory === 'laptop' ||
+          reqCategory === 'mobile_phone' ||
+          reqIsPcStock ||
+          reqIsAll ||
+          reqIsOthers) &&
+        reqStatusFilter
       ) {
-        params.set('status', statusFilter);
+        params.set('status', reqStatusFilter);
       }
-      if (q.trim()) params.set('q', q.trim());
-      params.set('limit', String(pageSize));
-      params.set('page', String(page));
+      if (reqQ.trim()) params.set('q', reqQ.trim());
+      params.set('limit', String(reqPageSize));
+      params.set('page', String(reqPage));
 
       const a = await api<{
         data: Asset[];
@@ -806,15 +852,21 @@ export default function AssetsPage() {
         signal: ac.signal,
       });
       if (gen !== assetsLoadGen.current || ac.signal.aborted) return 'aborted';
-      // Safety: never keep a row that belongs to another company tab after transfer.
-      const scoped = isSimTab
-        ? a.data
-        : activeCompany
-          ? a.data.filter((r) => Number(r.company_id) === Number(activeCompany.id))
-          : a.data;
+
+      const rowsIn = Array.isArray(a.data) ? a.data : [];
+      // Prefer API scope; only drop rows that clearly belong to another company.
+      const expectCid = resolvedCompany ? Number(resolvedCompany.id) : null;
+      const scoped =
+        reqIsSim || expectCid == null
+          ? rowsIn
+          : rowsIn.filter((r) => {
+              const cid = Number(r.company_id ?? r.current_company_id);
+              return !Number.isFinite(cid) || cid === expectCid;
+            });
+
       setRows(scoped);
       const total = Number(a.meta?.total ?? scoped.length);
-      const pages = Math.max(1, Number(a.meta?.pages ?? Math.ceil(total / pageSize) ?? 1));
+      const pages = Math.max(1, Number(a.meta?.pages ?? Math.ceil(total / reqPageSize) || 1));
       setTotalRows(total);
       setTotalPages(pages);
       setNewCount(Number(a.meta?.new_count ?? 0));
@@ -824,7 +876,9 @@ export default function AssetsPage() {
           ? Number(a.meta.old_stock_from_page)
           : null,
       );
-      if (a.meta?.page != null && Number(a.meta.page) !== page) {
+      // Backend may clamp page — sync without firing a second fetch loop
+      if (a.meta?.page != null && Number(a.meta.page) !== reqPage) {
+        skipPageEffect.current = true;
         setPage(Number(a.meta.page));
       }
       setError('');
@@ -928,27 +982,51 @@ export default function AssetsPage() {
   }
 
   useEffect(() => {
-    clearOrgMetaCache();
-    void loadMeta(true);
+    void loadMeta(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Tab change: reset paging/filters and load once (avoids stale page + double-fetch races).
   useEffect(() => {
     if (!categoryTab) return;
+    skipPageEffect.current = true;
     setPage(1);
     setLocationFilter('');
     setStatusFilter('');
+    setQ('');
+    skipSearchEffect.current = true;
+    setRows([]);
+    setTotalRows(0);
+    setListLoading(true);
+    void loadAssets({
+      page: 1,
+      category: activeCategory,
+      companyTab,
+      locationTab,
+      locationFilter: '',
+      statusFilter: '',
+      q: '',
+    });
+    // If page/filter effects do not run (deps already at defaults), clear the skip flag.
+    const t = window.setTimeout(() => {
+      skipPageEffect.current = false;
+    }, 0);
+    return () => window.clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCategory, companyTab, locationTab]);
 
+  // Pagination / page-size / status / location filter changes
   useEffect(() => {
     if (!categoryTab) return;
+    if (skipPageEffect.current) {
+      skipPageEffect.current = false;
+      return;
+    }
     void loadAssets();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeCategory, companyTab, locationTab, locationFilter, statusFilter, pageSize, page]);
+  }, [locationFilter, statusFilter, pageSize, page]);
 
   // Live search — debounce typing so we don't hit the API on every keystroke
-  const skipSearchEffect = useRef(true);
   useEffect(() => {
     if (!categoryTab) return;
     if (skipSearchEffect.current) {
@@ -956,9 +1034,14 @@ export default function AssetsPage() {
       return;
     }
     const handle = window.setTimeout(() => {
-      if (page !== 1) setPage(1);
-      else void loadAssets();
-    }, 400);
+      if (page !== 1) {
+        skipPageEffect.current = true;
+        setPage(1);
+        void loadAssets({ page: 1, q });
+      } else {
+        void loadAssets({ q });
+      }
+    }, 280);
     return () => window.clearTimeout(handle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q]);
