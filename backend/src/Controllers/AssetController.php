@@ -462,6 +462,7 @@ final class AssetController
             self::toBool($request->input('is_legacy'))
             || strtolower(trim((string) $request->input('entry_type', ''))) === 'old'
         );
+        $isSim = $category === 'mobile_phone' && self::toBool($request->input('is_sim'));
 
         try {
             $assetTag = $this->nextAssetTag(
@@ -469,7 +470,8 @@ final class AssetController
                 $category,
                 $table,
                 $locationId > 0 ? $locationId : null,
-                $isLegacy
+                $isLegacy,
+                $isSim
             );
         } catch (\Throwable $e) {
             Response::error($e->getMessage() !== '' ? $e->getMessage() : 'Could not assign asset ID', 422);
@@ -509,7 +511,8 @@ final class AssetController
                     $category,
                     $table,
                     $locationId > 0 ? $locationId : null,
-                    $isLegacy
+                    $isLegacy,
+                    $isSim
                 );
             } catch (\Throwable $e) {
                 Response::error($e->getMessage() !== '' ? $e->getMessage() : 'Could not assign asset ID', 422);
@@ -1335,6 +1338,7 @@ final class AssetController
         string $table,
         ?int $locationId = null,
         bool $isLegacy = false,
+        bool $isSim = false,
     ): string {
         $stmt = $this->pdo->prepare('SELECT code FROM companies WHERE id = :id');
         $stmt->execute(['id' => $companyId]);
@@ -1358,6 +1362,11 @@ final class AssetController
         // Other assets share one table — sequence is per company + branch: ITL-KHO-001 (no type token)
         if ($category === 'other') {
             return $this->nextBranchScopedTag($companyId, $table, $companyPrefix, $locationId, '', 3);
+        }
+
+        // SIMs must not consume phone MB numbers (would leave gaps on the phone list)
+        if ($isSim && $category === 'mobile_phone') {
+            return $this->nextSimAssetTag($companyId, $table, $companyPrefix);
         }
 
         $typeCode = match ($category) {
@@ -1397,6 +1406,11 @@ final class AssetController
             }
         }
 
+        // Phones share the mobile_phones table with SIMs — never let SIM rows advance MB sequence
+        $simFilter = $category === 'mobile_phone'
+            ? ' AND COALESCE(is_sim, FALSE) IS NOT TRUE'
+            : '';
+
         $maxSeen = 0;
         $maxStmt = $this->pdo->prepare(
             "SELECT COALESCE(MAX(
@@ -1404,7 +1418,8 @@ final class AssetController
              ), 0)
              FROM {$table}
              WHERE company_id = :company_id
-               AND asset_tag ~ :pattern"
+               AND asset_tag ~ :pattern
+               {$simFilter}"
         );
         foreach ($patterns as $pattern) {
             $maxStmt->execute([
@@ -1414,6 +1429,34 @@ final class AssetController
             $maxSeen = max($maxSeen, (int) $maxStmt->fetchColumn());
         }
         $next = $maxSeen + 1;
+
+        return sprintf('%s-%04d', $tagPrefix, $next);
+    }
+
+    /**
+     * SIM cards: {COMPANY}-SIM-0001 — separate from phone MB / legacy SIM-MB series.
+     */
+    private function nextSimAssetTag(int $companyId, string $table, string $companyPrefix): string
+    {
+        // Legacy SIM inventory used SIM-MB-* under the SIM company; keep that series there
+        $typeCode = $companyPrefix === 'SIM' ? 'MB' : 'SIM';
+        $tagPrefix = $companyPrefix . '-' . $typeCode;
+        $pattern = '^' . preg_quote($tagPrefix, '/') . '-[0-9]{3,}$';
+
+        $maxStmt = $this->pdo->prepare(
+            "SELECT COALESCE(MAX(
+                CAST(NULLIF(substring(asset_tag from '[0-9]+$'), '') AS INTEGER)
+             ), 0)
+             FROM {$table}
+             WHERE company_id = :company_id
+               AND COALESCE(is_sim, FALSE) = TRUE
+               AND asset_tag ~ :pattern"
+        );
+        $maxStmt->execute([
+            'company_id' => $companyId,
+            'pattern' => $pattern,
+        ]);
+        $next = ((int) $maxStmt->fetchColumn()) + 1;
 
         return sprintf('%s-%04d', $tagPrefix, $next);
     }
@@ -3399,8 +3442,16 @@ final class AssetController
             $fromLocationId = null;
         }
 
+        $transferIsSim = $category === 'mobile_phone' && self::toBool($asset['is_sim'] ?? false);
         try {
-            $newTag = $this->nextAssetTag($toCompanyId, $category, $table, $toLocationId);
+            $newTag = $this->nextAssetTag(
+                $toCompanyId,
+                $category,
+                $table,
+                $toLocationId,
+                false,
+                $transferIsSim
+            );
         } catch (\Throwable $e) {
             Response::error($e->getMessage() !== '' ? $e->getMessage() : 'Could not generate new asset tag', 422);
             return;
