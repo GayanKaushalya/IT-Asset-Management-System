@@ -350,11 +350,19 @@ export function buildAcceptancePrintHtml(data: AcceptanceFormData, logoSrc: stri
 </html>`;
 }
 
+export type PrintAcceptanceOptions = {
+  /** Fires after the system print dialog closes (print completed or cancelled). */
+  onAfterPrint?: () => void;
+};
+
 /**
  * Print via a hidden full-size iframe (Firefox needs non-zero size).
  * Frame stays off-screen so it never blocks the app UI / clipboard.
  */
-export function printAcceptanceForm(data: AcceptanceFormData): { ok: boolean; reason?: string } {
+export function printAcceptanceForm(
+  data: AcceptanceFormData,
+  options?: PrintAcceptanceOptions,
+): { ok: boolean; reason?: string } {
   const logoSrc = `${window.location.origin}/indra-acceptance-logo.jpg`;
   const html = buildAcceptancePrintHtml(data, logoSrc);
 
@@ -379,26 +387,35 @@ export function printAcceptanceForm(data: AcceptanceFormData): { ok: boolean; re
   const doc = frame.contentDocument;
   const win = frame.contentWindow;
   if (!doc || !win) {
-    return openFallbackWindow(html);
+    return openFallbackWindow(html, options);
   }
 
   doc.open();
   doc.write(html);
   doc.close();
 
-  const onAfterPrint = () => {
+  let settled = false;
+  const finish = () => {
+    if (settled) return;
+    settled = true;
     win.removeEventListener('afterprint', onAfterPrint);
     dismissAcceptancePrintFrame();
+    options?.onAfterPrint?.();
   };
+  const onAfterPrint = () => finish();
   win.addEventListener('afterprint', onAfterPrint);
-  window.setTimeout(() => dismissAcceptancePrintFrame(), 2_000);
+  // Safety cleanup if afterprint never fires; do not treat as a completed print
+  window.setTimeout(() => {
+    win.removeEventListener('afterprint', onAfterPrint);
+    dismissAcceptancePrintFrame();
+  }, 120_000);
 
   try {
     win.focus();
     win.print();
   } catch {
     dismissAcceptancePrintFrame();
-    return openFallbackWindow(html);
+    return openFallbackWindow(html, options);
   }
 
   return { ok: true };
@@ -411,7 +428,10 @@ export function dismissAcceptancePrintFrame(): void {
     'position:fixed;width:830px;height:1170px;left:-10000px;top:0;border:0;opacity:0;pointer-events:none;z-index:-1;';
 }
 
-function openFallbackWindow(html: string): { ok: boolean; reason?: string } {
+function openFallbackWindow(
+  html: string,
+  options?: PrintAcceptanceOptions,
+): { ok: boolean; reason?: string } {
   const w = window.open('', `itam-acceptance-print-${Date.now()}`, 'width=920,height=1200');
   if (!w) {
     return {
@@ -423,6 +443,17 @@ function openFallbackWindow(html: string): { ok: boolean; reason?: string } {
   w.document.write(html);
   w.document.close();
   w.focus();
+
+  let settled = false;
+  const finish = () => {
+    if (settled) return;
+    settled = true;
+    w.removeEventListener('afterprint', onAfterPrint);
+    options?.onAfterPrint?.();
+  };
+  const onAfterPrint = () => finish();
+  w.addEventListener('afterprint', onAfterPrint);
+
   try {
     w.print();
   } catch {

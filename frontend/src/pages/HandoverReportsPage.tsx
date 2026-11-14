@@ -231,13 +231,7 @@ export default function HandoverReportsPage() {
         throw new Error('Empty form response from server');
       }
       setFormData(res.data);
-      // Leave the reports list as soon as the handover report is generated
-      void removeFromList(
-        assetIds,
-        assetIds.length === 1
-          ? 'Form ready — item removed from Handover Reports'
-          : `Form ready — removed ${assetIds.length} items from Handover Reports`,
-      );
+      // Keep items on the list until the user confirms a successful print
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Could not load acceptance form';
       setFormError(msg);
@@ -311,12 +305,6 @@ export default function HandoverReportsPage() {
       return;
     }
 
-    const result = printAcceptanceForm(formData);
-    if (!result.ok) {
-      toast.error(result.reason || 'Print failed');
-      return;
-    }
-
     const handoverIds =
       formData.handover_ids && formData.handover_ids.length > 0
         ? formData.handover_ids.map(Number)
@@ -326,7 +314,7 @@ export default function HandoverReportsPage() {
 
     const assetIds =
       selectedAssetIds.length > 0
-        ? selectedAssetIds
+        ? [...selectedAssetIds]
         : rows
             .filter((r) => {
               const hid = handoverIdOf(r);
@@ -334,9 +322,29 @@ export default function HandoverReportsPage() {
             })
             .map((r) => assetIdOf(r));
 
-    void markPrintedAndRemove(handoverIds, assetIds);
-    toast.success('Print dialog opened');
-    closeForm();
+    const result = printAcceptanceForm(formData, {
+      onAfterPrint: () => {
+        // Browsers fire afterprint for both successful print and Cancel —
+        // ask before removing so aborting the printer dialog keeps the list.
+        const remove = window.confirm(
+          assetIds.length === 1
+            ? 'Did this form print successfully?\n\nOK — remove it from Handover Reports\nCancel — keep it on the list'
+            : `Did the form print successfully?\n\nOK — remove ${assetIds.length} items from Handover Reports\nCancel — keep them on the list`,
+        );
+        if (remove) {
+          void markPrintedAndRemove(handoverIds, assetIds);
+          closeForm();
+        } else {
+          toast.info('Kept on Handover Reports — print again when ready');
+        }
+      },
+    });
+    if (!result.ok) {
+      toast.error(result.reason || 'Print failed');
+      return;
+    }
+
+    toast.info('Choose a printer, or cancel to keep items on the list');
   }
 
   useEffect(() => {
@@ -653,8 +661,8 @@ export default function HandoverReportsPage() {
                       {formData?.employee.name || 'IT Hardware Acceptance Form'}
                     </h3>
                   <p style={{ margin: '0.25rem 0 0', color: 'var(--muted)', fontSize: '0.82rem' }}>
-                    Review the form below, then click <strong>Print / Select printer</strong> to
-                    open the system print dialog (choose printer there).
+                    Review the form below, then click <strong>Print / Select printer</strong>.
+                    Items stay on Handover Reports if you cancel the printer dialog.
                   </p>
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
