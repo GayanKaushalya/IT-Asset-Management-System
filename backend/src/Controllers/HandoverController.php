@@ -117,7 +117,7 @@ final class HandoverController
     }
 
     /**
-     * Handover Reports queue: laptops & mobile phones only
+     * Handover Reports queue: laptops, mobile phones, and other assets
      * (available, or open unprinted handover / allocated — unless removed).
      */
     public function availablePersonDevices(Request $request, array $user): void
@@ -129,14 +129,17 @@ final class HandoverController
                        a.status AS asset_status,
                        a.brand,
                        a.model,
+                       oa.item_name,
                        c.short_name AS company_short,
                        c.code AS company_code,
                        COALESCE(l.name, emp.work_location) AS location_name,
                        h.id,
-                       COALESCE(h.handover_date, lap.allocated_on, mb.allocated_on) AS handover_date,
+                       COALESCE(h.handover_date, lap.allocated_on, mb.allocated_on, oa.handover_date) AS handover_date,
                        COALESCE(
                            NULLIF(btrim(lap.allocated_person), ''),
                            NULLIF(btrim(mb.allocated_person), ''),
+                           NULLIF(btrim(oa.pc_name), ''),
+                           NULLIF(btrim(oa.user_name), ''),
                            NULLIF(btrim(h.assigned_person_name), ''),
                            CASE
                              WHEN emp.title IS NOT NULL AND emp.title <> '' THEN emp.title || '. ' || emp.name
@@ -158,6 +161,7 @@ final class HandoverController
                 LEFT JOIN locations l ON l.id = a.location_id
                 LEFT JOIN laptops lap ON a.category = 'laptop' AND lap.id = a.id
                 LEFT JOIN mobile_phones mb ON a.category = 'mobile_phone' AND mb.id = a.id
+                LEFT JOIN other_assets oa ON a.category = 'other' AND oa.id = a.id
                 LEFT JOIN LATERAL (
                     SELECT h2.*
                     FROM asset_handovers h2
@@ -176,6 +180,8 @@ final class HandoverController
                             btrim(COALESCE(
                               NULLIF(btrim(lap.allocated_person), ''),
                               NULLIF(btrim(mb.allocated_person), ''),
+                              NULLIF(btrim(oa.pc_name), ''),
+                              NULLIF(btrim(oa.user_name), ''),
                               NULLIF(btrim(h.assigned_person_name), ''),
                               ''
                             )),
@@ -186,6 +192,8 @@ final class HandoverController
                           AND lower(btrim(e.title || '. ' || e.name)) = lower(btrim(COALESCE(
                               NULLIF(btrim(lap.allocated_person), ''),
                               NULLIF(btrim(mb.allocated_person), ''),
+                              NULLIF(btrim(oa.pc_name), ''),
+                              NULLIF(btrim(oa.user_name), ''),
                               NULLIF(btrim(h.assigned_person_name), ''),
                               ''
                           )))
@@ -193,6 +201,8 @@ final class HandoverController
                         OR COALESCE(
                               NULLIF(btrim(lap.allocated_person), ''),
                               NULLIF(btrim(mb.allocated_person), ''),
+                              NULLIF(btrim(oa.pc_name), ''),
+                              NULLIF(btrim(oa.user_name), ''),
                               NULLIF(btrim(h.assigned_person_name), '')
                             )
                             ILIKE ('%' || e.name || '%')
@@ -202,10 +212,14 @@ final class HandoverController
                       e.id
                     LIMIT 1
                 ) emp ON TRUE
-                WHERE a.category IN ('laptop', 'mobile_phone')
+                WHERE a.category IN ('laptop', 'mobile_phone', 'other')
                   -- Once removed/printed, stay off this queue until status changes
                   -- (return → available, or new handover → deployed clears the hide flag)
-                  AND COALESCE(lap.handover_report_hidden_at, mb.handover_report_hidden_at) IS NULL
+                  AND COALESCE(
+                        lap.handover_report_hidden_at,
+                        mb.handover_report_hidden_at,
+                        oa.handover_report_hidden_at
+                      ) IS NULL
                   AND (
                     a.status = 'available'
                     OR (
@@ -213,8 +227,13 @@ final class HandoverController
                       AND h.is_open = TRUE
                       AND h.acceptance_form_printed_at IS NULL
                     )
-                    OR NULLIF(btrim(lap.allocated_person), '') IS NOT NULL
-                    OR NULLIF(btrim(mb.allocated_person), '') IS NOT NULL
+                    OR (
+                      a.category IN ('laptop', 'mobile_phone')
+                      AND (
+                        NULLIF(btrim(lap.allocated_person), '') IS NOT NULL
+                        OR NULLIF(btrim(mb.allocated_person), '') IS NOT NULL
+                      )
+                    )
                   )";
         $params = [];
 
@@ -228,7 +247,7 @@ final class HandoverController
 
         if ($request->input('asset_type')) {
             $type = (string) $request->input('asset_type');
-            if (in_array($type, ['laptop', 'mobile_phone'], true)) {
+            if (in_array($type, ['laptop', 'mobile_phone', 'other'], true)) {
                 $sql .= ' AND a.category = :asset_type';
                 $params['asset_type'] = $type;
             }
@@ -260,7 +279,8 @@ final class HandoverController
     }
 
     /**
-     * Hide laptops / mobile phones from the Handover Reports list (manual remove or after print).
+     * Hide laptops / mobile phones / other assets from the Handover Reports list
+     * (manual remove or after print).
      * Body: { items: [{ asset_id, asset_type }] }
      */
     public function hideFromReports(Request $request, array $user): void
@@ -274,6 +294,7 @@ final class HandoverController
         $tables = [
             'laptop' => 'laptops',
             'mobile_phone' => 'mobile_phones',
+            'other' => 'other_assets',
         ];
         $hidden = [];
 
@@ -529,14 +550,19 @@ final class HandoverController
         );
         $upd->execute($params);
 
-        // Remove related laptops / mobile phones from the Handover Reports queue
+        // Remove related laptops / mobile phones / other assets from the Handover Reports queue
         $assets = $this->pdo->prepare(
             'SELECT asset_id, asset_type FROM asset_handovers WHERE id IN (' . implode(',', $placeholders) . ')'
         );
         $assets->execute($params);
+        $hideTables = [
+            'laptop' => 'laptops',
+            'mobile_phone' => 'mobile_phones',
+            'other' => 'other_assets',
+        ];
         foreach ($assets->fetchAll() as $asset) {
             $type = (string) ($asset['asset_type'] ?? '');
-            $table = $type === 'laptop' ? 'laptops' : ($type === 'mobile_phone' ? 'mobile_phones' : null);
+            $table = $hideTables[$type] ?? null;
             if ($table === null) {
                 continue;
             }
@@ -722,12 +748,22 @@ final class HandoverController
 
         Auth::assertCompanyAccess($user, (int) $asset['company_id']);
 
-        $person = trim((string) ($asset['allocated_person'] ?? $asset['original_assigned_person'] ?? ''));
+        $person = trim((string) (
+            $asset['allocated_person']
+            ?? $asset['original_assigned_person']
+            ?? $asset['pc_name']
+            ?? $asset['user_name']
+            ?? ''
+        ));
         if ($person === '') {
             // Still create a stub so the form can be edited later
             $person = 'Unassigned';
         }
-        $date = substr((string) ($asset['allocated_on'] ?? date('Y-m-d')), 0, 10);
+        $date = substr((string) (
+            $asset['allocated_on']
+            ?? $asset['handover_date']
+            ?? date('Y-m-d')
+        ), 0, 10);
         if ($date === '') {
             $date = date('Y-m-d');
         }
@@ -779,6 +815,9 @@ final class HandoverController
             (string) ($asset['brand'] ?? ''),
             (string) ($asset['model'] ?? ''),
         ])));
+        if ($assetType === 'other' && $makeModel === '') {
+            $makeModel = trim((string) ($asset['item_name'] ?? ''));
+        }
 
         $serial = (string) ($asset['serial_number'] ?? '');
         if ($assetType === 'mobile_phone') {
@@ -793,8 +832,16 @@ final class HandoverController
             }
         }
 
+        $equipmentType = $typeLabel;
+        if ($assetType === 'other') {
+            $itemName = trim((string) ($asset['item_name'] ?? ''));
+            if ($itemName !== '') {
+                $equipmentType = $itemName;
+            }
+        }
+
         $equipment = [[
-            'equipment_type' => $typeLabel,
+            'equipment_type' => $equipmentType,
             'make_model' => $makeModel !== '' ? $makeModel : '—',
             'serial_imei' => $serial !== '' ? $serial : '—',
             'asset_tag' => (string) ($asset['asset_tag'] ?? '—'),
@@ -985,6 +1032,9 @@ final class HandoverController
     {
         // 1) Current allocated / open holder on the asset
         $allocated = trim((string) ($asset['allocated_person'] ?? ''));
+        if ($allocated === '') {
+            $allocated = trim((string) ($asset['pc_name'] ?? $asset['user_name'] ?? ''));
+        }
         if ($allocated !== '') {
             return $allocated;
         }
@@ -1180,7 +1230,7 @@ final class HandoverController
             }
 
             // New holder (any slot) must reappear on Handover Reports for printing
-            if (in_array($assetType, ['laptop', 'mobile_phone'], true)) {
+            if (in_array($assetType, ['laptop', 'mobile_phone', 'other'], true)) {
                 $this->pdo->prepare(
                     "UPDATE {$table}
                      SET status = 'deployed',
@@ -1377,7 +1427,7 @@ final class HandoverController
                 );
                 $stillOpen->execute(['aid' => $assetId, 'atype' => $assetType]);
                 if (! $stillOpen->fetchColumn()) {
-                    if (in_array($assetType, ['laptop', 'mobile_phone'], true)) {
+                    if (in_array($assetType, ['laptop', 'mobile_phone', 'other'], true)) {
                         $this->pdo->prepare(
                             "UPDATE {$table}
                              SET status = 'available',
@@ -1537,7 +1587,7 @@ final class HandoverController
         if (isset(self::TABLES[$assetType])) {
             $table = self::TABLES[$assetType];
             // Returned / available again — allow a fresh handover report print
-            if (in_array($assetType, ['laptop', 'mobile_phone'], true)) {
+            if (in_array($assetType, ['laptop', 'mobile_phone', 'other'], true)) {
                 $this->pdo->prepare(
                     "UPDATE {$table}
                      SET status = 'available',

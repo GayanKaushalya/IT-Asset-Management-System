@@ -805,7 +805,7 @@ final class AssetController
             if (
                 $statusInBody
                 && $newStatus === 'available'
-                && in_array($category, ['laptop', 'mobile_phone'], true)
+                && in_array($category, ['laptop', 'mobile_phone', 'other'], true)
             ) {
                 $this->queueHandoverReportOnAvailable($category, $id, $user);
             }
@@ -1825,7 +1825,7 @@ final class AssetController
         }
 
         // Show again on Handover Reports when marked available
-        if (in_array($category, ['laptop', 'mobile_phone'], true)) {
+        if (in_array($category, ['laptop', 'mobile_phone', 'other'], true)) {
             $table = self::TABLES[$category];
             $this->pdo->prepare(
                 "UPDATE {$table}

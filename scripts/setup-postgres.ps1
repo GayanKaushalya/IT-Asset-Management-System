@@ -115,6 +115,7 @@ if ([int]$tableCount -lt 5) {
         'add_pc_accessories.sql',
         'add_pc_ups_brand.sql',
         'add_handover_report_hidden.sql',
+        'add_other_assets_handover_report_hidden.sql',
         'seed_branch_locations.sql'
     )
     foreach ($f in $extra) {

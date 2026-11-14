@@ -33,6 +33,7 @@ const ASSET_TYPE_OPTIONS = [
   { value: '', label: 'All types' },
   { value: 'laptop', label: 'Laptop' },
   { value: 'mobile_phone', label: 'Mobile phone' },
+  { value: 'other', label: 'Other asset' },
 ];
 
 function dash(v: unknown): string {
@@ -45,6 +46,7 @@ function typeLabel(t: unknown): string {
   if (v === 'mobile_phone') return 'Mobile phone';
   if (v === 'laptop') return 'Laptop';
   if (v === 'pc') return 'PC';
+  if (v === 'other') return 'Other asset';
   return (
     ASSET_TYPE_OPTIONS.find((o) => o.value === v)?.label ??
     v.replace(/_/g, ' ')
@@ -131,6 +133,7 @@ export default function HandoverReportsPage() {
         'asset_type',
         'brand',
         'model',
+        'item_name',
         'gate_pass_no',
         'it_staff_name',
         'location_name',
@@ -254,7 +257,10 @@ export default function HandoverReportsPage() {
   async function removeFromList(assetIds: number[], message?: string) {
     if (assetIds.length === 0) return;
     const items = itemsPayload(rows, assetIds).filter(
-      (it) => it.asset_type === 'laptop' || it.asset_type === 'mobile_phone',
+      (it) =>
+        it.asset_type === 'laptop' ||
+        it.asset_type === 'mobile_phone' ||
+        it.asset_type === 'other',
     );
     if (items.length === 0) return;
     try {
@@ -543,6 +549,10 @@ export default function HandoverReportsPage() {
                   const aid = assetIdOf(r);
                   const checked = selectedAssetIds.includes(aid);
                   const brandModel = [r.brand, r.model].filter(Boolean).join(' ');
+                  const subtitle =
+                    brandModel ||
+                    (r.item_name ? String(r.item_name) : '') ||
+                    '';
                   return (
                     <tr
                       key={`${String(r.asset_type)}-${aid}`}
@@ -560,9 +570,9 @@ export default function HandoverReportsPage() {
                       </td>
                       <td>
                         <strong>{dash(r.asset_tag)}</strong>
-                        {brandModel || r.pc_name ? (
+                        {subtitle ? (
                           <div style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
-                            {brandModel || String(r.pc_name)}
+                            {subtitle}
                           </div>
                         ) : null}
                       </td>
