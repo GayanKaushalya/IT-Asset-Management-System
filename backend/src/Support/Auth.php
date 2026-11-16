@@ -63,23 +63,97 @@ final class Auth
         return $user;
     }
 
+    public static function roleOf(array $user): string
+    {
+        return (string) ($user['role'] ?? '');
+    }
+
+    public static function isSuperAdmin(array $user): bool
+    {
+        return self::roleOf($user) === 'super_admin';
+    }
+
+    public static function isAudit(array $user): bool
+    {
+        return self::roleOf($user) === 'audit';
+    }
+
+    /** Cross-company / all-tabs visibility (super_admin + audit). */
+    public static function hasGlobalAccess(array $user): bool
+    {
+        return in_array(self::roleOf($user), ['super_admin', 'audit'], true);
+    }
+
+    /** Mutating inventory / org / vault / users (audit is view-only). */
+    public static function canWrite(array $user): bool
+    {
+        return ! self::isAudit($user);
+    }
+
     public static function canDecryptVault(array $user): bool
     {
         if (! empty($user['can_decrypt_vault'])) {
             return true;
         }
-        return in_array($user['role'] ?? '', ['super_admin', 'it_admin'], true);
+        return in_array(self::roleOf($user), ['super_admin', 'it_admin', 'audit'], true);
     }
 
     public static function assertCompanyAccess(array $user, int $companyId): void
     {
-        if (($user['role'] ?? '') === 'super_admin') {
+        if (self::hasGlobalAccess($user)) {
             return;
         }
         if ((int) ($user['company_id'] ?? 0) !== $companyId) {
             Response::error('Cross-company access denied', 403);
             exit;
         }
+    }
+
+    /**
+     * Block audit users from mutating APIs (view-only).
+     * Allows own profile, logout, notification read, and credential reveal.
+     */
+    public static function assertAuditMayMutate(Request $request, array $user): void
+    {
+        if (! self::isAudit($user)) {
+            return;
+        }
+
+        $method = strtoupper($request->method);
+        if (in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)) {
+            return;
+        }
+
+        $path = rtrim($request->path, '/') ?: '/';
+
+        $allowedExact = [
+            '/api/logout',
+            '/api/me',
+            '/api/me/password',
+            '/api/notifications/read-all',
+        ];
+        if (in_array($path, $allowedExact, true)) {
+            return;
+        }
+
+        // Mark one notification read
+        if ($method === 'POST' && preg_match('#^/api/notifications/\d+/read$#', $path)) {
+            return;
+        }
+
+        // Reveal secrets is a view action
+        if ($method === 'POST' && preg_match('#^/api/(credentials|email-accounts)/\d+/reveal$#', $path)) {
+            return;
+        }
+
+        // Build acceptance form for on-screen preview / print (no inventory change intended);
+        // stub creation is still blocked via canWrite checks where needed — allow read of form payload.
+        if ($method === 'POST' && $path === '/api/handovers/acceptance-form') {
+            return;
+        }
+
+        Response::error('Audit accounts are view-only', 403);
+        exit;
     }
 
     /** @return array<string, mixed>|null */

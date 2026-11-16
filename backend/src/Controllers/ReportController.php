@@ -596,7 +596,7 @@ final class ReportController
             $company = 'IT';
         }
         $companyId = null;
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $companyId = (int) $user['company_id'];
         } elseif ($company !== '' && $company !== 'ALL') {
             $stmt = $this->pdo->prepare('SELECT id FROM companies WHERE code = :c LIMIT 1');
@@ -712,7 +712,7 @@ final class ReportController
             $company = 'IT';
         }
         $companyId = null;
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $companyId = (int) $user['company_id'];
         } elseif ($company !== '' && $company !== 'ALL') {
             $stmt = $this->pdo->prepare('SELECT id FROM companies WHERE code = :c LIMIT 1');
@@ -828,7 +828,7 @@ final class ReportController
             $company = 'IT';
         }
         $companyId = null;
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $companyId = (int) $user['company_id'];
         } elseif ($company !== '' && $company !== 'ALL') {
             $stmt = $this->pdo->prepare('SELECT id FROM companies WHERE code = :c LIMIT 1');
@@ -922,7 +922,7 @@ final class ReportController
             $company = 'IT';
         }
         $companyId = null;
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $companyId = (int) $user['company_id'];
         } elseif ($company !== '' && $company !== 'ALL') {
             $stmt = $this->pdo->prepare('SELECT id FROM companies WHERE code = :c LIMIT 1');
@@ -1140,7 +1140,7 @@ final class ReportController
             $company = 'IT';
         }
         $companyId = null;
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $companyId = (int) $user['company_id'];
         } elseif ($company !== '' && $company !== 'ALL') {
             $stmt = $this->pdo->prepare('SELECT id FROM companies WHERE code = :c LIMIT 1');

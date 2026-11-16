@@ -19,7 +19,7 @@ final class DashboardController
         $companyId = $request->input('company_id');
         $companyId = $companyId !== null && $companyId !== '' ? (int) $companyId : null;
 
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $companyId = (int) $user['company_id'];
         }
 

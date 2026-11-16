@@ -33,7 +33,7 @@ final class AgreementController
         $sql = $this->selectSql() . ' WHERE a.is_active = TRUE';
         $params = [];
 
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $sql .= ' AND (a.company_id = :user_company OR a.company_id IS NULL)';
             $params['user_company'] = (int) ($user['company_id'] ?? 0);
         } elseif ($company !== '' && $company !== 'ALL') {
@@ -629,7 +629,7 @@ final class AgreementController
             if ($companyId <= 0) {
                 $companyId = null;
             }
-        } elseif ($existing === null && ($user['role'] ?? '') !== 'super_admin') {
+        } elseif ($existing === null && ! Auth::hasGlobalAccess($user)) {
             $companyId = (int) ($user['company_id'] ?? 0) ?: null;
         }
 
@@ -726,7 +726,7 @@ final class AgreementController
     /** @param array<string, mixed> $row */
     private function canView(array $user, array $row): bool
     {
-        if (($user['role'] ?? '') === 'super_admin') {
+        if (Auth::hasGlobalAccess($user)) {
             return true;
         }
         $cid = $row['company_id'] ?? null;

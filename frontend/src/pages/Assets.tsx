@@ -27,6 +27,7 @@ import PaginationBar from '../components/ui/PaginationBar';
 import { api } from '../services/client';
 import { getOrgMeta } from '../services/metaCache';
 import { useAuth } from '../auth/AuthContext';
+import { canWrite } from '../auth/permissions';
 import { useToast } from '../components/ui/Toast';
 import AssetLifecycleTimeline from './AssetLifecycleTimeline';
 import PcKitPanel from './PcKitPanel';
@@ -486,7 +487,9 @@ export default function AssetsPage() {
   const returnToRef = useRef<string | null>(null);
   /** When Update/Transfer is opened from the record view, closing edit restores that same view. */
   const returnToViewRef = useRef<{ id: number; category: string } | null>(null);
-  const canManageKit = ['super_admin', 'it_admin', 'it_staff'].includes(user?.role ?? '');
+  const writable = canWrite(user);
+  const canManageKit =
+    writable && ['super_admin', 'it_admin', 'it_staff'].includes(user?.role ?? '');
   const categoryTab = categorySlug ? CATEGORY_FROM_PATH[categorySlug] : undefined;
   const activeCategory: CategoryTab = categoryTab ?? 'laptop';
   const isAllView = activeCategory === 'all';
@@ -1949,6 +1952,7 @@ export default function AssetsPage() {
             {tab.label}
           </button>
         ))}
+        {writable ? (
         <button
           type="button"
           className="btn btn-primary company-tabs-add"
@@ -1985,6 +1989,7 @@ export default function AssetsPage() {
         >
           + {addLabel}
         </button>
+        ) : null}
       </div>
 
       <div className="card asset-list-card">
@@ -2452,6 +2457,8 @@ export default function AssetsPage() {
                         onUpdate={() => void openEdit(Number(r.id), rowCategory)}
                         onDelete={() => void onDelete(Number(r.id), rowCategory, String(r.asset_tag))}
                         onQr={() => void openQr(Number(r.id), rowCategory, r)}
+                        updateDisabled={!writable}
+                        deleteDisabled={!writable}
                         deleteBusy={deletingId === Number(r.id)}
                       />
                     </td>

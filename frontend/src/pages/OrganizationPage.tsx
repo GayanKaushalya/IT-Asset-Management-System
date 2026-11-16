@@ -188,7 +188,9 @@ export default function OrganizationPage() {
 function EmployeesPanel() {
   const toast = useToast();
   const { user } = useAuth();
-  const canManage = ['super_admin', 'it_admin', 'it_staff'].includes(user?.role ?? '');
+  const canManage =
+    user?.role !== 'audit' &&
+    ['super_admin', 'it_admin', 'it_staff'].includes(user?.role ?? '');
 
   const [company, setCompany] = useState<CompanyTab>('ALL');
   const [rows, setRows] = useState<Employee[]>([]);

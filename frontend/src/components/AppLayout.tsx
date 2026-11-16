@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { isAudit } from '../auth/permissions';
 import { getOrgMeta } from '../services/metaCache';
 import NotificationBell from './NotificationBell';
 import UserAvatar from './ui/UserAvatar';
@@ -180,6 +181,11 @@ export default function AppLayout() {
             <div className="sidebar-user-meta">
               <strong>{user?.name}</strong>
               <span>{user?.email}</span>
+              {isAudit(user) ? (
+                <span style={{ display: 'block', fontSize: '0.72rem', color: '#b45309', fontWeight: 700 }}>
+                  Audit · view only
+                </span>
+              ) : null}
             </div>
           </div>
           <button

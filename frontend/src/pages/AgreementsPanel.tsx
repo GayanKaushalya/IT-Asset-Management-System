@@ -259,7 +259,9 @@ function IconInput({
 export default function AgreementsPanel() {
   const toast = useToast();
   const { user } = useAuth();
-  const canManage = ['super_admin', 'it_admin', 'it_staff'].includes(user?.role ?? '');
+  const canManage =
+    user?.role !== 'audit' &&
+    ['super_admin', 'it_admin', 'it_staff'].includes(user?.role ?? '');
   const termsRef = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 

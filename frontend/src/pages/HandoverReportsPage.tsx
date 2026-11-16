@@ -10,6 +10,8 @@ import { EmptyState, ErrorState, LoadingSkeleton } from '../components/ui/EmptyS
 import PaginationBar from '../components/ui/PaginationBar';
 import TableSettingsMenu, { type PageSize } from '../components/ui/TableSettingsMenu';
 import { useToast } from '../components/ui/Toast';
+import { useAuth } from '../auth/AuthContext';
+import { canWrite } from '../auth/permissions';
 import { api } from '../services/client';
 import { getOrgMeta } from '../services/metaCache';
 import { printAcceptanceForm, dismissAcceptancePrintFrame } from '../utils/acceptancePrint';
@@ -75,6 +77,8 @@ function itemsPayload(rows: DeviceRow[], assetIds: number[]) {
 
 export default function HandoverReportsPage() {
   const toast = useToast();
+  const { user } = useAuth();
+  const writable = canWrite(user);
   const [rows, setRows] = useState<DeviceRow[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
@@ -324,6 +328,10 @@ export default function HandoverReportsPage() {
 
     const result = printAcceptanceForm(formData, {
       onAfterPrint: () => {
+        if (!writable) {
+          closeForm();
+          return;
+        }
         // Browsers fire afterprint for both successful print and Cancel —
         // ask before removing so aborting the printer dialog keeps the list.
         const remove = window.confirm(
@@ -494,20 +502,22 @@ export default function HandoverReportsPage() {
               >
                 Clear selection
               </button>
-              <button
-                type="button"
-                className="btn btn-soft"
-                onClick={() => void removeFromList(selectedAssetIds)}
-                title="Remove selected items from this list"
-              >
-                Remove from list
-              </button>
+              {writable ? (
+                <button
+                  type="button"
+                  className="btn btn-soft"
+                  onClick={() => void removeFromList(selectedAssetIds)}
+                  title="Remove selected items from this list"
+                >
+                  Remove from list
+                </button>
+              ) : null}
               <button
                 type="button"
                 className="btn btn-primary"
                 onClick={() => void generateForm(selectedAssetIds)}
               >
-                Generate form ({selectedAssetIds.length})
+                {writable ? 'Generate form' : 'View form'} ({selectedAssetIds.length})
               </button>
             </div>
           </div>
@@ -628,15 +638,17 @@ export default function HandoverReportsPage() {
                           >
                             Form
                           </button>
-                          <button
-                            type="button"
-                            className="btn btn-soft"
-                            style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
-                            onClick={() => void removeFromList([aid])}
-                            title="Remove from Handover Reports"
-                          >
-                            Remove
-                          </button>
+                          {writable ? (
+                            <button
+                              type="button"
+                              className="btn btn-soft"
+                              style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
+                              onClick={() => void removeFromList([aid])}
+                              title="Remove from Handover Reports"
+                            >
+                              Remove
+                            </button>
+                          ) : null}
                         </div>
                       </td>
                     </tr>

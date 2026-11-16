@@ -64,7 +64,7 @@ CREATE TABLE users (
     email               VARCHAR(191) NOT NULL,
     phone               VARCHAR(30) NULL,
     password_hash       VARCHAR(255) NULL,
-    role                ENUM('super_admin','it_admin','it_staff','viewer','employee') NOT NULL DEFAULT 'employee',
+    role                ENUM('super_admin','it_admin','it_staff','viewer','employee','audit') NOT NULL DEFAULT 'employee',
     can_decrypt_vault   TINYINT(1) NOT NULL DEFAULT 0,
     is_active           TINYINT(1) NOT NULL DEFAULT 1,
     last_login_at       DATETIME NULL,

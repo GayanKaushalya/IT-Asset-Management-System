@@ -33,7 +33,7 @@ final class CredentialVaultController
                 LEFT JOIN users u ON u.id = c.assigned_user_id
                 WHERE c.is_active = TRUE';
         $params = [];
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $sql .= ' AND c.company_id = :company_id';
             $params['company_id'] = $user['company_id'];
         } elseif ($request->input('company_id')) {

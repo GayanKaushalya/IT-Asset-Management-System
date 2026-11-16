@@ -10,6 +10,7 @@ import TableSettingsMenu, { type PageSize } from '../components/ui/TableSettings
 import { api } from '../services/client';
 import { getOrgMeta } from '../services/metaCache';
 import { useAuth } from '../auth/AuthContext';
+import { canWrite } from '../auth/permissions';
 import { useToast } from '../components/ui/Toast';
 import { copyToClipboard } from '../utils/clipboard';
 
@@ -239,8 +240,12 @@ export default function CredentialsPage() {
     rows.length > 0 &&
     rows.every((r) => !pickStr(r.email_address) && !pickStr(r.emailAddress) && !pickStr(r.email));
 
+  const writable = canWrite(user);
   const canReveal =
-    !!user?.can_decrypt_vault || user?.role === 'super_admin' || user?.role === 'it_admin';
+    !!user?.can_decrypt_vault ||
+    user?.role === 'super_admin' ||
+    user?.role === 'it_admin' ||
+    user?.role === 'audit';
 
   async function load(opts?: { silent?: boolean }) {
     if (!mainTab) return;
@@ -773,9 +778,11 @@ export default function CredentialsPage() {
             {tab.label}
           </button>
         ))}
-        <button type="button" className="btn btn-primary company-tabs-add" onClick={openAdd}>
-          + {addLabel}
-        </button>
+        {writable ? (
+          <button type="button" className="btn btn-primary company-tabs-add" onClick={openAdd}>
+            + {addLabel}
+          </button>
+        ) : null}
       </div>
 
       <div className="card asset-list-card">
@@ -971,6 +978,8 @@ export default function CredentialsPage() {
                             onUpdate={() => void openEditEmail(r)}
                             onDelete={() => void onDeleteEmail(r)}
                             viewDisabled={!canReveal}
+                            updateDisabled={!writable}
+                            deleteDisabled={!writable}
                             deleteBusy={deletingId === rowKey}
                           />
                         </td>
@@ -1026,6 +1035,8 @@ export default function CredentialsPage() {
                           onUpdate={() => void openEditWifi(r)}
                           onDelete={() => void onDeleteWifi(r)}
                           viewDisabled={!canReveal}
+                          updateDisabled={!writable}
+                          deleteDisabled={!writable}
                           deleteBusy={deletingId === id}
                         />
                       </td>

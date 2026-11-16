@@ -1,6 +1,13 @@
 import { FormEvent, useEffect, useMemo, useState, type ChangeEvent, type ReactNode } from 'react';
 import { Navigate, NavLink, useParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import {
+  canCreateBackup,
+  canViewBackups,
+  canWrite,
+  isAudit,
+  isSuperAdmin,
+} from '../auth/permissions';
 import PageHeader from '../components/ui/PageHeader';
 import StatusBadge from '../components/ui/StatusBadge';
 import { EmptyState, ErrorState, LoadingSkeleton } from '../components/ui/EmptyState';
@@ -425,8 +432,9 @@ function formatWhen(value?: string | null): string {
 function BackupsPanel() {
   const { user } = useAuth();
   const toast = useToast();
-  const isAdmin = user?.role === 'super_admin' || user?.role === 'it_admin';
-  const isSuper = user?.role === 'super_admin';
+  const isAdmin = canViewBackups(user);
+  const canCreate = canCreateBackup(user);
+  const isSuper = isSuperAdmin(user) && canWrite(user);
 
   const [rows, setRows] = useState<BackupRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -548,9 +556,15 @@ function BackupsPanel() {
           <code>backend/config/config.php</code> after restore.
         </p>
         <div className="toolbar" style={{ gap: '0.5rem', flexWrap: 'wrap' }}>
+          {canCreate ? (
           <button type="button" className="btn btn-primary" disabled={creating} onClick={() => void createBackup()}>
-            {creating ? 'Creating backupâ€¦' : 'Create backup now'}
+            {creating ? 'Creating backup…' : 'Create backup now'}
           </button>
+          ) : isAudit(user) ? (
+            <p style={{ margin: 0, color: 'var(--muted)', fontSize: '0.9rem' }}>
+              Audit access is view-only — you can download existing backups.
+            </p>
+          ) : null}
           {isSuper ? (
             <label className="btn btn-soft" style={{ cursor: uploading ? 'wait' : 'pointer', margin: 0 }}>
               {uploading ? 'Restoring uploadâ€¦' : 'Restore from fileâ€¦'}

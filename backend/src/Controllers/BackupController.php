@@ -25,8 +25,8 @@ final class BackupController
 
     public function index(Request $request, array $user): void
     {
-        if (! $this->canManage($user)) {
-            Response::error('Only IT admins can manage backups', 403);
+        if (! $this->canView($user)) {
+            Response::error('Only IT admins can view backups', 403);
             return;
         }
         Response::json(['data' => $this->backups->list()]);
@@ -61,7 +61,7 @@ final class BackupController
 
     public function download(Request $request, array $user, string $file): void
     {
-        if (! $this->canManage($user)) {
+        if (! $this->canView($user)) {
             Response::error('Only IT admins can download backups', 403);
             return;
         }
@@ -194,6 +194,12 @@ final class BackupController
                 'tables_touched' => $result['tables_touched'],
             ],
         ]);
+    }
+
+    /** @param array<string, mixed> $user */
+    private function canView(array $user): bool
+    {
+        return in_array($user['role'] ?? '', ['super_admin', 'it_admin', 'audit'], true);
     }
 
     /** @param array<string, mixed> $user */

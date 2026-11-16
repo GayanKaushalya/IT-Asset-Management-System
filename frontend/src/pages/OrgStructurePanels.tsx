@@ -55,6 +55,7 @@ function readStoredPageSize(key: string): PageSize {
 
 function canManageOrg(role: string | undefined): boolean {
   return role === 'super_admin' || role === 'it_admin' || role === 'it_staff';
+  // audit is view-only — excluded above
 }
 
 function dash(v: unknown): string {

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { hasGlobalAccess } from '../auth/permissions';
 import PageHeader from '../components/ui/PageHeader';
 import { useToast } from '../components/ui/Toast';
 import { EmptyState, ErrorState, LoadingSkeleton } from '../components/ui/EmptyState';
@@ -265,7 +266,7 @@ export default function ExpenditureReportPage() {
               onChange={(e) => setToDate(e.target.value)}
             />
           </label>
-          {user?.role === 'super_admin' ? (
+          {hasGlobalAccess(user) ? (
             <label>
               Company
               <select className="select" value={company} onChange={(e) => setCompany(e.target.value)}>

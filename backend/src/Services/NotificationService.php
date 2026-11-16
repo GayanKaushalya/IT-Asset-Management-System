@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Indra\Itam\Services;
 
+use Indra\Itam\Support\Auth;
 use PDO;
 
 final class NotificationService
@@ -78,7 +79,7 @@ final class NotificationService
     public function listForUser(array $user, int $limit = 40): array
     {
         $limit = max(1, min(100, $limit));
-        $companyId = ($user['role'] ?? '') === 'super_admin' ? null : (int) ($user['company_id'] ?? 0);
+        $companyId = Auth::hasGlobalAccess($user) ? null : (int) ($user['company_id'] ?? 0);
         $userId = (int) ($user['id'] ?? 0);
 
         $this->syncWarrantyNotifications($companyId);
@@ -88,7 +89,7 @@ final class NotificationService
 
     public function unreadCount(array $user): int
     {
-        $companyId = ($user['role'] ?? '') === 'super_admin' ? null : (int) ($user['company_id'] ?? 0);
+        $companyId = Auth::hasGlobalAccess($user) ? null : (int) ($user['company_id'] ?? 0);
         $userId = (int) ($user['id'] ?? 0);
 
         $sql = "SELECT COUNT(*) FROM notifications
@@ -117,7 +118,7 @@ final class NotificationService
             'id' => $id,
             'uid' => (int) $user['id'],
             'cid' => (int) ($user['company_id'] ?? 0),
-            'super' => ($user['role'] ?? '') === 'super_admin' ? 1 : 0,
+            'super' => Auth::hasGlobalAccess($user) ? 1 : 0,
         ]);
         return $stmt->rowCount() > 0;
     }
@@ -129,7 +130,7 @@ final class NotificationService
                   AND type LIKE 'warranty_%'
                   AND (user_id = :uid";
         $params = ['uid' => (int) $user['id']];
-        if (($user['role'] ?? '') === 'super_admin') {
+        if (Auth::hasGlobalAccess($user)) {
             $sql .= ' OR user_id IS NULL)';
         } else {
             $sql .= ' OR (user_id IS NULL AND company_id = :cid))';

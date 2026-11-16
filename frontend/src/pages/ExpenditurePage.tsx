@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { hasGlobalAccess } from '../auth/permissions';
 import PageHeader from '../components/ui/PageHeader';
 import { EmptyState, ErrorState, LoadingSkeleton } from '../components/ui/EmptyState';
 import PaginationBar from '../components/ui/PaginationBar';
@@ -390,7 +391,7 @@ export default function ExpenditurePage() {
         subtitle="Spend from all asset tabs (laptops, phones, PCs, other). Date = Acquired On; amount from Assets. Total spend updates with your filters."
       />
 
-      {user?.role === 'super_admin' ? (
+      {hasGlobalAccess(user) ? (
         <div className="tabs-secondary company-tabs-row" style={{ marginBottom: '0.85rem' }}>
           {COMPANY_TABS.map((tab) => (
             <button

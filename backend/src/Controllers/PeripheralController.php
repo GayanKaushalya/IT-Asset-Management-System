@@ -32,7 +32,7 @@ final class PeripheralController
         $where = ['1=1'];
         $params = [];
 
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $where[] = 'p.company_id = :company_id';
             $params['company_id'] = (int) $user['company_id'];
         } elseif ($request->input('company_id')) {

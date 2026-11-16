@@ -17,7 +17,7 @@ final class MetaController
 
     public function companies(array $user): void
     {
-        if (($user['role'] ?? '') === 'super_admin') {
+        if (Auth::hasGlobalAccess($user)) {
             $rows = $this->pdo->query(
                 'SELECT id, code, name, short_name FROM companies WHERE is_active = TRUE ORDER BY id'
             )->fetchAll();
@@ -39,7 +39,7 @@ final class MetaController
                 JOIN companies c ON c.id = l.company_id
                 WHERE l.is_active = TRUE';
         $params = [];
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $sql .= ' AND l.company_id = :c';
             $params['c'] = $user['company_id'];
         } elseif ($request !== null && $request->input('company_id')) {
@@ -62,7 +62,7 @@ final class MetaController
                 LEFT JOIN locations l ON l.id = d.location_id
                 WHERE d.is_active = TRUE';
         $params = [];
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $sql .= ' AND d.company_id = :c';
             $params['c'] = $user['company_id'];
         }
@@ -80,7 +80,7 @@ final class MetaController
                 LEFT JOIN companies c ON c.id = s.company_id
                 WHERE s.is_active = TRUE';
         $params = [];
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $sql .= ' AND (s.company_id = :c OR s.company_id IS NULL)';
             $params['c'] = $user['company_id'];
         }
@@ -254,7 +254,7 @@ final class MetaController
     /** Single round-trip for companies + locations + departments. */
     public function org(array $user, ?Request $request = null): void
     {
-        $isSuper = ($user['role'] ?? '') === 'super_admin';
+        $isSuper = Auth::hasGlobalAccess($user);
         $companyId = null;
         if (! $isSuper) {
             $companyId = (int) $user['company_id'];

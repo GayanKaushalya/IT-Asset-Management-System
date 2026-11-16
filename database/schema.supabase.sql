@@ -27,7 +27,7 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-    CREATE TYPE user_role AS ENUM ('super_admin','it_admin','it_staff','viewer','employee');
+    CREATE TYPE user_role AS ENUM ('super_admin','it_admin','it_staff','viewer','employee','audit');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ---------------------------------------------------------------------------

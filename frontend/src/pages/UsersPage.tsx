@@ -8,6 +8,7 @@ import PaginationBar from '../components/ui/PaginationBar';
 import TableSettingsMenu, { type PageSize } from '../components/ui/TableSettingsMenu';
 import { api } from '../services/client';
 import { useAuth } from '../auth/AuthContext';
+import { canManageUsers, isSuperAdmin } from '../auth/permissions';
 
 const PAGE_SIZE_KEY = 'itams.users.pageSize';
 
@@ -56,12 +57,13 @@ const ROLE_OPTIONS = [
   { value: 'it_admin', label: 'IT Admin' },
   { value: 'viewer', label: 'Viewer' },
   { value: 'employee', label: 'Employee' },
+  { value: 'audit', label: 'Audit (view only)' },
   { value: 'super_admin', label: 'Super Admin' },
 ];
 
 export default function UsersPage({ embedded = false }: Props) {
   const { user: me } = useAuth();
-  const canManage = me?.role === 'super_admin' || me?.role === 'it_admin';
+  const canManage = canManageUsers(me);
 
   const [rows, setRows] = useState<UserRow[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -336,7 +338,9 @@ export default function UsersPage({ embedded = false }: Props) {
           <label>
             Access type
             <select className="select" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-              {ROLE_OPTIONS.filter((o) => me?.role === 'super_admin' || o.value !== 'super_admin').map((o) => (
+              {ROLE_OPTIONS.filter(
+                (o) => isSuperAdmin(me) || (o.value !== 'super_admin' && o.value !== 'audit'),
+              ).map((o) => (
                 <option key={o.value} value={o.value}>
                   {o.label}
                 </option>
@@ -391,7 +395,9 @@ export default function UsersPage({ embedded = false }: Props) {
                 value={editForm.role}
                 onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
               >
-                {ROLE_OPTIONS.filter((o) => me?.role === 'super_admin' || o.value !== 'super_admin').map((o) => (
+                {ROLE_OPTIONS.filter(
+                  (o) => isSuperAdmin(me) || (o.value !== 'super_admin' && o.value !== 'audit'),
+                ).map((o) => (
                   <option key={o.value} value={o.value}>
                     {o.label}
                   </option>

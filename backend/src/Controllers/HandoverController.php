@@ -40,7 +40,7 @@ final class HandoverController
                 WHERE 1=1';
         $params = [];
 
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $sql .= ' AND h.company_id = :company_id';
             $params['company_id'] = $user['company_id'];
         } elseif ($request->input('company_id')) {
@@ -237,7 +237,7 @@ final class HandoverController
                   )";
         $params = [];
 
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $sql .= ' AND a.company_id = :company_id';
             $params['company_id'] = $user['company_id'];
         } elseif ($request->input('company_id')) {
@@ -383,7 +383,18 @@ final class HandoverController
                 if ($assetId < 1 || ! isset(self::TABLES[$assetType])) {
                     continue;
                 }
-                $hid = $this->ensureOpenHandoverForAsset($assetId, $assetType, $user);
+                // Audit is view-only — never create handover stubs
+                if (Auth::isAudit($user)) {
+                    $latest = $this->pdo->prepare(
+                        'SELECT id FROM asset_handovers
+                         WHERE asset_id = :aid AND asset_type = :atype
+                         ORDER BY id DESC LIMIT 1'
+                    );
+                    $latest->execute(['aid' => $assetId, 'atype' => $assetType]);
+                    $hid = (int) $latest->fetchColumn();
+                } else {
+                    $hid = $this->ensureOpenHandoverForAsset($assetId, $assetType, $user);
+                }
                 if ($hid > 0 && ! in_array($hid, $ids, true)) {
                     $ids[] = $hid;
                 }
@@ -1639,7 +1650,7 @@ final class HandoverController
      */
     private function assertHandoverCompanyAccess(array $user, array $handover): void
     {
-        if (($user['role'] ?? '') === 'super_admin') {
+        if (Auth::hasGlobalAccess($user)) {
             return;
         }
         $handoverCid = (int) ($handover['company_id'] ?? 0);

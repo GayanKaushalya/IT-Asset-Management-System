@@ -16,6 +16,7 @@ type ActionsMenuProps = {
   onQr?: () => void;
   viewLabel?: string;
   viewDisabled?: boolean;
+  updateDisabled?: boolean;
   deleteDisabled?: boolean;
   deleteBusy?: boolean;
 };
@@ -27,6 +28,7 @@ export default function ActionsMenu({
   onQr,
   viewLabel = 'View',
   viewDisabled = false,
+  updateDisabled = false,
   deleteDisabled = false,
   deleteBusy = false,
 }: ActionsMenuProps) {
@@ -116,7 +118,7 @@ export default function ActionsMenu({
               <IconEye />
               {viewLabel}
             </MenuButton>
-            <MenuButton tone="update" onClick={() => run(onUpdate)}>
+            <MenuButton tone="update" disabled={updateDisabled} onClick={() => run(onUpdate)}>
               <IconPencil />
               Update
             </MenuButton>

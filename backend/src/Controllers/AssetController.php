@@ -107,7 +107,7 @@ final class AssetController
         $companyCode = null;
         $companyShort = null;
 
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $companyId = (int) $user['company_id'];
         } elseif ($request->input('company_id')) {
             $companyId = (int) $request->input('company_id');
@@ -2290,7 +2290,7 @@ final class AssetController
                 LEFT JOIN departments d ON d.id = a.department_id
                 WHERE TRUE";
         $params = [];
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $sql .= ' AND a.company_id = :cid';
             $params['cid'] = (int) $user['company_id'];
         } elseif ($request->input('company_code')) {
@@ -2395,7 +2395,7 @@ final class AssetController
             }
             $companyCode = strtoupper((string) ($row['company_code'] ?? $row['company'] ?? ''));
             $companyId = $byCode[$companyCode] ?? null;
-            if ($companyId === null && ($user['role'] ?? '') !== 'super_admin') {
+            if ($companyId === null && ! Auth::hasGlobalAccess($user)) {
                 $companyId = (int) $user['company_id'];
             }
             if ($companyId === null) {
@@ -3580,7 +3580,7 @@ final class AssetController
     /** @param array<string, mixed> $asset */
     private function assertAssetCompanyAccess(array $user, array $asset): void
     {
-        if (($user['role'] ?? '') === 'super_admin') {
+        if (Auth::hasGlobalAccess($user)) {
             return;
         }
         $userCompany = (int) ($user['company_id'] ?? 0);

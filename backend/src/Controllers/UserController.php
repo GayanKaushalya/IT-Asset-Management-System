@@ -31,7 +31,7 @@ final class UserController
                 WHERE 1=1';
         $params = [];
 
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $sql .= ' AND u.company_id = :company_id';
             $params['company_id'] = $user['company_id'];
         }
@@ -56,15 +56,15 @@ final class UserController
         $name = trim((string) $request->input('name', ''));
         $email = strtolower(trim((string) $request->input('email', '')));
         $role = (string) $request->input('role', 'employee');
-        $allowedRoles = ['super_admin', 'it_admin', 'it_staff', 'viewer', 'employee'];
+        $allowedRoles = ['super_admin', 'it_admin', 'it_staff', 'viewer', 'employee', 'audit'];
 
         if ($staffId === '' || $name === '' || $email === '' || ! in_array($role, $allowedRoles, true)) {
             Response::error('staff_id, name, email, role required', 422);
             return;
         }
 
-        if ($role === 'super_admin' && ($user['role'] ?? '') !== 'super_admin') {
-            Response::error('Only super_admin can create super_admin', 403);
+        if (in_array($role, ['super_admin', 'audit'], true) && ($user['role'] ?? '') !== 'super_admin') {
+            Response::error('Only super_admin can assign super_admin or audit', 403);
             return;
         }
 
@@ -91,7 +91,7 @@ final class UserController
                 'phone' => $request->input('phone') ?: null,
                 'password_hash' => $passwordHash,
                 'role' => $role,
-                'can_decrypt_vault' => in_array($role, ['super_admin', 'it_admin'], true) ? 1 : 0,
+                'can_decrypt_vault' => in_array($role, ['super_admin', 'it_admin', 'audit'], true) ? 1 : 0,
             ]);
         } catch (\Throwable $e) {
             Response::error('Could not create user (duplicate email/staff?)', 422);
@@ -139,12 +139,15 @@ final class UserController
 
         Auth::assertCompanyAccess($user, (int) $target['company_id']);
 
-        if (($target['role'] ?? '') === 'super_admin' && ($user['role'] ?? '') !== 'super_admin') {
-            Response::error('Only super_admin can modify a super_admin', 403);
+        if (
+            in_array((string) ($target['role'] ?? ''), ['super_admin', 'audit'], true)
+            && ($user['role'] ?? '') !== 'super_admin'
+        ) {
+            Response::error('Only super_admin can modify a super_admin or audit user', 403);
             return;
         }
 
-        $allowedRoles = ['super_admin', 'it_admin', 'it_staff', 'viewer', 'employee'];
+        $allowedRoles = ['super_admin', 'it_admin', 'it_staff', 'viewer', 'employee', 'audit'];
         $newRole = $request->input('role');
         $newActive = $request->input('is_active');
         $newVault = $request->input('can_decrypt_vault');
@@ -154,8 +157,8 @@ final class UserController
             Response::error('Invalid role', 422);
             return;
         }
-        if ($role === 'super_admin' && ($user['role'] ?? '') !== 'super_admin') {
-            Response::error('Only super_admin can assign super_admin', 403);
+        if (in_array($role, ['super_admin', 'audit'], true) && ($user['role'] ?? '') !== 'super_admin') {
+            Response::error('Only super_admin can assign super_admin or audit', 403);
             return;
         }
 
@@ -178,10 +181,10 @@ final class UserController
         if ($newVault !== null) {
             $canDecrypt = self::isTruthy($newVault);
         } else {
-            $canDecrypt = in_array($role, ['super_admin', 'it_admin'], true)
+            $canDecrypt = in_array($role, ['super_admin', 'it_admin', 'audit'], true)
                 ? true
                 : self::isTruthy($target['can_decrypt_vault']);
-            if (in_array($role, ['super_admin', 'it_admin'], true)) {
+            if (in_array($role, ['super_admin', 'it_admin', 'audit'], true)) {
                 $canDecrypt = true;
             } elseif ($newRole !== null) {
                 $canDecrypt = false;

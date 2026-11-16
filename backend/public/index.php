@@ -105,6 +105,7 @@ $router->add('GET', '/api/public/companies', static function () use ($pdo): void
 $authed = static function (callable $fn) use ($pdo, $config): callable {
     return static function (Request $req, array $params = []) use ($fn, $pdo, $config): void {
         $user = Auth::requireUser($pdo, $req, $config);
+        Auth::assertAuditMayMutate($req, $user);
         $fn($req, $user, $params);
     };
 };

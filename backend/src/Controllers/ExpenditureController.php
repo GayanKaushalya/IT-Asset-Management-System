@@ -566,7 +566,7 @@ final class ExpenditureController
     {
         $this->ensureTables();
         $companyId = null;
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $companyId = (int) ($user['company_id'] ?? 0);
         } elseif ($request->input('company_id')) {
             $companyId = (int) $request->input('company_id');
@@ -802,7 +802,7 @@ final class ExpenditureController
         $where = ['e.is_active = TRUE'];
         $params = [];
 
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $where[] = 'e.company_id = :user_company';
             $params['user_company'] = (int) ($user['company_id'] ?? 0);
         } else {
@@ -1425,7 +1425,7 @@ final class ExpenditureController
 
         $companyId = null;
         $companyCode = null;
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $companyId = (int) ($user['company_id'] ?? 0);
         } else {
             $company = strtoupper(trim((string) $request->input('company', $request->input('company_code', ''))));
@@ -1666,7 +1666,7 @@ final class ExpenditureController
         }
 
         $companyId = null;
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $companyId = (int) ($user['company_id'] ?? 0);
         } elseif ($request->input('company_id')) {
             $companyId = (int) $request->input('company_id');

@@ -53,7 +53,7 @@ final class EmailAccountController
             $sql .= ' AND co.code = :company_code';
             $params['company_code'] = 'OTHER';
         } else {
-            if (($user['role'] ?? '') !== 'super_admin') {
+            if (! Auth::hasGlobalAccess($user)) {
                 $sql .= ' AND e.company_id = :company_id';
                 $params['company_id'] = $user['company_id'];
             } elseif ($request->input('company_id')) {
@@ -544,7 +544,7 @@ final class EmailAccountController
         $stmt->execute(['id' => $companyId]);
         $code = strtoupper((string) ($stmt->fetchColumn() ?: ''));
         if ($code === 'OTHER') {
-            if (! Auth::canDecryptVault($user) && ($user['role'] ?? '') !== 'super_admin') {
+            if (! Auth::canDecryptVault($user) && ! Auth::hasGlobalAccess($user)) {
                 Response::error('Not authorized for Other emails vault', 403);
                 exit;
             }

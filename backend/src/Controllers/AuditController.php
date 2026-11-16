@@ -6,6 +6,7 @@ namespace Indra\Itam\Controllers;
 
 use Indra\Itam\Http\Request;
 use Indra\Itam\Http\Response;
+use Indra\Itam\Support\Auth;
 use PDO;
 
 final class AuditController
@@ -109,7 +110,7 @@ final class AuditController
                 WHERE 1=1';
         $params = [];
 
-        if (($user['role'] ?? '') !== 'super_admin') {
+        if (! Auth::hasGlobalAccess($user)) {
             $sql .= ' AND c.company_id = :company_id';
             $params['company_id'] = $user['company_id'];
         }
@@ -124,6 +125,6 @@ final class AuditController
     /** @param array<string, mixed> $user */
     private function isAdmin(array $user): bool
     {
-        return in_array($user['role'] ?? '', ['super_admin', 'it_admin'], true);
+        return in_array($user['role'] ?? '', ['super_admin', 'it_admin', 'audit'], true);
     }
 }
