@@ -922,11 +922,17 @@ export default function CredentialsPage() {
                   <td colSpan={mainTab === 'emails' ? 7 : 6}>
                     <EmptyState
                       title={mainTab === 'emails' ? 'No email accounts found' : 'No WiFi passwords found'}
-                      description="Add a vault entry for this company tab."
+                      description={
+                        writable
+                          ? 'Add a vault entry for this company tab.'
+                          : 'No vault entries for this company tab.'
+                      }
                       action={
-                        <button type="button" className="btn btn-primary" onClick={openAdd}>
-                          + {addLabel}
-                        </button>
+                        writable ? (
+                          <button type="button" className="btn btn-primary" onClick={openAdd}>
+                            + {addLabel}
+                          </button>
+                        ) : undefined
                       }
                     />
                   </td>
