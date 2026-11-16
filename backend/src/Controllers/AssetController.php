@@ -2347,6 +2347,192 @@ final class AssetController
         fclose($out);
     }
 
+    /**
+     * Full mobile-phone inventory export for Audit (Excel SpreadsheetML).
+     * Matches the Mobile Phones tab (excludes SIM cards).
+     */
+    public function exportMobilePhonesExcel(Request $request, array $user): void
+    {
+        if (! Auth::isAudit($user) && ! Auth::isSuperAdmin($user)) {
+            Response::error('Only Audit accounts can export the mobile phone workbook', 403);
+            return;
+        }
+
+        $sql = "SELECT a.*,
+                       c.code AS company_code,
+                       c.short_name AS company_short,
+                       c.name AS company_name,
+                       loc.name AS location_name,
+                       loc.code AS location_code,
+                       d.name AS department_name
+                FROM mobile_phones a
+                JOIN companies c ON c.id = a.company_id
+                LEFT JOIN locations loc ON loc.id = a.location_id
+                LEFT JOIN departments d ON d.id = a.department_id
+                WHERE COALESCE(a.is_sim, FALSE) IS NOT TRUE";
+        $params = [];
+        if ($request->input('company_code')) {
+            $sql .= ' AND c.code = :ccode';
+            $params['ccode'] = strtoupper((string) $request->input('company_code'));
+        }
+        $sql .= ' ORDER BY c.code ASC, a.asset_tag ASC';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $headers = [
+            'Asset ID',
+            'Former Asset ID',
+            'Company',
+            'Company code',
+            'Location',
+            'Department',
+            'Brand',
+            'Model',
+            'Serial number',
+            'IMEI 1',
+            'IMEI 2',
+            'Phone / SIM number',
+            'Status',
+            'Current holder',
+            'Allocated on',
+            'First assigned user',
+            'First assigned on',
+            '1st handover person',
+            'Handed over on',
+            'Handover person 1',
+            'Handover person 2',
+            'Handover person 3',
+            'Handover person 4',
+            'Handover person 5',
+            'Handover person 6',
+            'Handover person 7',
+            'Handover person 8',
+            'Handover person 9',
+            'Handover person 10',
+            'Purchase date',
+            'Invoice no',
+            'Purchase amount (LKR)',
+            'Warranty period',
+            'Warranty expires on',
+            'Condition',
+            'Accessories',
+            'Has charger',
+            'Has data cable',
+            'Has back cover',
+            'Old stock',
+            'Notes',
+            'Created at',
+            'Updated at',
+        ];
+
+        $boolLabel = static function (mixed $v): string {
+            if ($v === true || $v === 1 || $v === '1' || $v === 't' || $v === 'true') {
+                return 'Yes';
+            }
+            if ($v === false || $v === 0 || $v === '0' || $v === 'f' || $v === 'false') {
+                return 'No';
+            }
+            return '';
+        };
+
+        $xmlEscape = static function (mixed $value): string {
+            $s = trim((string) ($value ?? ''));
+            return htmlspecialchars($s, ENT_QUOTES | ENT_XML1, 'UTF-8');
+        };
+
+        $filename = 'itams-mobile-phones-' . date('Ymd-His') . '.xls';
+        http_response_code(200);
+        header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: no-store');
+
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        echo '<?mso-application progid="Excel.Sheet"?>' . "\n";
+        echo '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
+        echo ' xmlns:o="urn:schemas-microsoft-com:office:office"' . "\n";
+        echo ' xmlns:x="urn:schemas-microsoft-com:office:excel"' . "\n";
+        echo ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
+        echo ' xmlns:html="http://www.w3.org/TR/REC-html40">' . "\n";
+        echo '<Styles>' . "\n";
+        echo '<Style ss:ID="header"><Font ss:Bold="1"/><Interior ss:Color="#E2E8F0" ss:Pattern="Solid"/></Style>' . "\n";
+        echo '</Styles>' . "\n";
+        echo '<Worksheet ss:Name="Mobile Phones"><Table>' . "\n";
+
+        echo '<Row>';
+        foreach ($headers as $h) {
+            echo '<Cell ss:StyleID="header"><Data ss:Type="String">' . $xmlEscape($h) . '</Data></Cell>';
+        }
+        echo '</Row>' . "\n";
+
+        foreach ($rows as $row) {
+            $firstAssigned = trim((string) (
+                $row['original_assigned_person']
+                ?? $row['first_handover_person']
+                ?? $row['handover_person_1']
+                ?? ''
+            ));
+            $values = [
+                $row['asset_tag'] ?? '',
+                $row['former_asset_tag'] ?? '',
+                $row['company_short'] ?? $row['company_name'] ?? '',
+                $row['company_code'] ?? '',
+                $row['location_name'] ?? '',
+                $row['department_name'] ?? '',
+                $row['brand'] ?? '',
+                $row['model'] ?? '',
+                $row['serial_number'] ?? '',
+                $row['imei_number'] ?? '',
+                $row['imei_number_2'] ?? '',
+                $row['phone_number'] ?? '',
+                $row['status'] ?? '',
+                $row['allocated_person'] ?? $row['pc_name'] ?? '',
+                $row['allocated_on'] ?? '',
+                $firstAssigned,
+                $row['original_assigned_on'] ?? '',
+                $row['first_handover_person'] ?? '',
+                $row['handed_over_on'] ?? '',
+                $row['handover_person_1'] ?? '',
+                $row['handover_person_2'] ?? '',
+                $row['handover_person_3'] ?? '',
+                $row['handover_person_4'] ?? '',
+                $row['handover_person_5'] ?? '',
+                $row['handover_person_6'] ?? '',
+                $row['handover_person_7'] ?? '',
+                $row['handover_person_8'] ?? '',
+                $row['handover_person_9'] ?? '',
+                $row['handover_person_10'] ?? '',
+                $row['purchase_date'] ?? '',
+                $row['invoice_no'] ?? '',
+                $row['purchase_amount_lkr'] ?? '',
+                $row['warranty_period'] ?? $row['warranty'] ?? '',
+                $row['warranty_expires_on'] ?? '',
+                $row['condition_code'] ?? '',
+                $row['accessories'] ?? '',
+                $boolLabel($row['has_charger'] ?? null),
+                $boolLabel($row['has_data_cable'] ?? null),
+                $boolLabel($row['has_back_cover'] ?? null),
+                $boolLabel($row['is_legacy'] ?? null),
+                $row['notes'] ?? '',
+                $row['created_at'] ?? '',
+                $row['updated_at'] ?? '',
+            ];
+            echo '<Row>';
+            foreach ($values as $v) {
+                $num = is_numeric($v) && ! preg_match('/^0\d+/', (string) $v);
+                if ($num && ! str_contains((string) $v, 'E') && ! str_contains((string) $v, 'e')) {
+                    echo '<Cell><Data ss:Type="Number">' . $xmlEscape($v) . '</Data></Cell>';
+                } else {
+                    echo '<Cell><Data ss:Type="String">' . $xmlEscape($v) . '</Data></Cell>';
+                }
+            }
+            echo '</Row>' . "\n";
+        }
+
+        echo '</Table></Worksheet></Workbook>';
+        exit;
+    }
+
     public function import(Request $request, array $user): void
     {
         $category = (string) ($request->input('category') ?: 'laptop');

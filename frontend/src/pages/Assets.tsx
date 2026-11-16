@@ -350,10 +350,24 @@ function currentHolderName(r: Asset): string {
   return '';
 }
 
+function firstAssignedUser(r: Asset): string {
+  for (const key of [
+    'original_assigned_person',
+    'first_handover_person',
+    'handover_person_1',
+    'user_name',
+    'pc_name',
+  ] as const) {
+    const v = r[key];
+    if (v != null && String(v).trim() !== '') return String(v).trim();
+  }
+  return '';
+}
+
 function isCurrentHolderOriginal(r: Asset): boolean {
   const holder = currentHolderName(r);
   if (!holder || isItCustodyHolder(holder)) return false;
-  const original = r.original_assigned_person != null ? String(r.original_assigned_person) : '';
+  const original = firstAssignedUser(r);
   return (
     r.allocated_is_original === true ||
     r.allocated_is_original === 't' ||
@@ -381,7 +395,7 @@ function PersonNameCell({
         <span className="person-sign current-holder">Current holder</span>
       ) : null}
       {sign === 'original' ? (
-        <span className="person-sign originally-assigned">Originally assigned</span>
+        <span className="person-sign originally-assigned">First assigned</span>
       ) : null}
     </span>
   );
@@ -2197,7 +2211,7 @@ export default function AssetsPage() {
                       {isSimTab
                         ? 'Department'
                         : isPersonAsset || categoryTab === 'pc' || isAllView
-                          ? 'Originally assigned'
+                          ? 'First assigned user'
                           : 'Assigned to'}
                     </th>
                     <th className="col-status">Status</th>
@@ -2327,7 +2341,11 @@ export default function AssetsPage() {
                             {dash(r.asset_tag)}
                           </strong>
                         </td>
-                        <td>{dash(r.user_name ?? r.pc_name)}</td>
+                        <td>
+                          <span className="cell-oneline" title={firstAssignedUser(r) || ''}>
+                            {dash(firstAssignedUser(r))}
+                          </span>
+                        </td>
                         <td>{dash(r.department_name)}</td>
                         <td>{dash(r.item_name)}</td>
                         {locationTab == null ? (
@@ -2422,16 +2440,8 @@ export default function AssetsPage() {
                             </span>
                           ) : rowShowsHolderBadges ? (
                             <PersonNameCell
-                              name={
-                                r.original_assigned_person != null && String(r.original_assigned_person) !== ''
-                                  ? String(r.original_assigned_person)
-                                  : ''
-                              }
-                              sign={
-                                r.original_assigned_person != null && String(r.original_assigned_person) !== ''
-                                  ? 'original'
-                                  : null
-                              }
+                              name={firstAssignedUser(r)}
+                              sign={firstAssignedUser(r) ? 'original' : null}
                             />
                           ) : (
                             <span

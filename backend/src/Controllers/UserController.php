@@ -36,7 +36,8 @@ final class UserController
             $params['company_id'] = $user['company_id'];
         }
 
-        $sql .= ' ORDER BY u.name ASC LIMIT 300';
+        // Oldest accounts first so the first assigned users stay visible at the top
+        $sql .= ' ORDER BY u.id ASC LIMIT 300';
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         Response::json(['data' => $stmt->fetchAll()]);

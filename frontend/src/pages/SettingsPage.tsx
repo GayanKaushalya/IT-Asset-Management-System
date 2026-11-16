@@ -30,34 +30,46 @@ type Section =
   | 'users'
   | 'companies'
   | 'cctv'
-  | 'backups';
+  | 'backups'
+  | 'audit';
 
-const SECTIONS: { id: Section; label: string; hint: string }[] = [
+const BASE_SECTIONS: { id: Section; label: string; hint: string; auditOnly?: boolean }[] = [
   { id: 'account', label: 'Account', hint: 'Your profile and password' },
   { id: 'users', label: 'Users', hint: 'IT staff and system access' },
   { id: 'companies', label: 'Companies', hint: 'Operating companies' },
   { id: 'cctv', label: 'CCTV', hint: 'Branch contacts, DVR / NVR inventory, and Head Office IP cameras' },
   { id: 'backups', label: 'Backups', hint: 'Create and restore system data backups' },
+  {
+    id: 'audit',
+    label: 'Audit export',
+    hint: 'Export full mobile phone inventory to Excel',
+    auditOnly: true,
+  },
 ];
-
-const SECTION_IDS = new Set(SECTIONS.map((s) => s.id));
 
 type Row = Record<string, unknown>;
 
 function dash(v: unknown): string {
-  if (v == null || v === '') return 'â€”';
+  if (v == null || v === '') return '—';
   return String(v);
 }
 
 export default function SettingsPage() {
+  const { user } = useAuth();
   const { section: raw } = useParams();
   const section = (raw ?? 'account') as Section;
 
-  if (!SECTION_IDS.has(section)) {
+  const sections = useMemo(
+    () => BASE_SECTIONS.filter((s) => !s.auditOnly || isAudit(user)),
+    [user],
+  );
+  const sectionIds = useMemo(() => new Set(sections.map((s) => s.id)), [sections]);
+
+  if (!sectionIds.has(section)) {
     return <Navigate to="/settings/account" replace />;
   }
 
-  const active = SECTIONS.find((s) => s.id === section)!;
+  const active = sections.find((s) => s.id === section)!;
 
   return (
     <main className="page page--fill">
@@ -68,7 +80,7 @@ export default function SettingsPage() {
       />
 
       <div className="tabs-secondary" style={{ marginBottom: '1.1rem' }}>
-        {SECTIONS.map((s) => (
+        {sections.map((s) => (
           <NavLink
             key={s.id}
             to={`/settings/${s.id}`}
@@ -95,7 +107,47 @@ export default function SettingsPage() {
       ) : null}
       {section === 'cctv' ? <CctvPanel /> : null}
       {section === 'backups' ? <BackupsPanel /> : null}
+      {section === 'audit' && isAudit(user) ? <AuditExportPanel /> : null}
     </main>
+  );
+}
+
+function AuditExportPanel() {
+  const toast = useToast();
+  const [exporting, setExporting] = useState(false);
+
+  async function exportMobilePhones() {
+    setExporting(true);
+    try {
+      await downloadAuthenticated(
+        '/api/audit/mobile-phones-export',
+        `itams-mobile-phones-${new Date().toISOString().slice(0, 10)}.xls`,
+      );
+      toast.success('Mobile phone Excel export downloaded');
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Export failed');
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  return (
+    <section className="card" style={{ padding: '1.25rem 1.35rem' }}>
+      <h3 style={{ marginTop: 0, marginBottom: '0.35rem' }}>Mobile phones — full export</h3>
+      <p style={{ color: 'var(--muted)', marginTop: 0, maxWidth: '40rem', fontSize: '0.92rem' }}>
+        Download every mobile phone record (all companies) with asset ID, holders, first assigned
+        user, handover chain, IMEI, serial, location, warranty, and accessories. SIM cards are
+        excluded — same scope as the Mobile Phones tab.
+      </p>
+      <button
+        type="button"
+        className="btn btn-primary"
+        disabled={exporting}
+        onClick={() => void exportMobilePhones()}
+      >
+        {exporting ? 'Preparing Excel…' : 'Export mobile phones to Excel'}
+      </button>
+    </section>
   );
 }
 

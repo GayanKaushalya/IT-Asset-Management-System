@@ -159,6 +159,9 @@ $router->add('GET', '/api/assets', $authed(static function (Request $req, array 
 $router->add('GET', '/api/assets/export', $authed(static function (Request $req, array $user) use ($assets): void {
     $assets->export($req, $user);
 }));
+$router->add('GET', '/api/audit/mobile-phones-export', $authed(static function (Request $req, array $user) use ($assets): void {
+    $assets->exportMobilePhonesExcel($req, $user);
+}));
 $router->add('GET', '/api/assets/import-template', $authed(static function (Request $req, array $user) use ($assets): void {
     $assets->importTemplate($req, $user);
 }));
