@@ -6,6 +6,7 @@ namespace Indra\Itam\Controllers;
 
 use Indra\Itam\Http\Request;
 use Indra\Itam\Http\Response;
+use Indra\Itam\Support\Auth;
 use PDO;
 
 final class AgreementController
