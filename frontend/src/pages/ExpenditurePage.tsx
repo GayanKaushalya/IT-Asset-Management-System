@@ -1,15 +1,50 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import { hasGlobalAccess } from '../auth/permissions';
+import { canManageAssets, hasGlobalAccess } from '../auth/permissions';
 import PageHeader from '../components/ui/PageHeader';
 import { EmptyState, ErrorState, LoadingSkeleton } from '../components/ui/EmptyState';
+import { Modal } from '../components/ui/Modal';
+import { useToast } from '../components/ui/Toast';
 import PaginationBar from '../components/ui/PaginationBar';
 import TableSettingsMenu, { PAGE_SIZE_OPTIONS, type PageSize } from '../components/ui/TableSettingsMenu';
 import { api } from '../services/client';
 import { getOrgMeta, type MetaCompany, type MetaDepartment, type MetaLocation } from '../services/metaCache';
 import { formatLkr } from './expenditureTypes';
 import { DATE_INPUT_MIN as DATE_MIN } from '../lib/dateInput';
+
+type ManualExpense = {
+  id: number;
+  reference_no?: string;
+  expense_date?: string;
+  company_code?: string;
+  company_short?: string;
+  department_name?: string;
+  supplier_display?: string | null;
+  total_lkr?: number;
+  expense_category?: string | null;
+  remarks?: string | null;
+  items_short?: string | null;
+  items_preview?: string | null;
+  line_items?: { item_name?: string; line_total_lkr?: number }[];
+};
+
+const EXPENSE_TYPES = [
+  { value: 'other', label: 'Other' },
+  { value: 'accessories', label: 'Accessories' },
+  { value: 'software', label: 'Software' },
+  { value: 'internet', label: 'Internet' },
+  { value: 'repairs', label: 'Repairs' },
+  { value: 'maintenance', label: 'Maintenance' },
+  { value: 'cloud', label: 'Cloud' },
+  { value: 'subscription', label: 'Subscription' },
+  { value: 'networking', label: 'Networking' },
+  { value: 'monitor', label: 'Monitor' },
+  { value: 'printer', label: 'Printer' },
+  { value: 'laptop', label: 'Laptop' },
+  { value: 'mobile_phone', label: 'Mobile phone' },
+  { value: 'desktop_pc', label: 'Desktop PC' },
+];
 
 const PAGE_SIZE_KEY = 'itams.expenditure.pageSize';
 
@@ -86,6 +121,20 @@ function monthStartIso(): string {
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
+}
+
+function emptyExpenseForm() {
+  return {
+    company_id: '',
+    department_id: '',
+    expense_date: todayIso(),
+    item_name: '',
+    amount: '',
+    item_type: 'other',
+    supplier_name: '',
+    invoice_no: '',
+    remarks: '',
+  };
 }
 
 function allFromIso(): string {
@@ -228,6 +277,8 @@ function assetPathForCategory(category: string): string {
 export default function ExpenditurePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
+  const canAddExpense = canManageAssets(user);
   const [companies, setCompanies] = useState<MetaCompany[]>([]);
   const [locations, setLocations] = useState<MetaLocation[]>([]);
   const [departments, setDepartments] = useState<MetaDepartment[]>([]);
@@ -237,6 +288,15 @@ export default function ExpenditurePage() {
   const [company, setCompany] = useState('ALL');
   const [locationId, setLocationId] = useState('');
   const [departmentId, setDepartmentId] = useState('');
+  const [showAddExpense, setShowAddExpense] = useState(false);
+  const [savingExpense, setSavingExpense] = useState(false);
+  const [expenseForm, setExpenseForm] = useState(emptyExpenseForm);
+  const [manualExpenses, setManualExpenses] = useState<ManualExpense[]>([]);
+
+  const expenseDepartments = useMemo(() => {
+    if (!expenseForm.company_id) return departments;
+    return departments.filter((d) => Number(d.company_id) === Number(expenseForm.company_id));
+  }, [departments, expenseForm.company_id]);
   const [category, setCategory] = useState<AssetCategoryFilter>('');
   const [q, setQ] = useState('');
 
@@ -280,6 +340,24 @@ export default function ExpenditurePage() {
     setDepartmentId('');
   }
 
+  const loadManualExpenses = useCallback(async () => {
+    try {
+      const params = new URLSearchParams();
+      params.set('from_date', fromDate);
+      params.set('to_date', toDate);
+      params.set('limit', '100');
+      if (locationId) params.set('location_id', locationId);
+      if (departmentId) params.set('department_id', departmentId);
+      if (q.trim()) params.set('q', q.trim());
+      const companyCode = normalizeCompanyCode(company);
+      if (companyCode && companyCode !== 'ALL') params.set('company', companyCode);
+      const res = await api<{ data: ManualExpense[] }>(`/api/expenditures?${params.toString()}`);
+      setManualExpenses(res.data ?? []);
+    } catch {
+      setManualExpenses([]);
+    }
+  }, [fromDate, toDate, company, locationId, departmentId, q]);
+
   const load = useCallback(async () => {
     if (!fromDate || !toDate) {
       setError('Choose a From date and a To date');
@@ -317,7 +395,7 @@ export default function ExpenditurePage() {
             )
           : null;
 
-      const [res, cardsRes] = await Promise.all([filteredReq, cardsReq]);
+      const [res, cardsRes] = await Promise.all([filteredReq, cardsReq, loadManualExpenses()]);
       setRows(res.data ?? []);
       setSummary(res.summary ?? null);
       setCompanyCards((cardsRes ?? res).summary?.by_company ?? []);
@@ -331,7 +409,79 @@ export default function ExpenditurePage() {
     } finally {
       setLoading(false);
     }
-  }, [fromDate, toDate, company, locationId, departmentId, category, q]);
+  }, [fromDate, toDate, company, locationId, departmentId, category, q, loadManualExpenses]);
+
+  function openAddExpense() {
+    const code = normalizeCompanyCode(company);
+    const co =
+      code && code !== 'ALL' ? companies.find((c) => c.code === code) : companies[0];
+    setExpenseForm({
+      ...emptyExpenseForm(),
+      company_id: co ? String(co.id) : '',
+      department_id: departmentId || '',
+    });
+    setShowAddExpense(true);
+  }
+
+  async function submitExpense(e: FormEvent) {
+    e.preventDefault();
+    if (!expenseForm.company_id) {
+      toast.error('Company is required');
+      return;
+    }
+    if (!expenseForm.department_id) {
+      toast.error('Department is required');
+      return;
+    }
+    if (!expenseForm.expense_date) {
+      toast.error('Expense date is required');
+      return;
+    }
+    const itemName = expenseForm.item_name.trim();
+    if (!itemName) {
+      toast.error('Item / description is required');
+      return;
+    }
+    const amount = Number(String(expenseForm.amount).replace(/,/g, ''));
+    if (!Number.isFinite(amount) || amount <= 0) {
+      toast.error('Enter a valid amount greater than zero');
+      return;
+    }
+    setSavingExpense(true);
+    try {
+      await api('/api/expenditures', {
+        method: 'POST',
+        body: JSON.stringify({
+          company_id: Number(expenseForm.company_id),
+          department_id: Number(expenseForm.department_id),
+          expense_date: expenseForm.expense_date,
+          supplier_name: expenseForm.supplier_name.trim() || null,
+          invoice_no: expenseForm.invoice_no.trim() || null,
+          expense_category: expenseForm.item_type || 'other',
+          remarks: expenseForm.remarks.trim() || null,
+          payment_status: 'paid',
+          approval_status: 'approved',
+          amount_paid_lkr: amount,
+          lines: [
+            {
+              item_name: itemName,
+              item_type: expenseForm.item_type || 'other',
+              quantity: 1,
+              unit_price_lkr: amount,
+            },
+          ],
+        }),
+      });
+      toast.success('Expense added');
+      setShowAddExpense(false);
+      setExpenseForm(emptyExpenseForm());
+      await load();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not save expense');
+    } finally {
+      setSavingExpense(false);
+    }
+  }
 
   useEffect(() => {
     void load();
@@ -388,7 +538,14 @@ export default function ExpenditurePage() {
       <PageHeader
         eyebrow="Finance & Procurement"
         title="IT Expenditure"
-        subtitle="Spend from all asset tabs (laptops, phones, PCs, other). Date = Acquired On; amount from Assets. Total spend updates with your filters."
+        subtitle="Spend from all asset tabs (laptops, phones, PCs, other). Date = Acquired On; amount from Assets. Add manual expenses with company and department."
+        actions={
+          canAddExpense ? (
+            <button type="button" className="btn btn-primary" onClick={openAddExpense}>
+              Add Expense
+            </button>
+          ) : null
+        }
       />
 
       {hasGlobalAccess(user) ? (
@@ -702,6 +859,219 @@ export default function ExpenditurePage() {
           </div>
         </section>
       ) : null}
+
+      {!loading && manualExpenses.length > 0 ? (
+        <section className="card exp2-table-card" style={{ marginTop: '1rem' }}>
+          <div className="exp2-table-head">
+            <div className="exp2-table-title">Manual expenses</div>
+          </div>
+          <div className="table-wrap">
+            <table className="table asset-data-table exp2-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Reference</th>
+                  <th>Item</th>
+                  <th>Company</th>
+                  <th>Department</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {manualExpenses.map((ex) => {
+                  const item =
+                    ex.items_short ||
+                    ex.line_items?.[0]?.item_name ||
+                    ex.expense_category ||
+                    ex.remarks ||
+                    'Expense';
+                  const tone = companyTone(ex.company_code);
+                  return (
+                    <tr key={ex.id}>
+                      <td className="exp2-date">
+                        {(ex.expense_date || '—').toString().slice(0, 10)}
+                      </td>
+                      <td>{ex.reference_no || '—'}</td>
+                      <td>
+                        <strong>{item}</strong>
+                      </td>
+                      <td>
+                        <span className={`exp2-pill exp2-pill--${tone}`}>
+                          {companyDisplay(ex.company_code, ex.company_short)}
+                        </span>
+                      </td>
+                      <td>{ex.department_name || '—'}</td>
+                      <td className="exp2-price">{formatLkr(ex.total_lkr ?? 0)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
+
+      <Modal
+        open={showAddExpense}
+        title="Add Expense"
+        eyebrow="IT Expenditure"
+        subtitle="Record a manual expense with company and department."
+        onClose={() => {
+          if (!savingExpense) setShowAddExpense(false);
+        }}
+        wide
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-soft"
+              disabled={savingExpense}
+              onClick={() => setShowAddExpense(false)}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="add-expense-form"
+              className="btn btn-primary"
+              disabled={savingExpense}
+            >
+              {savingExpense ? 'Saving…' : 'Save expense'}
+            </button>
+          </>
+        }
+      >
+        <form id="add-expense-form" className="form-grid" onSubmit={(e) => void submitExpense(e)}>
+          <label>
+            Company *
+            <select
+              className="select"
+              required
+              value={expenseForm.company_id}
+              onChange={(e) =>
+                setExpenseForm((prev) => ({
+                  ...prev,
+                  company_id: e.target.value,
+                  department_id: '',
+                }))
+              }
+            >
+              <option value="">Select company</option>
+              {companies.map((c) => (
+                <option key={c.id} value={String(c.id)}>
+                  {c.short_name || c.code}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Department *
+            <select
+              className="select"
+              required
+              value={expenseForm.department_id}
+              onChange={(e) =>
+                setExpenseForm((prev) => ({ ...prev, department_id: e.target.value }))
+              }
+            >
+              <option value="">Select department</option>
+              {expenseDepartments.map((d) => (
+                <option key={d.id} value={String(d.id)}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Expense date *
+            <input
+              className="input"
+              type="date"
+              min={DATE_MIN}
+              required
+              value={expenseForm.expense_date}
+              onChange={(e) =>
+                setExpenseForm((prev) => ({ ...prev, expense_date: e.target.value }))
+              }
+            />
+          </label>
+          <label>
+            Type
+            <select
+              className="select"
+              value={expenseForm.item_type}
+              onChange={(e) =>
+                setExpenseForm((prev) => ({ ...prev, item_type: e.target.value }))
+              }
+            >
+              {EXPENSE_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label style={{ gridColumn: '1 / -1' }}>
+            Item / description *
+            <input
+              className="input"
+              required
+              placeholder="e.g. Network switch, Internet bill"
+              value={expenseForm.item_name}
+              onChange={(e) =>
+                setExpenseForm((prev) => ({ ...prev, item_name: e.target.value }))
+              }
+            />
+          </label>
+          <label>
+            Amount (LKR) *
+            <input
+              className="input"
+              required
+              inputMode="decimal"
+              placeholder="0.00"
+              value={expenseForm.amount}
+              onChange={(e) =>
+                setExpenseForm((prev) => ({ ...prev, amount: e.target.value }))
+              }
+            />
+          </label>
+          <label>
+            Supplier
+            <input
+              className="input"
+              placeholder="Optional"
+              value={expenseForm.supplier_name}
+              onChange={(e) =>
+                setExpenseForm((prev) => ({ ...prev, supplier_name: e.target.value }))
+              }
+            />
+          </label>
+          <label>
+            Invoice no.
+            <input
+              className="input"
+              placeholder="Optional"
+              value={expenseForm.invoice_no}
+              onChange={(e) =>
+                setExpenseForm((prev) => ({ ...prev, invoice_no: e.target.value }))
+              }
+            />
+          </label>
+          <label style={{ gridColumn: '1 / -1' }}>
+            Remarks
+            <textarea
+              className="input"
+              rows={2}
+              placeholder="Optional notes"
+              value={expenseForm.remarks}
+              onChange={(e) =>
+                setExpenseForm((prev) => ({ ...prev, remarks: e.target.value }))
+              }
+            />
+          </label>
+        </form>
+      </Modal>
     </main>
   );
 }

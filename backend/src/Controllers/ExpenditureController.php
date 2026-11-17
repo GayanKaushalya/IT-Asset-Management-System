@@ -686,7 +686,8 @@ final class ExpenditureController
 
     private function canManage(array $user): bool
     {
-        return in_array($user['role'] ?? '', ['super_admin', 'it_admin', 'it_staff'], true);
+        return Auth::canWrite($user)
+            && in_array($user['role'] ?? '', ['super_admin', 'it_admin', 'it_staff'], true);
     }
 
     private function headerSelect(): string

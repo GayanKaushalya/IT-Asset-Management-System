@@ -1197,6 +1197,14 @@ export default function AssetsPage() {
 
       const processor = String(form.processor ?? '').trim();
       const amountN = form.amount.trim() === '' ? null : Number(form.amount.replace(/,/g, ''));
+      // Empty purchased date: null on update (allow clear). On create for inventory assets,
+      // default to today so Expenditure can count the purchase.
+      const purchaseDateCleared = String(form.date ?? '').trim() || null;
+      const purchaseDate =
+        purchaseDateCleared ??
+        (editingId || category === 'other' || category === 'printer' || savingSim
+          ? null
+          : new Date().toISOString().slice(0, 10));
       const payload: Record<string, unknown> = {
         company_id: saveCompany.id,
         category,
@@ -1215,9 +1223,8 @@ export default function AssetsPage() {
         cpu: processor || null,
         other: form.other || null,
         notes: form.other || null,
-        // Acquired On = purchased date; default to today when left blank so Expenditure can count it
-        date: String(form.date ?? '').trim() || new Date().toISOString().slice(0, 10),
-        purchase_date: String(form.date ?? '').trim() || new Date().toISOString().slice(0, 10),
+        date: purchaseDate,
+        purchase_date: purchaseDate,
         warranty: savingSim ? null : warranty,
         warranty_expires_on: savingSim ? null : warranty,
         imei_number: form.imei_number || null,
@@ -6737,7 +6744,7 @@ function AssetViewModal({
                 </div>
                 <div className="avm-spec-row">
                   <span>Purchased date</span>
-                  <strong>{dash(asset.purchase_date ?? asset.handover_date)}</strong>
+                  <strong>{dash(asset.purchase_date ? String(asset.purchase_date).slice(0, 10) : '')}</strong>
                 </div>
                 {asset.warranty_period ? (
                   <div className="avm-spec-row">
