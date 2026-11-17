@@ -123,7 +123,22 @@ type SpendSummary = {
   }[];
 };
 
-type AssetCategoryFilter = '' | 'laptop' | 'mobile_phone' | 'pc' | 'other';
+type AssetCategoryFilter = 'all' | 'laptop' | 'mobile_phone' | 'pc' | 'other' | 'manual';
+
+const CATEGORY_CARDS: {
+  key: AssetCategoryFilter;
+  label: string;
+  tone: string;
+  badge: string;
+  badgeTone: string;
+}[] = [
+  { key: 'laptop', label: 'Laptops', tone: 'blue', badge: 'Spend', badgeTone: 'green' },
+  { key: 'mobile_phone', label: 'Mobile phones', tone: 'green', badge: 'Spend', badgeTone: 'blue' },
+  { key: 'pc', label: 'PCs', tone: 'slate', badge: 'New', badgeTone: 'slate' },
+  { key: 'other', label: 'Other assets', tone: 'purple', badge: 'IT', badgeTone: 'purple' },
+  { key: 'manual', label: 'Manual expenses', tone: 'orange', badge: 'Ledger', badgeTone: 'orange' },
+  { key: 'all', label: 'Total purchases', tone: 'cyan', badge: 'Period', badgeTone: 'cyan' },
+];
 
 const COMPANY_TABS: { id: string; label: string }[] = [
   { id: 'ALL', label: 'All' },
@@ -131,6 +146,10 @@ const COMPANY_TABS: { id: string; label: string }[] = [
   { id: 'IMS', label: 'IMS' },
   { id: 'ISP', label: 'ISP' },
 ];
+
+function categoryCardLabel(key: AssetCategoryFilter): string {
+  return CATEGORY_CARDS.find((c) => c.key === key)?.label ?? 'Purchases';
+}
 
 function normalizeCompanyCode(code?: string | null): string {
   const c = (code || '').toUpperCase();
@@ -249,33 +268,6 @@ function categoryIconClass(category: string): string {
   return 'is-laptop';
 }
 
-function IconCoin() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <circle cx="12" cy="12" r="8" />
-      <path d="M12 7v10M9.5 9.5c.6-1 1.7-1.5 2.8-1.5 1.7 0 2.7 1 2.7 2.2 0 2.5-5 1.6-5 4.1 0 1.1 1 2.2 2.8 2.2 1.2 0 2.1-.5 2.7-1.4" />
-    </svg>
-  );
-}
-
-function IconBox() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M21 8l-9-5-9 5v8l9 5 9-5V8z" />
-      <path d="M3 8l9 5 9-5M12 13v10" />
-    </svg>
-  );
-}
-
-function IconTag() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M20 12l-8 8-9-9V3h8l9 9z" />
-      <circle cx="7.5" cy="7.5" r="1.2" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
 function IconSearch() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
@@ -328,7 +320,7 @@ export default function ExpenditurePage() {
     if (!expenseForm.company_id) return departments;
     return departments.filter((d) => Number(d.company_id) === Number(expenseForm.company_id));
   }, [departments, expenseForm.company_id]);
-  const [category, setCategory] = useState<AssetCategoryFilter>('');
+  const [category, setCategory] = useState<AssetCategoryFilter>('all');
   const [q, setQ] = useState('');
 
   const [rows, setRows] = useState<SpendRow[]>([]);
@@ -339,6 +331,55 @@ export default function ExpenditurePage() {
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<PageSize>(() => readStoredPageSize());
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<AssetCategoryFilter, number> = {
+      all: 0,
+      laptop: 0,
+      mobile_phone: 0,
+      pc: 0,
+      other: 0,
+      manual: manualExpenses.length,
+    };
+    for (const r of rows) {
+      const key = r.asset_category as AssetCategoryFilter;
+      if (key === 'laptop' || key === 'mobile_phone' || key === 'pc' || key === 'other') {
+        counts[key] += 1;
+      }
+    }
+    counts.all = rows.length + manualExpenses.length;
+    return counts;
+  }, [rows, manualExpenses]);
+
+  const categorySpend = useMemo(() => {
+    const spend: Record<AssetCategoryFilter, number> = {
+      all: 0,
+      laptop: 0,
+      mobile_phone: 0,
+      pc: 0,
+      other: 0,
+      manual: 0,
+    };
+    for (const r of rows) {
+      const amt = Number(r.purchase_amount_lkr) || 0;
+      spend.all += amt;
+      const key = r.asset_category as AssetCategoryFilter;
+      if (key === 'laptop' || key === 'mobile_phone' || key === 'pc' || key === 'other') {
+        spend[key] += amt;
+      }
+    }
+    for (const ex of manualExpenses) {
+      const amt = Number(ex.total_lkr) || 0;
+      spend.manual += amt;
+      spend.all += amt;
+    }
+    return spend;
+  }, [rows, manualExpenses]);
+
+  const filteredRows = useMemo(() => {
+    if (category === 'all' || category === 'manual') return rows;
+    return rows.filter((r) => r.asset_category === category);
+  }, [rows, category]);
 
   useEffect(() => {
     void getOrgMeta().then((m) => {
@@ -369,6 +410,16 @@ export default function ExpenditurePage() {
     setCompany(code === '' ? 'ALL' : code);
     setLocationId('');
     setDepartmentId('');
+    setCategory('all');
+  }
+
+  function clearFilters() {
+    setQ('');
+    setCategory('all');
+    setLocationId('');
+    setDepartmentId('');
+    setCompany('ALL');
+    setPage(1);
   }
 
   const loadManualExpenses = useCallback(async () => {
@@ -408,7 +459,6 @@ export default function ExpenditurePage() {
       base.set('to_date', toDate);
       if (locationId) base.set('location_id', locationId);
       if (departmentId) base.set('department_id', departmentId);
-      if (category) base.set('category', category);
       if (q.trim()) base.set('q', q.trim());
 
       const filtered = new URLSearchParams(base);
@@ -440,7 +490,7 @@ export default function ExpenditurePage() {
     } finally {
       setLoading(false);
     }
-  }, [fromDate, toDate, company, locationId, departmentId, category, q, loadManualExpenses]);
+  }, [fromDate, toDate, company, locationId, departmentId, q, loadManualExpenses]);
 
   function openAddExpense() {
     const code = normalizeCompanyCode(company);
@@ -561,14 +611,22 @@ export default function ExpenditurePage() {
     void load();
   }, [load]);
 
-  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize) || 1);
+  useEffect(() => {
+    setPage(1);
+  }, [category]);
+
+  const listRows = category === 'manual' ? [] : filteredRows;
+  const totalPages = Math.max(1, Math.ceil(listRows.length / pageSize) || 1);
   const safePage = Math.min(Math.max(1, page), totalPages);
   const pageRows = useMemo(() => {
     const start = (safePage - 1) * pageSize;
-    return rows.slice(start, start + pageSize);
-  }, [rows, safePage, pageSize]);
-  const rangeFrom = rows.length === 0 ? 0 : (safePage - 1) * pageSize + 1;
-  const rangeTo = Math.min(safePage * pageSize, rows.length);
+    return listRows.slice(start, start + pageSize);
+  }, [listRows, safePage, pageSize]);
+  const rangeFrom = listRows.length === 0 ? 0 : (safePage - 1) * pageSize + 1;
+  const rangeTo = Math.min(safePage * pageSize, listRows.length);
+  const showManualSection = category === 'all' || category === 'manual';
+  const showPurchaseSection = category !== 'manual';
+  const periodHint = `${fromDate} → ${toDate}`;
 
   function changePageSize(size: PageSize) {
     setPageSize(size);
@@ -592,11 +650,6 @@ export default function ExpenditurePage() {
       setToDate(todayIso());
     }
   }
-
-  const phoneCat = summary?.by_category.find((c) => c.asset_category === 'mobile_phone');
-  const laptopCat = summary?.by_category.find((c) => c.asset_category === 'laptop');
-  const pcCat = summary?.by_category.find((c) => c.asset_category === 'pc');
-  const otherCat = summary?.by_category.find((c) => c.asset_category === 'other');
 
   function openAssetView(r: SpendRow) {
     const path = assetPathForCategory(r.asset_category);
@@ -683,20 +736,6 @@ export default function ExpenditurePage() {
               ))}
             </select>
           </label>
-          <label className="exp2-field">
-            <span>Asset type</span>
-            <select
-              className="select"
-              value={category}
-              onChange={(e) => setCategory(e.target.value as AssetCategoryFilter)}
-            >
-              <option value="">All types</option>
-              <option value="laptop">Laptop</option>
-              <option value="mobile_phone">Mobile phone</option>
-              <option value="pc">Desktop PC</option>
-              <option value="other">Other assets</option>
-            </select>
-          </label>
           <label className="exp2-field exp2-field--search">
             <span>Search</span>
             <div className="exp2-search">
@@ -714,9 +753,25 @@ export default function ExpenditurePage() {
           </label>
           <div className="exp2-field exp2-field--action">
             <span>&nbsp;</span>
-            <button type="button" className="btn btn-primary exp2-calc" onClick={() => void load()}>
-              <IconCalc /> Calculate
-            </button>
+            <div className="exp2-filter-actions">
+              <button
+                type="button"
+                className="btn btn-soft"
+                disabled={
+                  !q &&
+                  category === 'all' &&
+                  !locationId &&
+                  !departmentId &&
+                  company === 'ALL'
+                }
+                onClick={clearFilters}
+              >
+                Clear search / filters
+              </button>
+              <button type="button" className="btn btn-primary exp2-calc" onClick={() => void load()}>
+                <IconCalc /> Refresh
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -724,123 +779,83 @@ export default function ExpenditurePage() {
       {loading ? <LoadingSkeleton /> : null}
       {error ? <ErrorState title="Could not calculate" description={error} /> : null}
 
-      {!loading && summary ? (
-        <>
-          <section className="exp2-kpi-row">
-            <article className="card exp2-kpi">
-              <div className="exp2-kpi-icon">
-                <IconCoin />
-              </div>
-              <div>
-                <div className="exp2-kpi-label">
-                  Total spend ({fromDate} → {toDate})
+      {!loading && !error ? (
+        <section className="branch-stat-row no-print" aria-label="Expenditure category counts">
+          {CATEGORY_CARDS.map((card) => {
+            const value = categoryCounts[card.key] ?? 0;
+            const spend = categorySpend[card.key] ?? 0;
+            const active = category === card.key;
+            return (
+              <button
+                key={card.key}
+                type="button"
+                className={`branch-stat-card tone-${card.tone}${active ? ' is-active' : ''}`}
+                onClick={() => setCategory(card.key)}
+                title={`Show ${card.label.toLowerCase()}`}
+              >
+                <div className="branch-stat-top">
+                  <span className="branch-stat-label">{card.label}</span>
+                  <span className={`branch-stat-badge tone-${card.badgeTone}`}>{card.badge}</span>
                 </div>
-                <div className="exp2-kpi-value">{formatLkr(summary.total_spend)}</div>
-              </div>
-            </article>
-            <article className="card exp2-kpi">
-              <div className="exp2-kpi-icon">
-                <IconBox />
-              </div>
-              <div>
-                <div className="exp2-kpi-label">Assets in period</div>
-                <div className="exp2-kpi-value">{summary.asset_count}</div>
-              </div>
-            </article>
-            <article className="card exp2-kpi">
-              <div className="exp2-kpi-icon">
-                <IconTag />
-              </div>
-              <div>
-                <div className="exp2-kpi-label">With purchase price</div>
-                <div className="exp2-kpi-value">{summary.with_price_count}</div>
-              </div>
-            </article>
-          </section>
-
-          <section className="exp2-company-block">
-            <div className="exp2-company-title">Count &amp; spend by sub-company</div>
-            <div className="exp2-company-row">
-              <div className="exp2-company-cards">
-                {(companyCards.length > 0 ? companyCards : summary.by_company).map((co) => {
-                  const tone = companyTone(co.company_code);
-                  const active = sameCompany(company, co.company_code);
-                  return (
-                    <button
-                      key={co.company_code || co.company_label}
-                      type="button"
-                      className={`card exp2-co-card${active ? ' is-active' : ''}`}
-                      title={active ? 'Show all companies' : `Filter to ${companyDisplay(co.company_code, co.company_label)}`}
-                      onClick={() => {
-                        if (active) selectCompany('ALL');
-                        else selectCompany(co.company_code);
-                      }}
-                    >
-                      <span className={`exp2-co-badge exp2-co-badge--${tone}`}>
-                        {companyDisplay(co.company_code, co.company_label).slice(0, 3)}
-                      </span>
-                      <div className="exp2-co-text">
-                        <strong>{companyDisplay(co.company_code, co.company_label)}</strong>
-                        <span>
-                          {co.asset_count} asset{co.asset_count === 1 ? '' : 's'}
-                        </span>
-                      </div>
-                      <div className="exp2-co-amt">{formatLkr(co.total_spend)}</div>
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="exp2-cat-pills">
-                {laptopCat ? (
-                  <button
-                    type="button"
-                    className={`exp2-cat-pill${category === 'laptop' ? ' is-active' : ''}`}
-                    onClick={() => setCategory(category === 'laptop' ? '' : 'laptop')}
-                  >
-                    <IconLaptop size={14} />
-                    Laptops: {laptopCat.asset_count} · {formatLkr(laptopCat.total_spend)}
-                  </button>
-                ) : null}
-                {phoneCat ? (
-                  <button
-                    type="button"
-                    className={`exp2-cat-pill${category === 'mobile_phone' ? ' is-active' : ''}`}
-                    onClick={() => setCategory(category === 'mobile_phone' ? '' : 'mobile_phone')}
-                  >
-                    <IconPhone size={14} />
-                    Mobile phones: {phoneCat.asset_count} · {formatLkr(phoneCat.total_spend)}
-                  </button>
-                ) : null}
-                {pcCat ? (
-                  <button
-                    type="button"
-                    className={`exp2-cat-pill${category === 'pc' ? ' is-active' : ''}`}
-                    onClick={() => setCategory(category === 'pc' ? '' : 'pc')}
-                  >
-                    <IconPc size={14} />
-                    Desktop PCs: {pcCat.asset_count} · {formatLkr(pcCat.total_spend)}
-                  </button>
-                ) : null}
-                {otherCat ? (
-                  <button
-                    type="button"
-                    className={`exp2-cat-pill${category === 'other' ? ' is-active' : ''}`}
-                    onClick={() => setCategory(category === 'other' ? '' : 'other')}
-                  >
-                    <IconOther size={14} />
-                    Other assets: {otherCat.asset_count} · {formatLkr(otherCat.total_spend)}
-                  </button>
-                ) : null}
-              </div>
-            </div>
-          </section>
-        </>
+                <strong className="branch-stat-value">{value}</strong>
+                <span className="branch-stat-hint">
+                  {formatLkr(spend)} · click to list
+                </span>
+              </button>
+            );
+          })}
+        </section>
       ) : null}
 
-      {!loading && !error && rows.length === 0 ? (
+      {!loading && summary ? (
+        <section className="exp2-company-block">
+          <div className="exp2-company-title">Count &amp; spend by sub-company · {periodHint}</div>
+          <div className="exp2-company-row">
+            <div className="exp2-company-cards">
+              {(companyCards.length > 0 ? companyCards : summary.by_company).map((co) => {
+                const tone = companyTone(co.company_code);
+                const active = sameCompany(company, co.company_code);
+                return (
+                  <button
+                    key={co.company_code || co.company_label}
+                    type="button"
+                    className={`card exp2-co-card${active ? ' is-active' : ''}`}
+                    title={
+                      active
+                        ? 'Show all companies'
+                        : `Filter to ${companyDisplay(co.company_code, co.company_label)}`
+                    }
+                    onClick={() => {
+                      if (active) selectCompany('ALL');
+                      else selectCompany(co.company_code);
+                    }}
+                  >
+                    <span className={`exp2-co-badge exp2-co-badge--${tone}`}>
+                      {companyDisplay(co.company_code, co.company_label).slice(0, 3)}
+                    </span>
+                    <div className="exp2-co-text">
+                      <strong>{companyDisplay(co.company_code, co.company_label)}</strong>
+                      <span>
+                        {co.asset_count} asset{co.asset_count === 1 ? '' : 's'}
+                      </span>
+                    </div>
+                    <div className="exp2-co-amt">{formatLkr(co.total_spend)}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {!loading && !error && showPurchaseSection && listRows.length === 0 ? (
         <EmptyState
-          title="No new purchases in this date range"
-          description="Laptops, phones, newly purchased PCs, and other assets with Acquired On + purchase amount appear here. Try widening the dates or All types."
+          title={
+            category === 'all'
+              ? 'No new purchases in this date range'
+              : `No ${categoryCardLabel(category).toLowerCase()} in this date range`
+          }
+          description="Laptops, phones, newly purchased PCs, and other assets with Acquired On + purchase amount appear here. Try widening the dates or clear filters."
           action={
             <button type="button" className="btn btn-primary" onClick={() => presetRange('all')}>
               Show all purchases
@@ -849,17 +864,24 @@ export default function ExpenditurePage() {
         />
       ) : null}
 
-      {!loading && rows.length > 0 ? (
+      {!loading && showPurchaseSection && listRows.length > 0 ? (
         <section className="card exp2-table-card">
           <div className="exp2-table-head">
-            <div className="exp2-table-title">Purchases</div>
+            <div className="exp2-table-title">
+              Purchases
+              {category !== 'all' ? (
+                <span className="exp2-table-title-sub"> · {categoryCardLabel(category)}</span>
+              ) : null}
+            </div>
             <div className="exp2-table-toolbar">
               <TableSettingsMenu
                 pageSize={pageSize}
                 onPageSizeChange={changePageSize}
                 onRefresh={() => void load()}
                 refreshing={loading}
-                rangeLabel={rows.length === 0 ? '0 of 0' : `${rangeFrom} - ${rangeTo} of ${rows.length}`}
+                rangeLabel={
+                  listRows.length === 0 ? '0 of 0' : `${rangeFrom} - ${rangeTo} of ${listRows.length}`
+                }
               />
               <PaginationBar
                 page={safePage}
@@ -928,16 +950,35 @@ export default function ExpenditurePage() {
             </table>
           </div>
           <div className="exp2-table-foot">
-            {rows.length} purchase{rows.length === 1 ? '' : 's'} · {fromDate} → {toDate}
-            {summary ? ` · Total ${formatLkr(summary.total_spend)}` : ''}
+            {listRows.length} purchase{listRows.length === 1 ? '' : 's'} · {periodHint}
+            {` · ${formatLkr(category === 'all' ? categorySpend.all - categorySpend.manual : categorySpend[category] ?? 0)}`}
           </div>
         </section>
       ) : null}
 
-      {!loading && manualExpenses.length > 0 ? (
+      {!loading && category === 'manual' && manualExpenses.length === 0 ? (
+        <EmptyState
+          title="No manual expenses in this date range"
+          description="Use Add Expense to record ledger spend with company and department."
+          action={
+            canAddExpense ? (
+              <button type="button" className="btn btn-primary" onClick={openAddExpense}>
+                Add Expense
+              </button>
+            ) : undefined
+          }
+        />
+      ) : null}
+
+      {!loading && showManualSection && manualExpenses.length > 0 ? (
         <section className="card exp2-table-card" style={{ marginTop: '1rem' }}>
           <div className="exp2-table-head">
-            <div className="exp2-table-title">Manual expenses</div>
+            <div className="exp2-table-title">
+              Manual expenses
+              {category === 'manual' ? (
+                <span className="exp2-table-title-sub"> · Ledger</span>
+              ) : null}
+            </div>
           </div>
           <div className="table-wrap">
             <table className="table asset-data-table exp2-table">
@@ -1228,6 +1269,84 @@ export default function ExpenditurePage() {
           </div>
         </form>
       </Modal>
+
+      <style>{`
+        .exp2-filter-actions {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+        }
+        .exp2-table-title-sub {
+          color: var(--muted);
+          font-weight: 500;
+          font-size: 0.95rem;
+        }
+        .branch-stat-row {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 0.75rem;
+          margin-bottom: 1rem;
+        }
+        .branch-stat-card {
+          text-align: left;
+          border: 1px solid var(--border);
+          border-bottom-width: 3px;
+          border-radius: 12px;
+          background: #fff;
+          padding: 0.85rem 0.95rem;
+          cursor: pointer;
+          display: grid;
+          gap: 0.35rem;
+          min-height: 6.5rem;
+        }
+        .branch-stat-card.tone-blue { border-bottom-color: #2563eb; }
+        .branch-stat-card.tone-green { border-bottom-color: #16a34a; }
+        .branch-stat-card.tone-slate { border-bottom-color: #64748b; }
+        .branch-stat-card.tone-purple { border-bottom-color: #7c3aed; }
+        .branch-stat-card.tone-orange { border-bottom-color: #ea580c; }
+        .branch-stat-card.tone-cyan { border-bottom-color: #0891b2; }
+        .branch-stat-card.is-active {
+          box-shadow: 0 0 0 2px #93c5fd;
+          background: #f8fbff;
+        }
+        .branch-stat-card:hover { background: #f9fafb; }
+        .branch-stat-top {
+          display: flex;
+          justify-content: space-between;
+          gap: 0.5rem;
+          align-items: flex-start;
+        }
+        .branch-stat-label {
+          font-size: 0.68rem;
+          font-weight: 750;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          color: #6b7280;
+        }
+        .branch-stat-badge {
+          font-size: 0.65rem;
+          font-weight: 700;
+          border-radius: 999px;
+          padding: 0.12rem 0.45rem;
+          white-space: nowrap;
+        }
+        .branch-stat-badge.tone-green { background: #dcfce7; color: #166534; }
+        .branch-stat-badge.tone-blue { background: #dbeafe; color: #1d4ed8; }
+        .branch-stat-badge.tone-slate { background: #f1f5f9; color: #475569; }
+        .branch-stat-badge.tone-purple { background: #ede9fe; color: #6d28d9; }
+        .branch-stat-badge.tone-orange { background: #ffedd5; color: #c2410c; }
+        .branch-stat-badge.tone-cyan { background: #cffafe; color: #0e7490; }
+        .branch-stat-value {
+          font-size: 1.65rem;
+          line-height: 1.1;
+          color: #111827;
+        }
+        .branch-stat-hint {
+          font-size: 0.72rem;
+          color: #9ca3af;
+        }
+      `}</style>
     </main>
   );
 }
