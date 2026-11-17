@@ -2714,6 +2714,96 @@ a {
   color: var(--muted);
 }
 
+.exp2-attach {
+  margin-top: 0.15rem;
+}
+
+.exp2-attach-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.45rem;
+}
+
+.exp2-attach-optional {
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.exp2-attach-count {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.exp2-attach-drop {
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  padding: 1.1rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--motion-fast), background var(--motion-fast);
+}
+
+.exp2-attach-drop:hover,
+.exp2-attach-drop.is-drag {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.exp2-attach-drop.is-busy {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.exp2-attach-lead {
+  margin: 0 0 0.3rem;
+  color: var(--navy);
+  font-weight: 650;
+  font-size: 0.92rem;
+}
+
+.exp2-attach-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.exp2-attach-list {
+  list-style: none;
+  margin: 0.65rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.exp2-attach-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  padding: 0.45rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.exp2-attach-name {
+  font-weight: 650;
+  color: var(--navy);
+  flex: 1;
+  min-width: 8rem;
+  word-break: break-word;
+}
+
+.exp2-attach-meta {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
 /* Print: shell uses height:100% + overflow:hidden — unlock so multi-page PDF works */
 @media print {
   html,

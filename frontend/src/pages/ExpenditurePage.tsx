@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { canManageAssets, hasGlobalAccess } from '../auth/permissions';
@@ -26,8 +26,36 @@ type ManualExpense = {
   remarks?: string | null;
   items_short?: string | null;
   items_preview?: string | null;
+  attachment_count?: number;
   line_items?: { item_name?: string; line_total_lkr?: number }[];
 };
+
+const EXPENSE_ATTACH_EXT = ['pdf', 'doc', 'docx', 'png', 'jpg', 'jpeg', 'webp'];
+const EXPENSE_ATTACH_MAX = 5;
+const EXPENSE_ATTACH_BYTES = 25 * 1024 * 1024;
+
+function expenseAttachExt(name: string): string {
+  const i = name.lastIndexOf('.');
+  return i >= 0 ? name.slice(i + 1).toLowerCase() : '';
+}
+
+function formatAttachSize(n: number): string {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+async function uploadExpenseAttachments(expenseId: number, files: File[]): Promise<number> {
+  let n = 0;
+  for (const file of files.slice(0, EXPENSE_ATTACH_MAX)) {
+    const body = new FormData();
+    body.append('file', file);
+    body.append('doc_type', 'other');
+    await api(`/api/expenditures/${expenseId}/attachments`, { method: 'POST', body });
+    n += 1;
+  }
+  return n;
+}
 
 const EXPENSE_TYPES = [
   { value: 'other', label: 'Other' },
@@ -291,6 +319,9 @@ export default function ExpenditurePage() {
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [savingExpense, setSavingExpense] = useState(false);
   const [expenseForm, setExpenseForm] = useState(emptyExpenseForm);
+  const [pendingExpenseFiles, setPendingExpenseFiles] = useState<File[]>([]);
+  const [attachDragOver, setAttachDragOver] = useState(false);
+  const expenseFileInputRef = useRef<HTMLInputElement>(null);
   const [manualExpenses, setManualExpenses] = useState<ManualExpense[]>([]);
 
   const expenseDepartments = useMemo(() => {
@@ -420,7 +451,36 @@ export default function ExpenditurePage() {
       company_id: co ? String(co.id) : '',
       department_id: departmentId || '',
     });
+    setPendingExpenseFiles([]);
+    setAttachDragOver(false);
     setShowAddExpense(true);
+  }
+
+  function addExpenseFiles(incoming: FileList | File[] | null) {
+    if (!incoming) return;
+    const list = Array.from(incoming);
+    const room = EXPENSE_ATTACH_MAX - pendingExpenseFiles.length;
+    if (room <= 0) {
+      toast.error(`Maximum of ${EXPENSE_ATTACH_MAX} attachments`);
+      return;
+    }
+    const accepted: File[] = [];
+    for (const file of list) {
+      if (accepted.length >= room) break;
+      const ext = expenseAttachExt(file.name);
+      if (!EXPENSE_ATTACH_EXT.includes(ext)) {
+        toast.error(`Not allowed: ${file.name}. Use PDF, DOC, DOCX, PNG, JPG, or WEBP`);
+        continue;
+      }
+      if (file.size <= 0 || file.size > EXPENSE_ATTACH_BYTES) {
+        toast.error(`${file.name} must be under 25 MB`);
+        continue;
+      }
+      accepted.push(file);
+    }
+    if (accepted.length > 0) {
+      setPendingExpenseFiles((prev) => [...prev, ...accepted].slice(0, EXPENSE_ATTACH_MAX));
+    }
   }
 
   async function submitExpense(e: FormEvent) {
@@ -449,7 +509,7 @@ export default function ExpenditurePage() {
     }
     setSavingExpense(true);
     try {
-      await api('/api/expenditures', {
+      const created = await api<{ data?: { id?: number } }>('/api/expenditures', {
         method: 'POST',
         body: JSON.stringify({
           company_id: Number(expenseForm.company_id),
@@ -472,9 +532,23 @@ export default function ExpenditurePage() {
           ],
         }),
       });
-      toast.success('Expense added');
+      const newId = Number(created?.data?.id ?? 0);
+      let attachNote = '';
+      if (newId > 0 && pendingExpenseFiles.length > 0) {
+        try {
+          const n = await uploadExpenseAttachments(newId, pendingExpenseFiles);
+          attachNote = n > 0 ? ` ${n} file${n === 1 ? '' : 's'} attached.` : '';
+        } catch (attachErr) {
+          attachNote = ' (expense saved; some attachments failed to upload)';
+          toast.error(
+            attachErr instanceof Error ? attachErr.message : 'Attachment upload failed',
+          );
+        }
+      }
+      toast.success(`Expense added.${attachNote}`);
       setShowAddExpense(false);
       setExpenseForm(emptyExpenseForm());
+      setPendingExpenseFiles([]);
       await load();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not save expense');
@@ -874,6 +948,7 @@ export default function ExpenditurePage() {
                   <th>Item</th>
                   <th>Company</th>
                   <th>Department</th>
+                  <th>Files</th>
                   <th>Amount</th>
                 </tr>
               </thead>
@@ -901,6 +976,7 @@ export default function ExpenditurePage() {
                         </span>
                       </td>
                       <td>{ex.department_name || '—'}</td>
+                      <td>{Number(ex.attachment_count ?? 0) > 0 ? ex.attachment_count : '—'}</td>
                       <td className="exp2-price">{formatLkr(ex.total_lkr ?? 0)}</td>
                     </tr>
                   );
@@ -917,7 +993,10 @@ export default function ExpenditurePage() {
         eyebrow="IT Expenditure"
         subtitle="Record a manual expense with company and department."
         onClose={() => {
-          if (!savingExpense) setShowAddExpense(false);
+          if (!savingExpense) {
+            setShowAddExpense(false);
+            setPendingExpenseFiles([]);
+          }
         }}
         wide
         footer={
@@ -926,7 +1005,10 @@ export default function ExpenditurePage() {
               type="button"
               className="btn btn-soft"
               disabled={savingExpense}
-              onClick={() => setShowAddExpense(false)}
+              onClick={() => {
+                setShowAddExpense(false);
+                setPendingExpenseFiles([]);
+              }}
             >
               Cancel
             </button>
@@ -1070,6 +1152,80 @@ export default function ExpenditurePage() {
               }
             />
           </label>
+
+          <div className="exp2-attach" style={{ gridColumn: '1 / -1' }}>
+            <div className="exp2-attach-head">
+              <strong>
+                Attachments <span className="exp2-attach-optional">(optional)</span>
+              </strong>
+              <span className="exp2-attach-count">
+                {pendingExpenseFiles.length} / {EXPENSE_ATTACH_MAX}
+              </span>
+            </div>
+            <div
+              className={`exp2-attach-drop${attachDragOver ? ' is-drag' : ''}${savingExpense ? ' is-busy' : ''}`}
+              role="button"
+              tabIndex={0}
+              onClick={() => !savingExpense && expenseFileInputRef.current?.click()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  expenseFileInputRef.current?.click();
+                }
+              }}
+              onDragEnter={(e) => {
+                e.preventDefault();
+                setAttachDragOver(true);
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setAttachDragOver(true);
+              }}
+              onDragLeave={() => setAttachDragOver(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setAttachDragOver(false);
+                addExpenseFiles(e.dataTransfer.files);
+              }}
+            >
+              <p className="exp2-attach-lead">Drop files here or click to browse</p>
+              <p className="exp2-attach-hint">
+                Up to {EXPENSE_ATTACH_MAX} files, 25 MB each. Allowed: PDF, DOC, DOCX, PNG, JPG, WEBP
+              </p>
+              <input
+                ref={expenseFileInputRef}
+                type="file"
+                multiple
+                accept={EXPENSE_ATTACH_EXT.map((x) => `.${x}`).join(',')}
+                hidden
+                disabled={savingExpense}
+                onChange={(e) => {
+                  addExpenseFiles(e.target.files);
+                  e.target.value = '';
+                }}
+              />
+            </div>
+            {pendingExpenseFiles.length > 0 ? (
+              <ul className="exp2-attach-list">
+                {pendingExpenseFiles.map((file, idx) => (
+                  <li key={`${file.name}-${file.size}-${idx}`}>
+                    <span className="exp2-attach-name">{file.name}</span>
+                    <span className="exp2-attach-meta">{formatAttachSize(file.size)}</span>
+                    <button
+                      type="button"
+                      className="btn btn-soft btn-sm"
+                      disabled={savingExpense}
+                      onClick={() =>
+                        setPendingExpenseFiles((prev) => prev.filter((_, i) => i !== idx))
+                      }
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
         </form>
       </Modal>
     </main>
