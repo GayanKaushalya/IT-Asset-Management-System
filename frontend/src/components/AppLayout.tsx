@@ -4,6 +4,7 @@ import { useAuth } from '../auth/AuthContext';
 import { isAudit } from '../auth/permissions';
 import { getOrgMeta } from '../services/metaCache';
 import NotificationBell from './NotificationBell';
+import ThemeToggle from './ThemeToggle';
 import UserAvatar from './ui/UserAvatar';
 
 type NavItem = {
@@ -213,6 +214,7 @@ export default function AppLayout() {
         </button>
 
         <div className="main-topbar">
+          <ThemeToggle />
           <NotificationBell />
         </div>
         <div className="main-content">
@@ -245,8 +247,8 @@ export default function AppLayout() {
           top: 0.85rem;
           left: 0.85rem;
           z-index: 40;
-          background: #fff;
-          box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+          background: var(--card);
+          box-shadow: var(--shadow-md);
         }
         @media (max-width: 720px) {
           .mobile-menu-fab { display: inline-grid; }

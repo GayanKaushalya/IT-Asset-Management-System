@@ -2,6 +2,7 @@
   /* Brand / surfaces */
   --navy: #0f172a;
   --navy-soft: #1e293b;
+  --heading: #0f172a;
   --bg: #f1f5f9;
   --bg-elevated: #f8fafc;
   --card: #ffffff;
@@ -79,6 +80,183 @@
   --font-mono: "Cascadia Code", "SF Mono", ui-monospace, monospace;
 
   color-scheme: light;
+}
+
+/* Dark mode — Cloudy Storage–style navy / charcoal surfaces */
+html[data-theme='dark'] {
+  --navy: #15171d;
+  --navy-soft: #1f222b;
+  --heading: #f3f4f6;
+  --bg: #1a1c23;
+  --bg-elevated: #1f222b;
+  --card: #242731;
+  --text: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --muted: #9ca3af;
+  --border: #353945;
+  --border-strong: #454a57;
+
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --primary-soft: rgba(59, 130, 246, 0.18);
+  --primary-muted: rgba(59, 130, 246, 0.1);
+  --blue: var(--primary);
+  --blue-bg: var(--primary-soft);
+
+  --success: #34d399;
+  --success-hover: #6ee7b7;
+  --success-soft: rgba(52, 211, 153, 0.16);
+  --green: var(--success);
+  --green-bg: var(--success-soft);
+
+  --warning: #fbbf24;
+  --warning-hover: #fcd34d;
+  --warning-soft: rgba(251, 191, 36, 0.16);
+
+  --danger: #f87171;
+  --danger-hover: #fca5a5;
+  --danger-soft: rgba(248, 113, 113, 0.16);
+  --red: var(--danger);
+  --red-bg: var(--danger-soft);
+
+  --info: #2dd4bf;
+  --info-soft: rgba(45, 212, 191, 0.16);
+
+  --security: #8b5cf6;
+  --security-hover: #a78bfa;
+  --security-soft: rgba(139, 92, 246, 0.18);
+  --purple: var(--security);
+  --purple-bg: var(--security-soft);
+
+  --neutral: #9ca3af;
+  --neutral-soft: #2a2e39;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+
+  color-scheme: dark;
+}
+
+html[data-theme='dark'] .sidebar {
+  border-right: 1px solid #2a2e39;
+}
+
+html[data-theme='dark'] .tab-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+html[data-theme='dark'] .icon-btn {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+html[data-theme='dark'] .icon-btn:hover {
+  background: #353945;
+  border-color: var(--border-strong);
+}
+
+html[data-theme='dark'] .theme-toggle {
+  background: #353945;
+  border-color: #454a57;
+}
+
+html[data-theme='dark'] .table thead th {
+  background: #1f222b;
+  color: var(--muted);
+}
+
+html[data-theme='dark'] .table tbody tr:hover {
+  background: rgba(53, 57, 69, 0.55);
+}
+
+html[data-theme='dark'] .branch-stat-card {
+  background: var(--card) !important;
+  border-color: var(--border) !important;
+}
+
+html[data-theme='dark'] .branch-stat-card:hover {
+  background: #2a2e39 !important;
+}
+
+html[data-theme='dark'] .branch-stat-card.is-active {
+  background: rgba(59, 130, 246, 0.12) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.45) !important;
+}
+
+html[data-theme='dark'] .branch-stat-label {
+  color: var(--muted) !important;
+}
+
+html[data-theme='dark'] .branch-stat-value {
+  color: var(--text) !important;
+}
+
+html[data-theme='dark'] .branch-stat-hint {
+  color: #6b7280 !important;
+}
+
+html[data-theme='dark'] .auth-shell {
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(59, 130, 246, 0.18), transparent 45%),
+    radial-gradient(ellipse at 80% 0%, rgba(139, 92, 246, 0.14), transparent 40%),
+    var(--bg);
+}
+
+html[data-theme='dark'] .mobile-menu-fab {
+  background: var(--card) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+html[data-theme='dark'] .icon-btn .badge-dot {
+  border-color: var(--card);
+}
+
+/* Soften hard-coded light surfaces in asset modals / forms */
+html[data-theme='dark'] .modal-card,
+html[data-theme='dark'] .avm-shell,
+html[data-theme='dark'] .avm-body,
+html[data-theme='dark'] .avm-panel,
+html[data-theme='dark'] .avm-footer,
+html[data-theme='dark'] .aed-shell,
+html[data-theme='dark'] .aed-main,
+html[data-theme='dark'] .asset-form-section,
+html[data-theme='dark'] .exp2-attach-list li {
+  background: var(--card) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+html[data-theme='dark'] .avm-spec-row,
+html[data-theme='dark'] .avm-mini,
+html[data-theme='dark'] .avm-slot {
+  background: var(--bg-elevated) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+html[data-theme='dark'] .page-title,
+html[data-theme='dark'] .exp2-attach-lead,
+html[data-theme='dark'] .exp2-attach-name {
+  color: var(--heading) !important;
+}
+
+html[data-theme='dark'] .input,
+html[data-theme='dark'] .select,
+html[data-theme='dark'] .textarea,
+html[data-theme='dark'] .asset-control {
+  background: #1f222b !important;
+  color: var(--text) !important;
+  border-color: var(--border-strong) !important;
+}
+
+html[data-theme='dark'] .input::placeholder,
+html[data-theme='dark'] .textarea::placeholder {
+  color: #6b7280;
 }
 
 * {
@@ -2400,7 +2578,7 @@ a {
   margin-top: 0.2rem;
   font-size: 1.25rem;
   font-weight: 750;
-  color: var(--navy);
+  color: var(--heading);
   letter-spacing: -0.02em;
 }
 
@@ -2412,7 +2590,7 @@ a {
 .exp2-company-title {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--navy);
+  color: var(--heading);
 }
 
 .exp2-company-row {
@@ -2497,7 +2675,7 @@ a {
 
 .exp2-co-text strong {
   font-size: 0.95rem;
-  color: var(--navy);
+  color: var(--heading);
 }
 
 .exp2-co-text span {
@@ -2509,7 +2687,7 @@ a {
   margin-left: auto;
   font-weight: 750;
   font-size: 1rem;
-  color: var(--navy);
+  color: var(--heading);
   white-space: nowrap;
   padding-left: 0.5rem;
   flex-shrink: 0;
@@ -2564,7 +2742,7 @@ a {
   padding: 0;
   font-size: 1rem;
   font-weight: 750;
-  color: var(--navy);
+  color: var(--heading);
   border-bottom: 0;
 }
 
@@ -2656,7 +2834,7 @@ a {
 
 .exp2-item-text strong {
   font-weight: 700;
-  color: var(--navy);
+  color: var(--heading);
   line-height: 1.3;
 }
 
@@ -2760,7 +2938,7 @@ a {
 
 .exp2-attach-lead {
   margin: 0 0 0.3rem;
-  color: var(--navy);
+  color: var(--heading);
   font-weight: 650;
   font-size: 0.92rem;
 }
@@ -2793,7 +2971,7 @@ a {
 
 .exp2-attach-name {
   font-weight: 650;
-  color: var(--navy);
+  color: var(--heading);
   flex: 1;
   min-width: 8rem;
   word-break: break-word;
