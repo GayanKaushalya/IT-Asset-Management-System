@@ -2215,11 +2215,9 @@ export default function AssetsPage() {
                     {showSimNumberCol ? <th className="col-sim">SIM number</th> : null}
                     {!isSimTab ? <th className="col-sn">S/N</th> : null}
                     <th className="col-assigned">
-                      {isSimTab
-                        ? 'Department'
-                        : isPersonAsset || categoryTab === 'pc' || isAllView
-                          ? 'First assigned user'
-                          : 'Assigned to'}
+                      {isSimTab || isPersonAsset || categoryTab === 'pc' || isAllView
+                        ? 'First assigned user'
+                        : 'Assigned to'}
                     </th>
                     <th className="col-status">Status</th>
                     <th className="col-actions"></th>
@@ -2392,27 +2390,46 @@ export default function AssetsPage() {
                           </td>
                         ) : null}
                         <td className="col-name">
-                          {rowShowsHolderBadges ? (
-                            <PersonNameCell
-                              name={currentHolderName(r)}
-                              sign={
-                                currentHolderName(r)
-                                  ? isItCustodyHolder(currentHolderName(r))
-                                    ? 'holds_now'
-                                    : isCurrentHolderOriginal(r)
-                                      ? 'original'
-                                      : 'current'
-                                  : null
-                              }
-                            />
-                          ) : (
-                            <span
-                              className="cell-oneline cell-oneline--strong"
-                              title={String(currentHolderName(r) || r.pc_name || '')}
-                            >
-                              {dash(currentHolderName(r) || r.pc_name)}
-                            </span>
-                          )}
+                          {(() => {
+                            const holder = currentHolderName(r);
+                            // SIM table: never show synthetic "IT Department" custody label
+                            const simOwner =
+                              isSimTab && isItCustodyHolder(holder) ? '' : holder;
+                            if (isSimTab) {
+                              return (
+                                <span
+                                  className="cell-oneline cell-oneline--strong"
+                                  title={simOwner}
+                                >
+                                  {simOwner ? dash(simOwner) : '—'}
+                                </span>
+                              );
+                            }
+                            if (rowShowsHolderBadges) {
+                              return (
+                                <PersonNameCell
+                                  name={holder}
+                                  sign={
+                                    holder
+                                      ? isItCustodyHolder(holder)
+                                        ? 'holds_now'
+                                        : isCurrentHolderOriginal(r)
+                                          ? 'original'
+                                          : 'current'
+                                      : null
+                                  }
+                                />
+                              );
+                            }
+                            return (
+                              <span
+                                className="cell-oneline cell-oneline--strong"
+                                title={String(holder || r.pc_name || '')}
+                              >
+                                {dash(holder || r.pc_name)}
+                              </span>
+                            );
+                          })()}
                         </td>
                         {showLocationCol ? (
                           <td className="col-location">
@@ -2441,11 +2458,7 @@ export default function AssetsPage() {
                           </td>
                         ) : null}
                         <td className="col-assigned">
-                          {isSimTab ? (
-                            <span className="cell-oneline" title={String(r.department_name ?? '')}>
-                              {dash(r.department_name)}
-                            </span>
-                          ) : rowShowsHolderBadges ? (
+                          {isSimTab || rowShowsHolderBadges ? (
                             <PersonNameCell
                               name={firstAssignedUser(r)}
                               sign={firstAssignedUser(r) ? 'original' : null}

@@ -1162,31 +1162,52 @@ final class ReportController
         }
         $q = trim((string) $request->input('q', ''));
 
+        // Available stock must include IT Department custody rows. Prefer allocated_person;
+        // when Available with no live holder, label as IT Department (do not hide the row).
+        $availableItHolder = "CASE
+            WHEN LOWER(a.status::text) = 'available'
+                 AND NULLIF(TRIM(a.allocated_person), '') IS NULL
+            THEN 'IT Department'
+            ELSE NULLIF(TRIM(a.allocated_person), '')
+        END";
+
         $defs = [
             'laptop' => [
                 'table' => 'laptops',
                 'legacy_expr' => 'COALESCE(a.is_legacy, FALSE)',
-                'holder' => "COALESCE(NULLIF(TRIM(a.allocated_person), ''), NULLIF(TRIM(a.original_assigned_person), ''), NULLIF(TRIM(a.pc_name), ''))",
+                'holder' => "COALESCE({$availableItHolder}, NULLIF(TRIM(a.original_assigned_person), ''), NULLIF(TRIM(a.pc_name), ''))",
                 'extra' => 'a.brand, a.model, a.serial_number',
+                'extra_where' => '',
             ],
             'mobile_phone' => [
                 'table' => 'mobile_phones',
                 'legacy_expr' => 'COALESCE(a.is_legacy, FALSE)',
-                'holder' => "COALESCE(NULLIF(TRIM(a.allocated_person), ''), NULLIF(TRIM(a.original_assigned_person), ''), NULLIF(TRIM(a.first_handover_person), ''), NULLIF(TRIM(a.pc_name), ''))",
+                'holder' => "COALESCE({$availableItHolder}, NULLIF(TRIM(a.original_assigned_person), ''), NULLIF(TRIM(a.first_handover_person), ''), NULLIF(TRIM(a.pc_name), ''))",
                 'extra' => 'a.brand, a.model, a.serial_number',
+                // Phones only — SIM cards have their own register
+                'extra_where' => 'AND COALESCE(a.is_sim, FALSE) IS NOT TRUE',
             ],
             'pc' => [
                 'table' => 'pcs',
                 // Newly purchased register vs older fleet PCs
                 'legacy_expr' => 'CASE WHEN COALESCE(a.newly_purchased, FALSE) THEN FALSE ELSE TRUE END',
-                'holder' => "COALESCE(NULLIF(TRIM(a.allocated_person), ''), NULLIF(TRIM(a.original_assigned_person), ''), NULLIF(TRIM(a.pc_name), ''))",
+                'holder' => "COALESCE({$availableItHolder}, NULLIF(TRIM(a.original_assigned_person), ''), NULLIF(TRIM(a.pc_name), ''))",
                 'extra' => 'a.brand, a.model, a.serial_number',
+                'extra_where' => '',
             ],
             'other' => [
                 'table' => 'other_assets',
                 'legacy_expr' => 'FALSE',
                 'holder' => "COALESCE(NULLIF(TRIM(a.user_name), ''), NULLIF(TRIM(a.pc_name), ''), NULLIF(TRIM(a.item_name), ''))",
                 'extra' => 'a.brand, a.model, a.serial_number, a.item_name',
+                'extra_where' => '',
+            ],
+            'printer' => [
+                'table' => 'printers',
+                'legacy_expr' => 'FALSE',
+                'holder' => "NULLIF(TRIM(a.pc_name), '')",
+                'extra' => 'a.brand, a.model, a.serial_number',
+                'extra_where' => '',
             ],
         ];
 
@@ -1214,6 +1235,11 @@ final class ReportController
                 } elseif ($stockKind === 'old') {
                     $where[] = "({$d['legacy_expr']}) = TRUE";
                 }
+                $extraWhere = trim((string) ($d['extra_where'] ?? ''));
+                if ($extraWhere !== '') {
+                    // Already includes leading AND
+                    $where[] = ltrim(preg_replace('/^\s*AND\s+/i', '', $extraWhere) ?? $extraWhere);
+                }
                 if ($q !== '') {
                     $where[] = "(a.asset_tag ILIKE :q OR a.pc_name ILIKE :q OR a.serial_number ILIKE :q
                         OR a.brand ILIKE :q OR a.model ILIKE :q OR {$d['holder']} ILIKE :q
@@ -1235,16 +1261,21 @@ final class ReportController
                         WHERE " . implode(' AND ', $where) . '
                         ORDER BY a.asset_tag
                         LIMIT 3000';
-                $stmt = $this->pdo->prepare($sql);
-                $stmt->execute($params);
-                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) ?: [] as $row) {
-                    $legacy = ($row['is_legacy'] ?? false) === true
-                        || $row['is_legacy'] === 't'
-                        || $row['is_legacy'] === '1'
-                        || $row['is_legacy'] === 1;
-                    $row['is_legacy'] = $legacy;
-                    $row['stock_kind'] = $legacy ? 'old' : 'new';
-                    $rows[] = $row;
+                try {
+                    $stmt = $this->pdo->prepare($sql);
+                    $stmt->execute($params);
+                    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) ?: [] as $row) {
+                        $legacy = ($row['is_legacy'] ?? false) === true
+                            || $row['is_legacy'] === 't'
+                            || $row['is_legacy'] === '1'
+                            || $row['is_legacy'] === 1;
+                        $row['is_legacy'] = $legacy;
+                        $row['stock_kind'] = $legacy ? 'old' : 'new';
+                        $rows[] = $row;
+                    }
+                } catch (\Throwable $catErr) {
+                    // Skip missing/broken category tables (e.g. unused printers) without failing the report
+                    error_log('stock report ' . $cat . ': ' . $catErr->getMessage());
                 }
             }
         } catch (\Throwable $e) {

@@ -48,18 +48,13 @@ const COMPANY_TABS: { id: CompanyTab; label: string }[] = [
   { id: 'ISP', label: 'ISP' },
 ];
 
-const HEAD_OFFICE_CODES: Record<CompanyTab, string[]> = {
-  IT: ['KANDY_HO'],
-  IMS: ['BR_201'],
-  ISP: ['KANDY'],
-};
-
 const CATEGORY_CARDS: { key: string; label: string; tone: string }[] = [
   { key: 'all', label: 'All available', tone: 'cyan' },
   { key: 'laptop', label: 'Laptops', tone: 'blue' },
   { key: 'mobile_phone', label: 'Mobile phones', tone: 'green' },
   { key: 'pc', label: 'PCs', tone: 'slate' },
   { key: 'other', label: 'Other assets', tone: 'purple' },
+  { key: 'printer', label: 'Printers', tone: 'orange' },
 ];
 
 const STATUS_OPTIONS = [
@@ -80,6 +75,7 @@ function catLabel(c: string): string {
   if (c === 'laptop') return 'Laptop';
   if (c === 'pc') return 'PC';
   if (c === 'other') return 'Other';
+  if (c === 'printer') return 'Printer';
   return c.replace(/_/g, ' ');
 }
 
@@ -88,23 +84,8 @@ function assetPath(category: string): string {
   if (category === 'laptop') return '/assets/laptop';
   if (category === 'pc') return '/assets/all';
   if (category === 'other') return '/assets/others';
+  if (category === 'printer') return '/assets/others';
   return '/assets/all';
-}
-
-function headOfficeLocationId(
-  companyTab: CompanyTab,
-  companyLocations: MetaLocation[],
-): string {
-  const preferred = HEAD_OFFICE_CODES[companyTab] ?? [];
-  for (const code of preferred) {
-    const hit = companyLocations.find((l) => String(l.code ?? '').toUpperCase() === code);
-    if (hit) return String(hit.id);
-  }
-  const byName = companyLocations.find(
-    (l) => /head\s*office/i.test(l.name) && /kandy/i.test(l.name),
-  );
-  if (byName) return String(byName.id);
-  return companyLocations[0] ? String(companyLocations[0].id) : '';
 }
 
 export default function StockReportPage() {
@@ -152,14 +133,15 @@ export default function StockReportPage() {
   }, [locations, companyId]);
 
   useEffect(() => {
-    if (companyLocations.length === 0) return;
-    setLocationId(headOfficeLocationId(company, companyLocations));
+    if (companies.length === 0) return;
+    // Default: all locations so every available item (incl. IT Department custody) is listed
+    setLocationId('');
     setLocationReady(true);
     setCategoryFilter('all');
     setQ('');
     setStockKind('all');
     setStatusFilter('available');
-  }, [company, companyLocations]);
+  }, [company, companies.length]);
 
   const selectedLocationName = useMemo(() => {
     if (!locationId) return 'All locations';
@@ -231,6 +213,7 @@ export default function StockReportPage() {
         mobile_phone: 0,
         pc: 0,
         other: 0,
+        printer: 0,
       };
       let newCount = 0;
       let oldCount = 0;
@@ -246,6 +229,7 @@ export default function StockReportPage() {
         mobile_phone: live.mobile_phone,
         pc: live.pc,
         other: live.other,
+        printer: live.printer,
         new_count: newCount,
         old_count: oldCount,
       };
@@ -257,6 +241,7 @@ export default function StockReportPage() {
       mobile_phone: Number(by.mobile_phone ?? 0),
       pc: Number(by.pc ?? 0),
       other: Number(by.other ?? 0),
+      printer: Number(by.printer ?? 0),
       new_count: meta.new_count ?? 0,
       old_count: meta.old_count ?? 0,
     };
@@ -300,7 +285,7 @@ export default function StockReportPage() {
     setCategoryFilter('all');
     setStockKind('all');
     setStatusFilter('available');
-    setLocationId(headOfficeLocationId(company, companyLocations));
+    setLocationId('');
   };
 
   return (
@@ -310,7 +295,7 @@ export default function StockReportPage() {
           eyebrow="Reports"
           title="Stock Report"
           badge={<LiveRepositoryBadge />}
-          subtitle="All available assets (new stock and old) by company and branch. Click a row to open the asset view."
+          subtitle="All available assets (new and old), including items currently held by IT Department. Defaults to all branches — click a row to open the asset view."
         />
 
         <div className="tabs-secondary company-tabs-row" style={{ marginBottom: '0.85rem' }}>
@@ -398,7 +383,7 @@ export default function StockReportPage() {
                 categoryFilter === 'all' &&
                 stockKind === 'all' &&
                 statusFilter === 'available' &&
-                locationId === headOfficeLocationId(company, companyLocations)
+                !locationId
               }
             >
               Reset filters
