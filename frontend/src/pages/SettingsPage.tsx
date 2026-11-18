@@ -135,9 +135,10 @@ function AuditExportPanel() {
     <section className="card" style={{ padding: '1.25rem 1.35rem' }}>
       <h3 style={{ marginTop: 0, marginBottom: '0.35rem' }}>Mobile phones — full export</h3>
       <p style={{ color: 'var(--muted)', marginTop: 0, maxWidth: '40rem', fontSize: '0.92rem' }}>
-        Download every mobile phone record (all companies) with asset ID, holders, first assigned
-        user, handover chain, IMEI, serial, location, warranty, and accessories. SIM cards are
-        excluded — same scope as the Mobile Phones tab.
+        Download every mobile phone record across all companies — both new stock and old stock —
+        with asset ID, holders, first assigned user, handover chain, IMEI, serial, location,
+        warranty, and accessories. A Stock type column marks each row as New or Old. SIM cards
+        are excluded.
       </p>
       <button
         type="button"

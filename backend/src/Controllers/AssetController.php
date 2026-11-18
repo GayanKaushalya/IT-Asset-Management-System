@@ -2349,7 +2349,7 @@ final class AssetController
 
     /**
      * Full mobile-phone inventory export for Audit (Excel SpreadsheetML).
-     * Matches the Mobile Phones tab (excludes SIM cards).
+     * Includes both new and old stock across all companies. SIM cards are excluded.
      */
     public function exportMobilePhonesExcel(Request $request, array $user): void
     {
@@ -2358,6 +2358,7 @@ final class AssetController
             return;
         }
 
+        // Intentionally no is_legacy filter — Audit export must include old stock + new phones.
         $sql = "SELECT a.*,
                        c.code AS company_code,
                        c.short_name AS company_short,
@@ -2366,7 +2367,7 @@ final class AssetController
                        loc.code AS location_code,
                        d.name AS department_name
                 FROM mobile_phones a
-                JOIN companies c ON c.id = a.company_id
+                LEFT JOIN companies c ON c.id = a.company_id
                 LEFT JOIN locations loc ON loc.id = a.location_id
                 LEFT JOIN departments d ON d.id = a.department_id
                 WHERE COALESCE(a.is_sim, FALSE) IS NOT TRUE";
@@ -2375,7 +2376,10 @@ final class AssetController
             $sql .= ' AND c.code = :ccode';
             $params['ccode'] = strtoupper((string) $request->input('company_code'));
         }
-        $sql .= ' ORDER BY c.code ASC, a.asset_tag ASC';
+        // New stock first, then old stock (same grouping as the Mobile Phones tab).
+        $sql .= ' ORDER BY CASE WHEN COALESCE(a.is_legacy, FALSE) THEN 1 ELSE 0 END,
+                          COALESCE(c.code, \'\') ASC,
+                          a.asset_tag ASC';
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -2394,6 +2398,7 @@ final class AssetController
             'IMEI 2',
             'Phone / SIM number',
             'Status',
+            'Stock type',
             'Current holder',
             'Allocated on',
             'First assigned user',
@@ -2420,7 +2425,6 @@ final class AssetController
             'Has charger',
             'Has data cable',
             'Has back cover',
-            'Old stock',
             'Notes',
             'Created at',
             'Updated at',
@@ -2472,6 +2476,11 @@ final class AssetController
                 ?? $row['handover_person_1']
                 ?? ''
             ));
+            $isLegacy = $row['is_legacy'] === true
+                || $row['is_legacy'] === 1
+                || $row['is_legacy'] === '1'
+                || $row['is_legacy'] === 't'
+                || $row['is_legacy'] === 'true';
             $values = [
                 $row['asset_tag'] ?? '',
                 $row['former_asset_tag'] ?? '',
@@ -2486,6 +2495,7 @@ final class AssetController
                 $row['imei_number_2'] ?? '',
                 $row['phone_number'] ?? '',
                 $row['status'] ?? '',
+                $isLegacy ? 'Old' : 'New',
                 $row['allocated_person'] ?? $row['pc_name'] ?? '',
                 $row['allocated_on'] ?? '',
                 $firstAssigned,
@@ -2512,7 +2522,6 @@ final class AssetController
                 $boolLabel($row['has_charger'] ?? null),
                 $boolLabel($row['has_data_cable'] ?? null),
                 $boolLabel($row['has_back_cover'] ?? null),
-                $boolLabel($row['is_legacy'] ?? null),
                 $row['notes'] ?? '',
                 $row['created_at'] ?? '',
                 $row['updated_at'] ?? '',
