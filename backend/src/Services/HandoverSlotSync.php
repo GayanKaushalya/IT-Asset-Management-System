@@ -10,7 +10,8 @@ use PDO;
  * Keeps denormalized handover slots + original/allocated users in sync.
  *
  * - original_assigned_* = 1st handover person (never overwritten by later handovers)
- * - allocated_*         = current open handover person (cleared when returned)
+ * - allocated_*         = current open handover person; when Available with no open
+ *                         handover, temporary custody is "IT Department"
  * - handover_person_1..10 + handover_on_1..10 = full chain (each person has a date)
  *
  * Consecutive duplicate handovers to the same person (e.g. double-click transfer)
@@ -142,6 +143,10 @@ final class HandoverSlotSync
             if (preg_match('/\bmissing\s+in\b/i', $name) || preg_match('/\bing\s+in\s+jaffna\b/i', $name)) {
                 continue;
             }
+            // IT Department is custody label only — never a chain person
+            if (strcasecmp($name, 'IT Department') === 0) {
+                continue;
+            }
             $slot++;
             $date = $row['handover_date'] ?: null;
             if ($date === null || $date === '') {
@@ -154,6 +159,19 @@ final class HandoverSlotSync
             if ($this->isOpenFlag($row['is_open'] ?? false)) {
                 $allocatedPerson = $name;
                 $allocatedOn = $date;
+            }
+        }
+
+        // Returned / Available: keep temporary IT custody so Mark returned sticks across refresh
+        if ($allocatedPerson === null) {
+            $statusStmt = $this->pdo->prepare("SELECT status, allocated_on FROM {$table} WHERE id = :id");
+            $statusStmt->execute(['id' => $assetId]);
+            $statusRow = $statusStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+            $status = strtolower(trim((string) ($statusRow['status'] ?? '')));
+            if ($status === 'available') {
+                $allocatedPerson = 'IT Department';
+                $prevOn = trim((string) ($statusRow['allocated_on'] ?? ''));
+                $allocatedOn = $prevOn !== '' ? $prevOn : date('Y-m-d');
             }
         }
 

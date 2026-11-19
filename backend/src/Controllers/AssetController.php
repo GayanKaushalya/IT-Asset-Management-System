@@ -422,15 +422,33 @@ final class AssetController
             $holder = trim((string) ($current['assigned_person_name'] ?? ''));
             $row['allocated_is_original'] = $original !== '' && strcasecmp($original, $holder) === 0;
         } else {
-            // No open handover — clear current holder (do not fall back to slot 1 / original).
-            // Chain history stays on handover_person_* / original_assigned_* for display.
+            // No open handover — do not fall back to slot 1 / original person.
+            // Available laptop/phone/PC keep temporary IT Department custody after Mark returned.
             $row['handover_open'] = false;
-            $row['allocated_person'] = null;
-            $row['allocated_on'] = null;
-            $row['assigned_person_name'] = null;
             $row['current_handover_no'] = null;
             $row['current_handover_label'] = null;
             $row['allocated_is_original'] = false;
+            $status = strtolower(trim((string) ($row['status'] ?? '')));
+            $dbHolder = trim((string) ($row['allocated_person'] ?? ''));
+            if (
+                $status === 'available'
+                && in_array($category, ['laptop', 'mobile_phone', 'pc'], true)
+            ) {
+                $it = 'IT Department';
+                $row['allocated_person'] = $dbHolder !== '' ? $dbHolder : $it;
+                if (strcasecmp((string) $row['allocated_person'], $it) === 0) {
+                    $row['assigned_person_name'] = $it;
+                } else {
+                    $row['assigned_person_name'] = $row['allocated_person'];
+                }
+                if (empty($row['allocated_on'])) {
+                    $row['allocated_on'] = date('Y-m-d');
+                }
+            } else {
+                $row['allocated_person'] = null;
+                $row['allocated_on'] = null;
+                $row['assigned_person_name'] = null;
+            }
         }
         $row['current_holder'] = $row['allocated_person'] ?? $row['assigned_person_name'] ?? null;
         Response::json(['data' => $row]);

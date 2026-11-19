@@ -1858,15 +1858,29 @@ export default function AssetsPage() {
     const target = editAsset;
     if (!target || !editingId || !editingCategory) return;
     const handovers = Array.isArray(target.handovers) ? (target.handovers as Asset[]) : [];
-    const current = handovers.find((h) => h.is_current || h.is_open);
-    if (!current) {
-      toast.error('No open handover to return');
+    const current =
+      handovers.find((h) => Boolean(h.is_current) || Boolean(h.is_open)) ??
+      (target.handover_open
+        ? handovers.find(
+            (h) =>
+              !h.return_date &&
+              String(h.assigned_person_name ?? '').trim() !== '' &&
+              !isItCustodyHolder(String(h.assigned_person_name ?? '')),
+          )
+        : undefined);
+    if (!current || !Number(current.id)) {
+      toast.error('No open handover to return — allocate the asset first, then Mark returned');
       return;
     }
     const cat = String(target.category || editingCategory);
     setReturnPopup({
       handoverId: Number(current.id),
-      person: String(current.assigned_person_name ?? 'current holder'),
+      person: String(
+        current.assigned_person_name ??
+          target.allocated_person ??
+          target.current_holder ??
+          'current holder',
+      ),
       category: cat,
       has_charger:
         target.has_charger === undefined || target.has_charger === null
@@ -1913,7 +1927,7 @@ export default function AssetsPage() {
       // Optional: sync accessory flags on the phone record after return
       if (returnPopup.category === 'mobile_phone') {
         try {
-          await api(`/api/assets/${editingId}`, {
+          await api(`/api/assets/mobile_phone/${editingId}`, {
             method: 'PUT',
             body: JSON.stringify({
               category: 'mobile_phone',
@@ -1928,6 +1942,8 @@ export default function AssetsPage() {
       }
       setReturnPopup(null);
       toast.success('Returned — now held by IT Department');
+      // Settle then refresh so slot sync + IT custody are visible
+      await new Promise((r) => window.setTimeout(r, 80));
       await refreshOpenAssetViews(editingId, editingCategory);
       await reloadAfterMutation(true);
     } catch (err) {
