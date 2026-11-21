@@ -391,6 +391,20 @@ final class AssetController
             return;
         }
         $this->assertAssetCompanyAccess($user, $row);
+        // Available = returned to IT: never leave a stray open handover (e.g. accessory PUT after check-in)
+        $showStatus = strtolower(trim((string) ($row['status'] ?? '')));
+        if (
+            $showStatus === 'available'
+            && in_array($category, ['laptop', 'mobile_phone', 'pc'], true)
+        ) {
+            $this->pdo->prepare(
+                'UPDATE asset_handovers SET
+                    is_open = FALSE,
+                    return_date = COALESCE(return_date, CURRENT_DATE),
+                    updated_at = NOW()
+                 WHERE asset_id = :id AND asset_type = :type AND is_open = TRUE'
+            )->execute(['id' => $id, 'type' => $category]);
+        }
         // Slots may exist from imports/edits without asset_handovers rows — backfill so history matches UI
         $this->ensureHandoversFromSlots($category, $id, $row, $user);
         // Rebuild denormalized slots + collapse accidental consecutive same-person handovers
@@ -862,8 +876,9 @@ final class AssetController
                     // Only when there has never been a 2nd/3rd owner may we rename original + slot 1
                     $soleHolder = $handoverCount <= 1;
 
-                    // Keep / reopen open handover so Name survives status-only edits (incl. Available)
-                    if (! $endsCustody) {
+                    // Keep / reopen open handover so Name survives status-only edits.
+                    // Never reopen while Available — that undoes Mark returned (IT custody + return remarks).
+                    if (! $endsCustody && $effectiveStatus !== 'available') {
                         $this->ensureOpenHandoverForDeployed(
                             $category,
                             $id,
@@ -1188,14 +1203,21 @@ final class AssetController
         }
 
         if (in_array($category, ['laptop', 'mobile_phone', 'pc'], true)) {
-            // Current holder = open allocation only (do not fall back to slot 1 after return)
+            // Current holder = open allocation only (do not fall back to slot 1 after return).
+            // "IT Department" is temporary Available custody — not an open person handover.
             $holderExpr = "NULLIF({$alias}.allocated_person, '')";
+            $liveHolderExpr = "CASE
+                 WHEN {$holderExpr} IS NULL THEN NULL
+                 WHEN lower({$holderExpr}) = 'it department' THEN NULL
+                 ELSE {$holderExpr}
+               END";
             $holderSinceExpr = "{$alias}.allocated_on";
             $isOriginalExpr = "CASE
-                 WHEN {$holderExpr} IS NULL OR {$alias}.original_assigned_person IS NULL THEN FALSE
-                 WHEN lower({$holderExpr}) = lower({$alias}.original_assigned_person) THEN TRUE
+                 WHEN {$liveHolderExpr} IS NULL OR {$alias}.original_assigned_person IS NULL THEN FALSE
+                 WHEN lower({$liveHolderExpr}) = lower({$alias}.original_assigned_person) THEN TRUE
                  ELSE FALSE
                END";
+            $handoverOpenExpr = "({$liveHolderExpr} IS NOT NULL)";
         } else {
             $holderExpr = $category === 'other'
                 ? "NULLIF({$alias}.user_name, '')"
@@ -1204,6 +1226,7 @@ final class AssetController
                 ? "{$alias}.handover_date"
                 : 'NULL::date';
             $isOriginalExpr = 'FALSE';
+            $handoverOpenExpr = "({$holderExpr} IS NOT NULL)";
         }
 
         // Always join real company — needed so transferred-away rows show destination (ISP), not the filter tab
@@ -1231,7 +1254,7 @@ final class AssetController
                        NULL::varchar AS supplier_name,
                        {$handoverSelect},
                        NULL::date AS return_date,
-                       ({$holderExpr} IS NOT NULL) AS handover_open,
+                       {$handoverOpenExpr} AS handover_open,
                        {$holderExpr} AS assigned_person_name,
                        {$holderExpr} AS current_holder,
                        {$holderSinceExpr} AS current_holder_since,
@@ -1870,6 +1893,16 @@ final class AssetController
             return;
         }
 
+        // Available / disposed / retired must not reopen a closed return
+        $st = $this->pdo->prepare(
+            'SELECT status FROM ' . self::TABLES[$category] . ' WHERE id = :id'
+        );
+        $st->execute(['id' => $assetId]);
+        $status = strtolower(trim((string) ($st->fetchColumn() ?: '')));
+        if (in_array($status, ['available', 'disposed', 'retired'], true)) {
+            return;
+        }
+
         $open = $this->pdo->prepare(
             'SELECT id FROM asset_handovers
              WHERE asset_id = :id AND asset_type = :type AND is_open = TRUE
@@ -2109,6 +2142,10 @@ final class AssetController
                 $name = trim((string) ($asset['allocated_person'] ?? $asset['pc_name'] ?? ''));
             }
             if ($name === '') {
+                continue;
+            }
+            // Temporary Available custody — never backfill as a chain person
+            if (strcasecmp($name, 'IT Department') === 0) {
                 continue;
             }
             // Excel sometimes put lost notes (e.g. "Missing in Jaffna") in person columns

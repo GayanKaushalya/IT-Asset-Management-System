@@ -6229,17 +6229,21 @@ function AssetViewModal({
   ).trim();
   // Temporary custody location after Mark returned (not a person / chain slot)
   // Other assets may legitimately list "IT Department" as the first assigned user.
+  const noOpenPersonHandover = !Boolean(asset.handover_open);
   const holder =
     rawHolder ||
-    (isAvailableStatus && !asset.handover_open && !isOtherAssetView ? IT_CUSTODY_HOLDER : '');
+    (isAvailableStatus && noOpenPersonHandover && !isOtherAssetView ? IT_CUSTODY_HOLDER : '');
   const itCustodyNow =
     !isOtherAssetView &&
     isAvailableStatus &&
-    !asset.handover_open &&
-    isItCustodyHolder(holder);
-  // Special return remark: visible in View only while Available / with IT Department
+    noOpenPersonHandover &&
+    (isItCustodyHolder(holder) || holder === '');
+  // Force IT Department label in View while Available with no open person custody
+  const displayHolder = itCustodyNow ? IT_CUSTODY_HOLDER : holder;
+  // Return remarks: show latest closed-handover note while Available (Mark returned)
   const activeReturnRemarks = (() => {
-    if (!itCustodyNow) return '';
+    if (!isAvailableStatus || isOtherAssetView) return '';
+    if (!itCustodyNow && Boolean(asset.handover_open)) return '';
     for (let i = history.length - 1; i >= 0; i--) {
       const h = history[i];
       if (h.is_open || h.is_current) continue;
@@ -6643,20 +6647,20 @@ function AssetViewModal({
                 <h4>Current Assignee</h4>
                 {itCustodyNow ? (
                   <span className="avm-pill info check">Holds now</span>
-                ) : holder ? (
+                ) : displayHolder ? (
                   <span className="avm-pill info check">Holds Device</span>
                 ) : (
                   <span className="avm-pill muted">Unassigned</span>
                 )}
               </div>
-              {holder ? (
+              {displayHolder ? (
                 <>
                   <div className="avm-assignee-box">
                     <div className="avm-avatar" aria-hidden>
-                      {initialsFromName(holder)}
+                      {initialsFromName(displayHolder)}
                     </div>
                     <div>
-                      <strong>{holder}</strong>
+                      <strong>{displayHolder}</strong>
                       {itCustodyNow ? (
                         <div className="avm-meta-line">
                           Temporary location — not a person. Item is Available until next handover.
