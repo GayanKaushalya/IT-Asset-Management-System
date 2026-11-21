@@ -96,12 +96,7 @@ final class CredentialVaultController
             Response::error('Invalid credential payload', 422);
             return;
         }
-        if ($type === 'wifi') {
-            // blank allowed
-        } elseif (strlen($password) < 8) {
-            Response::error('Password must be at least 8 characters', 422);
-            return;
-        }
+        // Any password length allowed (including blank for WiFi / vault storage)
         if (! in_array($type, $allowedTypes, true)) {
             Response::error('Invalid credential_type', 422);
             return;
@@ -224,11 +219,6 @@ final class CredentialVaultController
         Auth::assertCompanyAccess($user, (int) $credential['company_id']);
 
         $password = (string) $request->input('password', '');
-        $minLen = ($credential['credential_type'] ?? '') === 'wifi' ? 4 : 8;
-        if (strlen($password) < $minLen) {
-            Response::error("Password must be at least {$minLen} characters", 422);
-            return;
-        }
 
         $stmt = $this->pdo->prepare(
             'UPDATE credentials
@@ -260,7 +250,6 @@ final class CredentialVaultController
 
         $systemName = trim((string) $request->input('system_name', $credential['system_name']));
         $password = (string) $request->input('password', '');
-        $type = (string) ($credential['credential_type'] ?? 'other');
 
         $companyId = (int) $credential['company_id'];
         if ($request->input('company_id') !== null && $request->input('company_id') !== '') {
@@ -289,13 +278,6 @@ final class CredentialVaultController
         if ($systemName === '') {
             Response::error('Invalid credential payload', 422);
             return;
-        }
-        if ($password !== '') {
-            $minLen = $type === 'wifi' ? 4 : 8;
-            if (strlen($password) < $minLen) {
-                Response::error("Password must be at least {$minLen} characters", 422);
-                return;
-            }
         }
 
         $sql = 'UPDATE credentials

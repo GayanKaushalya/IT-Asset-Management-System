@@ -129,12 +129,6 @@ final class EmailAccountController
                 $emailId = (int) $existing['id'];
                 $wasActive = $this->isTruthy($existing['is_active'] ?? false);
 
-                if ($password !== '' && strlen($password) < 8) {
-                    $this->pdo->rollBack();
-                    Response::error('Password must be at least 8 characters', 422);
-                    return;
-                }
-
                 // Reactivate soft-deleted mailbox and optionally update password
                 if ($password !== '') {
                     $cipher = $this->vault->encrypt($password);
@@ -173,12 +167,7 @@ final class EmailAccountController
                     )->execute(['eid' => $emailId]);
                 }
             } else {
-                // Blank password allowed (stored encrypted empty string)
-                if ($password !== '' && strlen($password) < 8) {
-                    $this->pdo->rollBack();
-                    Response::error('Password must be at least 8 characters when provided', 422);
-                    return;
-                }
+                // Any password length allowed (including blank — stored encrypted)
 
                 $sql = 'INSERT INTO email_accounts (
                             company_id, email_address, password_ciphertext, encryption_version,
@@ -334,11 +323,6 @@ final class EmailAccountController
             Response::error('Location does not belong to this company', 422);
             return;
         }
-        if ($password !== '' && strlen($password) < 8) {
-            Response::error('Password must be at least 8 characters', 422);
-            return;
-        }
-
         $targetAccountId = (int) $row['email_account_id'];
         $mergeFromAccountId = null;
 

@@ -1258,7 +1258,6 @@ export default function CredentialsPage() {
                       <input
                         className="input"
                         type={showFormPassword ? 'text' : 'password'}
-                        minLength={isEditing || existingEmailHint ? undefined : 8}
                         required={false}
                         placeholder={
                           isEditing || existingEmailHint
@@ -1267,7 +1266,10 @@ export default function CredentialsPage() {
                         }
                         value={form.password}
                         onChange={(e) => setForm({ ...form, password: e.target.value })}
-                        autoComplete="new-password"
+                        autoComplete="off"
+                        data-lpignore="true"
+                        data-1p-ignore="true"
+                        data-form-type="other"
                         name="itams-vault-new-password"
                       />
                       <div className="password-actions">
@@ -1400,14 +1402,16 @@ export default function CredentialsPage() {
                       <input
                         className="input"
                         type={showFormPassword ? 'text' : 'password'}
-                        minLength={isEditing ? undefined : 4}
-                        required={!isEditing}
+                        required={false}
                         placeholder={
-                          isEditing ? 'New password (leave blank to keep current)' : 'Password'
+                          isEditing ? 'New password (leave blank to keep current)' : 'Password (optional)'
                         }
                         value={form.password}
                         onChange={(e) => setForm({ ...form, password: e.target.value })}
-                        autoComplete="new-password"
+                        autoComplete="off"
+                        data-lpignore="true"
+                        data-1p-ignore="true"
+                        data-form-type="other"
                         name="itams-wifi-new-password"
                       />
                       <div className="password-actions">
