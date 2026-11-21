@@ -24,9 +24,35 @@ final class DashboardController
             $companyId = (int) $user['company_id'];
         }
 
-        // One pass over base tables instead of many v_assets scans
-        $companyFilter = $companyId !== null ? ' AND company_id = :company_id' : '';
+        // Fleet counts must match Assets inventory tabs:
+        // - exclude disposed from type/status totals used as "active fleet"
+        // - exclude SIM rows from mobile_phones (SIM is its own Assets tab)
+        // - exclude FOTON (same as stock report / company chart)
+        $companyFilter = $companyId !== null ? ' AND a.company_id = :company_id' : '';
         $params = $companyId !== null ? ['company_id' => $companyId] : [];
+
+        $fleetFrom = "(
+            SELECT l.company_id, l.status, l.purchase_amount_lkr, 'laptop'::text AS category
+            FROM laptops l
+            JOIN companies c ON c.id = l.company_id AND c.code <> 'FOTON'
+            UNION ALL
+            SELECT m.company_id, m.status, m.purchase_amount_lkr, 'mobile_phone'
+            FROM mobile_phones m
+            JOIN companies c ON c.id = m.company_id AND c.code <> 'FOTON'
+            WHERE COALESCE(m.is_sim, FALSE) IS NOT TRUE
+            UNION ALL
+            SELECT p.company_id, p.status, p.purchase_amount_lkr, 'pc'
+            FROM pcs p
+            JOIN companies c ON c.id = p.company_id AND c.code <> 'FOTON'
+            UNION ALL
+            SELECT pr.company_id, pr.status, pr.purchase_amount_lkr, 'printer'
+            FROM printers pr
+            JOIN companies c ON c.id = pr.company_id AND c.code <> 'FOTON'
+            UNION ALL
+            SELECT o.company_id, o.status, o.purchase_amount_lkr, 'other'
+            FROM other_assets o
+            JOIN companies c ON c.id = o.company_id AND c.code <> 'FOTON'
+         ) a";
 
         $summarySql = "SELECT
             COUNT(*) FILTER (WHERE status <> 'disposed') AS total_assets,
@@ -39,17 +65,7 @@ final class DashboardController
             COUNT(*) FILTER (WHERE category = 'mobile_phone' AND status <> 'disposed') AS mobiles,
             COUNT(*) FILTER (WHERE category = 'pc' AND status <> 'disposed') AS pcs,
             COUNT(*) FILTER (WHERE category = 'other' AND status <> 'disposed') AS others
-         FROM (
-            SELECT company_id, status, purchase_amount_lkr, 'laptop'::text AS category FROM laptops
-            UNION ALL
-            SELECT company_id, status, purchase_amount_lkr, 'mobile_phone' FROM mobile_phones
-            UNION ALL
-            SELECT company_id, status, purchase_amount_lkr, 'pc' FROM pcs
-            UNION ALL
-            SELECT company_id, status, purchase_amount_lkr, 'printer' FROM printers
-            UNION ALL
-            SELECT company_id, status, purchase_amount_lkr, 'other' FROM other_assets
-         ) a
+         FROM {$fleetFrom}
          WHERE TRUE {$companyFilter}";
         $summaryStmt = $this->pdo->prepare($summarySql);
         $summaryStmt->execute($params);
@@ -58,25 +74,32 @@ final class DashboardController
         $warrantyDays = (int) ($request->input('warranty_days') ?: 90);
         $warrantyDue = $this->countWarrantyDue($companyId, $warrantyDays);
 
-        $byCompanySql = "SELECT * FROM v_dashboard_assets_by_company WHERE code <> 'FOTON'";
+        $byCompanySql = "SELECT
+                c.id AS company_id,
+                c.code,
+                c.short_name,
+                c.name AS company_name,
+                COUNT(*) FILTER (WHERE a.status <> 'disposed') AS total_assets,
+                COALESCE(SUM(a.purchase_amount_lkr) FILTER (WHERE a.status <> 'disposed'), 0) AS total_value_lkr
+             FROM companies c
+             LEFT JOIN {$fleetFrom} ON a.company_id = c.id
+             WHERE c.code <> 'FOTON'";
         $byCompanyParams = [];
         if ($companyId !== null) {
-            $byCompanySql .= ' AND company_id = :company_id';
+            $byCompanySql .= ' AND c.id = :company_id';
             $byCompanyParams['company_id'] = $companyId;
         }
+        $byCompanySql .= ' GROUP BY c.id, c.code, c.short_name, c.name ORDER BY c.code';
         $byCompanyStmt = $this->pdo->prepare($byCompanySql);
         $byCompanyStmt->execute($byCompanyParams);
 
-        $byStatusSql = 'SELECT status, SUM(asset_count) AS asset_count
-                        FROM v_dashboard_assets_by_status';
-        $byStatusParams = [];
-        if ($companyId !== null) {
-            $byStatusSql .= ' WHERE company_id = :company_id';
-            $byStatusParams['company_id'] = $companyId;
-        }
-        $byStatusSql .= ' GROUP BY status ORDER BY status';
+        $byStatusSql = "SELECT a.status, COUNT(*) AS asset_count
+                        FROM {$fleetFrom}
+                        WHERE TRUE {$companyFilter}
+                        GROUP BY a.status
+                        ORDER BY a.status";
         $byStatusStmt = $this->pdo->prepare($byStatusSql);
-        $byStatusStmt->execute($byStatusParams);
+        $byStatusStmt->execute($params);
 
         $laptops = (int) ($summary['laptops'] ?? 0);
         $mobiles = (int) ($summary['mobiles'] ?? 0);
