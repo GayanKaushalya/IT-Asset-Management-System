@@ -237,7 +237,7 @@ final class AssetController
                  CASE WHEN COALESCE(is_legacy, FALSE) THEN asset_tag ELSE NULL END ASC NULLS FIRST,
                  {$tagNumDesc}";
 
-        // One DB round-trip instead of COUNT + SELECT (saves Supabase pooler RTT)
+        // One DB round-trip: page rows + totals via window functions (avoids a second full scan)
         $fetchPage = static function (
             PDO $pdo,
             string $base,
@@ -245,15 +245,24 @@ final class AssetController
             int $limit,
             int $offset,
             string $orderBy,
-            ?string $legacyFilter = null
+            ?string $legacyFilter = null,
+            bool $withLegacyCounts = false
         ): array {
             $legacyWhere = $legacyFilter === null
                 ? ''
                 : ' WHERE COALESCE(is_legacy, FALSE) = ' . ($legacyFilter === 'old' ? 'TRUE' : 'FALSE');
+            // Compute new/old totals over the full set, then filter/page — one scan of {$base}
+            $countCols = $withLegacyCounts
+                ? ", COUNT(*) FILTER (WHERE NOT COALESCE(is_legacy, FALSE)) OVER() AS _new_count
+                   , COUNT(*) FILTER (WHERE COALESCE(is_legacy, FALSE)) OVER() AS _old_count"
+                : '';
             $stmt = $pdo->prepare(
                 "SELECT * FROM (
-                    SELECT asset_list.*, COUNT(*) OVER() AS _total_count
-                    FROM ({$base}) AS asset_list
+                    SELECT * FROM (
+                        SELECT asset_list.*, COUNT(*) OVER() AS _total_count
+                               {$countCols}
+                        FROM ({$base}) AS asset_list
+                    ) AS counted
                     {$legacyWhere}
                  ) AS paged
                  ORDER BY {$orderBy}
@@ -262,11 +271,13 @@ final class AssetController
             $stmt->execute($params);
             $rows = $stmt->fetchAll();
             $total = $rows === [] ? 0 : (int) ($rows[0]['_total_count'] ?? 0);
+            $newCount = $rows === [] ? 0 : (int) ($rows[0]['_new_count'] ?? 0);
+            $oldCount = $rows === [] ? 0 : (int) ($rows[0]['_old_count'] ?? 0);
             foreach ($rows as &$row) {
-                unset($row['_total_count']);
+                unset($row['_total_count'], $row['_new_count'], $row['_old_count']);
             }
             unset($row);
-            return [$rows, $total];
+            return [$rows, $total, $newCount, $oldCount];
         };
 
         // Per sub-company laptop/phone lists: new stock fills pages 1..N; one trailing page holds ALL Old stock.
@@ -282,37 +293,48 @@ final class AssetController
         $oldPages = 0;
 
         if ($reserveOldPages) {
-            $countStmt = $this->pdo->prepare(
-                "SELECT
-                    COUNT(*) FILTER (WHERE NOT COALESCE(is_legacy, FALSE)) AS new_count,
-                    COUNT(*) FILTER (WHERE COALESCE(is_legacy, FALSE)) AS old_count
-                 FROM ({$base}) AS asset_list"
-            );
-            $countStmt->execute($params);
-            $counts = $countStmt->fetch(PDO::FETCH_ASSOC) ?: [];
-            $newCount = (int) ($counts['new_count'] ?? 0);
-            $oldCount = (int) ($counts['old_count'] ?? 0);
-            $total = $newCount + $oldCount;
-
             $newOrderBy = $tagNumDesc;
             $oldOrderBy = 'asset_tag ASC, id DESC';
 
             if ($hasSearch) {
                 // Mixed new + old matches; keep new-first ordering from $orderBy
                 $offset = ($page - 1) * $limit;
-                [$rows, $total] = $fetchPage($this->pdo, $base, $params, $limit, $offset, $orderBy, null);
+                [$rows, $total, $newCount, $oldCount] = $fetchPage(
+                    $this->pdo, $base, $params, $limit, $offset, $orderBy, null, true
+                );
                 $pages = $total === 0 ? 1 : max(1, (int) ceil($total / $limit));
                 if ($page > $pages) {
                     $page = $pages;
                     $offset = ($page - 1) * $limit;
-                    [$rows, $total] = $fetchPage($this->pdo, $base, $params, $limit, $offset, $orderBy, null);
+                    [$rows, $total, $newCount, $oldCount] = $fetchPage(
+                        $this->pdo, $base, $params, $limit, $offset, $orderBy, null, true
+                    );
                     $pages = $total === 0 ? 1 : max(1, (int) ceil($total / $limit));
                 }
                 $newPages = $pages;
                 $oldPages = 0;
             } else {
+                // Probe page 1 of new stock to learn new/old totals without a separate COUNT query
+                $probeLimit = $limit;
+                $probeOffset = max(0, ($page - 1) * $limit);
+                [$rows, , $newCount, $oldCount] = $fetchPage(
+                    $this->pdo, $base, $params, $probeLimit, $probeOffset, $newOrderBy, 'new', true
+                );
+                // Empty probe (e.g. only old stock, or past last new page) — still need totals
+                if ($rows === [] && ($newCount + $oldCount) === 0) {
+                    $probe = $this->pdo->prepare(
+                        "SELECT
+                            COUNT(*) FILTER (WHERE NOT COALESCE(is_legacy, FALSE)) AS new_count,
+                            COUNT(*) FILTER (WHERE COALESCE(is_legacy, FALSE)) AS old_count
+                         FROM ({$base}) AS asset_list"
+                    );
+                    $probe->execute($params);
+                    $c = $probe->fetch(PDO::FETCH_ASSOC) ?: [];
+                    $newCount = (int) ($c['new_count'] ?? 0);
+                    $oldCount = (int) ($c['old_count'] ?? 0);
+                }
+                $total = $newCount + $oldCount;
                 $newPages = $newCount === 0 ? 0 : (int) ceil($newCount / $limit);
-                // Keep every old-stock row on a single final page so none are hidden behind page 2+
                 $oldPages = $oldCount === 0 ? 0 : 1;
                 $pages = max(1, $newPages + $oldPages);
                 if ($page > $pages) {
@@ -325,11 +347,13 @@ final class AssetController
                     if ($oldLimit > 500) {
                         $oldLimit = 500;
                     }
-                    [$rows] = $fetchPage($this->pdo, $base, $params, $oldLimit, 0, $oldOrderBy, 'old');
-                } else {
+                    [$rows] = $fetchPage($this->pdo, $base, $params, $oldLimit, 0, $oldOrderBy, 'old', true);
+                } elseif ($rows === [] && $newCount > 0) {
+                    // Requested page was past new stock; re-fetch correct new page
                     $offset = ($page - 1) * $limit;
-                    [$rows] = $fetchPage($this->pdo, $base, $params, $limit, $offset, $newOrderBy, 'new');
+                    [$rows] = $fetchPage($this->pdo, $base, $params, $limit, $offset, $newOrderBy, 'new', true);
                 }
+                // else: $rows already holds the correct new-stock page from the probe
             }
         } else {
             [$rows, $total] = $fetchPage($this->pdo, $base, $params, $limit, $offset, $orderBy);
@@ -391,29 +415,49 @@ final class AssetController
             return;
         }
         $this->assertAssetCompanyAccess($user, $row);
-        // Available = returned to IT: never leave a stray open handover (e.g. accessory PUT after check-in)
+
         $showStatus = strtolower(trim((string) ($row['status'] ?? '')));
-        if (
-            $showStatus === 'available'
-            && in_array($category, ['laptop', 'mobile_phone', 'pc'], true)
-        ) {
-            $this->pdo->prepare(
-                'UPDATE asset_handovers SET
-                    is_open = FALSE,
-                    return_date = COALESCE(return_date, CURRENT_DATE),
-                    updated_at = NOW()
-                 WHERE asset_id = :id AND asset_type = :type AND is_open = TRUE'
-            )->execute(['id' => $id, 'type' => $category]);
+        $slotCategories = in_array($category, ['laptop', 'mobile_phone', 'pc'], true);
+        $mutated = false;
+
+        // Available = returned to IT: close stray open handovers (e.g. accessory PUT after check-in).
+        // Satisfy chk_return_complete (return_date requires received_by + condition).
+        if ($showStatus === 'available' && $slotCategories) {
+            $openChk = $this->pdo->prepare(
+                'SELECT id FROM asset_handovers
+                 WHERE asset_id = :id AND asset_type = :type AND is_open = TRUE
+                 LIMIT 1'
+            );
+            $openChk->execute(['id' => $id, 'type' => $category]);
+            if ($openChk->fetchColumn()) {
+                $uid = (int) ($user['id'] ?? 1) ?: 1;
+                $this->pdo->prepare(
+                    'UPDATE asset_handovers SET
+                        is_open = FALSE,
+                        return_date = COALESCE(return_date, CURRENT_DATE),
+                        return_received_by_id = COALESCE(return_received_by_id, :uid),
+                        return_condition = COALESCE(return_condition, \'good\'),
+                        updated_at = NOW()
+                     WHERE asset_id = :id AND asset_type = :type AND is_open = TRUE'
+                )->execute(['uid' => $uid, 'id' => $id, 'type' => $category]);
+                $mutated = true;
+            }
         }
-        // Slots may exist from imports/edits without asset_handovers rows — backfill so history matches UI
-        $this->ensureHandoversFromSlots($category, $id, $row, $user);
-        // Rebuild denormalized slots + collapse accidental consecutive same-person handovers
-        if (in_array($category, ['laptop', 'mobile_phone', 'pc'], true)) {
-            (new HandoverSlotSync($this->pdo))->sync($category, $id);
-            $refreshed = $this->findDetailed($category, $id);
-            if (is_array($refreshed)) {
-                $row = $refreshed;
-                $row['company_id'] = $refreshed['company_id'] ?? $row['company_id'];
+
+        // Backfill missing history from slots when needed; skip full slot sync on every View.
+        // Sync writes are expensive — only run after a mutation (heal / backfill).
+        if ($slotCategories) {
+            $backfilled = $this->ensureHandoversFromSlots($category, $id, $row, $user);
+            // ensureHandoversFromSlots already syncs when it inserts; heal path still needs sync.
+            if ($mutated && ! $backfilled) {
+                (new HandoverSlotSync($this->pdo))->sync($category, $id);
+            }
+            if ($mutated || $backfilled) {
+                $refreshed = $this->findDetailed($category, $id);
+                if (is_array($refreshed)) {
+                    $row = $refreshed;
+                    $row['company_id'] = $refreshed['company_id'] ?? $row['company_id'];
+                }
             }
         }
         $row['handovers'] = $this->handoverHistory($category, $id);
@@ -2125,11 +2169,12 @@ final class AssetController
      *
      * @param array<string, mixed> $asset
      * @param array<string, mixed> $user
+     * @return bool true when rows were inserted / history changed
      */
-    private function ensureHandoversFromSlots(string $category, int $assetId, array $asset, array $user): void
+    private function ensureHandoversFromSlots(string $category, int $assetId, array $asset, array $user): bool
     {
         if (! in_array($category, ['laptop', 'mobile_phone', 'pc'], true)) {
-            return;
+            return false;
         }
 
         $slots = [];
@@ -2163,7 +2208,7 @@ final class AssetController
         }
 
         if ($slots === []) {
-            return;
+            return false;
         }
 
         $histStmt = $this->pdo->prepare(
@@ -2177,7 +2222,7 @@ final class AssetController
 
         // Already have at least as many history rows as slot people — nothing to backfill
         if (count($history) >= count($slots)) {
-            return;
+            return false;
         }
 
         $companyId = (int) ($asset['company_id'] ?? 0);
@@ -2244,10 +2289,12 @@ final class AssetController
 
             $this->pdo->commit();
             (new HandoverSlotSync($this->pdo))->sync($category, $assetId);
+            return true;
         } catch (\Throwable) {
             if ($this->pdo->inTransaction()) {
                 $this->pdo->rollBack();
             }
+            return false;
         }
     }
 
