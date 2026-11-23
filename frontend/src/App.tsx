@@ -16,6 +16,7 @@ import {
   StockReportPage,
 } from './pages/SystemPages';
 import SettingsPage from './pages/SettingsPage';
+import CctvPage from './pages/CctvPage';
 import HandoverReportsPage from './pages/HandoverReportsPage';
 import OrganizationPage from './pages/OrganizationPage';
 import AgreementsPage from './pages/AgreementsPage';
@@ -51,10 +52,12 @@ export default function App() {
 
             <Route path="assets" element={<Navigate to="/assets/all" replace />} />
             <Route path="assets/pc" element={<Navigate to="/assets/all" replace />} />
+            <Route path="assets/cctv" element={<CctvPage />} />
             <Route path="assets/:category" element={<AssetsPage />} />
             <Route path="agreements" element={<AgreementsPage />} />
             <Route path="expenditures" element={<ExpenditurePage />} />
             <Route path="peripherals" element={<Navigate to="/assets/others" replace />} />
+            <Route path="settings/cctv" element={<Navigate to="/assets/cctv" replace />} />
 
             <Route path="credentials" element={<Navigate to="/credentials/emails" replace />} />
             <Route path="credentials/access-logs" element={<Navigate to="/credentials/emails" replace />} />

@@ -1176,37 +1176,44 @@ final class ReportController
                 'table' => 'laptops',
                 'legacy_expr' => 'COALESCE(a.is_legacy, FALSE)',
                 'holder' => "COALESCE({$availableItHolder}, NULLIF(TRIM(a.original_assigned_person), ''), NULLIF(TRIM(a.pc_name), ''))",
-                'extra' => 'a.brand, a.model, a.serial_number',
-                'extra_where' => '',
+                'extra' => 'a.brand, a.model, a.serial_number, NULL::numeric AS purchase_amount_lkr, NULL::varchar AS phone_number',
+                'extra_where' => 'AND COALESCE(a.is_on_loan, FALSE) IS NOT TRUE',
             ],
             'mobile_phone' => [
                 'table' => 'mobile_phones',
                 'legacy_expr' => 'COALESCE(a.is_legacy, FALSE)',
                 'holder' => "COALESCE({$availableItHolder}, NULLIF(TRIM(a.original_assigned_person), ''), NULLIF(TRIM(a.first_handover_person), ''), NULLIF(TRIM(a.pc_name), ''))",
-                'extra' => 'a.brand, a.model, a.serial_number',
-                // Phones only — SIM cards have their own register
+                'extra' => 'a.brand, a.model, a.serial_number, a.purchase_amount_lkr, a.phone_number',
+                // Phones only — SIM cards have their own Stock Report card
                 'extra_where' => 'AND COALESCE(a.is_sim, FALSE) IS NOT TRUE',
+            ],
+            'sim' => [
+                'table' => 'mobile_phones',
+                'legacy_expr' => 'COALESCE(a.is_legacy, FALSE)',
+                'holder' => "COALESCE({$availableItHolder}, NULLIF(TRIM(a.original_assigned_person), ''), NULLIF(TRIM(a.first_handover_person), ''), NULLIF(TRIM(a.pc_name), ''))",
+                'extra' => 'a.brand, a.model, a.serial_number, a.purchase_amount_lkr, a.phone_number',
+                'extra_where' => 'AND COALESCE(a.is_sim, FALSE) = TRUE',
             ],
             'pc' => [
                 'table' => 'pcs',
                 // Newly purchased register vs older fleet PCs
                 'legacy_expr' => 'CASE WHEN COALESCE(a.newly_purchased, FALSE) THEN FALSE ELSE TRUE END',
                 'holder' => "COALESCE({$availableItHolder}, NULLIF(TRIM(a.original_assigned_person), ''), NULLIF(TRIM(a.pc_name), ''))",
-                'extra' => 'a.brand, a.model, a.serial_number',
+                'extra' => 'a.brand, a.model, a.serial_number, NULL::numeric AS purchase_amount_lkr, NULL::varchar AS phone_number',
                 'extra_where' => '',
             ],
             'other' => [
                 'table' => 'other_assets',
                 'legacy_expr' => 'FALSE',
                 'holder' => "COALESCE(NULLIF(TRIM(a.user_name), ''), NULLIF(TRIM(a.pc_name), ''), NULLIF(TRIM(a.item_name), ''))",
-                'extra' => 'a.brand, a.model, a.serial_number, a.item_name',
+                'extra' => 'a.brand, a.model, a.serial_number, NULL::numeric AS purchase_amount_lkr, NULL::varchar AS phone_number',
                 'extra_where' => '',
             ],
             'printer' => [
                 'table' => 'printers',
                 'legacy_expr' => 'FALSE',
                 'holder' => "NULLIF(TRIM(a.pc_name), '')",
-                'extra' => 'a.brand, a.model, a.serial_number',
+                'extra' => 'a.brand, a.model, a.serial_number, NULL::numeric AS purchase_amount_lkr, NULL::varchar AS phone_number',
                 'extra_where' => '',
             ],
         ];
@@ -1248,9 +1255,13 @@ final class ReportController
                 }
 
                 $itemSelect = $cat === 'other' ? 'a.item_name' : 'NULL::varchar AS item_name';
+                $pkgSelect = in_array($cat, ['mobile_phone', 'sim'], true)
+                    ? 'a.purchase_amount_lkr, a.phone_number'
+                    : 'NULL::numeric AS purchase_amount_lkr, NULL::varchar AS phone_number';
                 $sql = "SELECT a.id, a.asset_tag, '{$cat}' AS category, a.status,
                                a.brand, a.model, a.serial_number,
                                {$itemSelect},
+                               {$pkgSelect},
                                {$d['holder']} AS holder_name,
                                ({$d['legacy_expr']}) AS is_legacy,
                                c.code AS company_code, c.short_name AS company,

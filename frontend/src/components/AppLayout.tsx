@@ -37,9 +37,11 @@ const groups: NavGroup[] = [
     title: 'Asset Management',
     items: [
       { to: '/assets/laptop', label: 'Laptops', icon: <IconLaptop /> },
+      { to: '/assets/on-loan', label: 'On Loan', icon: <IconOnLoan /> },
       { to: '/assets/mobile-phones', label: 'Mobile Phones', icon: <IconPhone /> },
       { to: '/assets/all', label: 'PC Inventory', icon: <IconPc /> },
       { to: '/assets/others', label: 'Other assets', icon: <IconOthers /> },
+      { to: '/assets/cctv', label: 'CCTV', icon: <IconCctv /> },
       { to: '/agreements', label: 'Agreements', icon: <IconAgreements /> },
     ],
   },
@@ -290,6 +292,26 @@ function IconLaptop() {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="4" width="18" height="12" rx="2" />
       <path d="M2 20h20" />
+    </svg>
+  );
+}
+
+function IconOnLoan() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="5" width="18" height="11" rx="2" />
+      <path d="M2 19h20" />
+      <path d="M12 9v4M10 11h4" />
+    </svg>
+  );
+}
+
+function IconCctv() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 10 14 6v8L3 10z" />
+      <circle cx="17.5" cy="10" r="2.5" />
+      <path d="M7 18h10M12 14v4" />
     </svg>
   );
 }

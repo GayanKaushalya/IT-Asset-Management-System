@@ -51,7 +51,7 @@ type Company = { id: number; code: string; short_name: string; name: string };
 type Loc = { id: number; company_id: number; code?: string; name: string };
 type Dept = { id: number; company_id: number; code?: string; name: string; location_id?: number | null };
 
-type CategoryTab = 'all' | 'laptop' | 'mobile_phone' | 'pc' | 'others';
+type CategoryTab = 'all' | 'laptop' | 'on_loan' | 'mobile_phone' | 'pc' | 'others';
 type CompanyTab = 'IT' | 'IMS' | 'ISP' | 'SIM';
 
 /** Head-office location codes — always first / default in PC Inventory & Other assets */
@@ -82,6 +82,7 @@ function headOfficeLocationId(
 const CATEGORY_FROM_PATH: Record<string, CategoryTab> = {
   all: 'all',
   laptop: 'laptop',
+  'on-loan': 'on_loan',
   'mobile-phones': 'mobile_phone',
   pc: 'pc',
   others: 'others',
@@ -90,10 +91,19 @@ const CATEGORY_FROM_PATH: Record<string, CategoryTab> = {
 const CATEGORY_TITLES: Record<CategoryTab, string> = {
   all: 'PC Inventory',
   laptop: 'Laptops',
+  on_loan: 'On Loan',
   mobile_phone: 'Mobile Phones',
   pc: 'Newly Purchased PCs',
   others: 'Other assets',
 };
+
+/** API category for list/save (on-loan is a laptop subset). */
+function apiCategoryFor(tab: CategoryTab): string {
+  if (tab === 'on_loan') return 'laptop';
+  if (tab === 'others') return 'other';
+  if (tab === 'all') return 'pc';
+  return tab;
+}
 
 const OTHER_ITEM_OPTIONS = [
   'Printers',
@@ -113,6 +123,13 @@ const COMPANY_TABS: { id: CompanyTab; label: string }[] = [
 function companyTabsForCategory(category: CategoryTab): { id: CompanyTab; label: string }[] {
   if (category === 'mobile_phone') return COMPANY_TABS;
   return COMPANY_TABS.filter((t) => t.id !== 'SIM');
+}
+
+function formatPackagePrice(v: unknown): string {
+  if (v == null || String(v).trim() === '') return '';
+  const n = Number(v);
+  if (!Number.isFinite(n)) return String(v);
+  return `LKR ${n.toLocaleString('en-LK')}`;
 }
 
 /** PC assignment chain max (backend HandoverSlotSync::MAX_PERSONS_PC). */
@@ -598,12 +615,15 @@ export default function AssetsPage() {
     [companies, simFormCompany],
   );
 
+  const isOnLoanTab = activeCategory === 'on_loan';
   const createCategory =
     activeCategory === 'all'
       ? 'pc'
       : activeCategory === 'others'
         ? 'other'
-        : activeCategory;
+        : activeCategory === 'on_loan'
+          ? 'laptop'
+          : activeCategory;
 
   const formCategory = editingCategory ?? createCategory;
   const isLaptopForm = formCategory === 'laptop';
@@ -612,6 +632,8 @@ export default function AssetsPage() {
   const isSimForm =
     isPhoneForm &&
     (asBool(editAsset?.is_sim) || (isSimTab && showAddModal));
+  const isOnLoanForm =
+    isLaptopForm && (isOnLoanTab || asBool(editAsset?.is_on_loan));
   const isStudioForm = isLaptopForm || isPcForm || isPhoneForm;
 
   /** Company used for location / department dropdowns (SIM form uses ITL/IMS/ISP). */
@@ -791,9 +813,11 @@ export default function AssetsPage() {
     const reqQ = overrides?.q ?? q;
     const reqPageSize = overrides?.pageSize ?? pageSize;
     const reqIsSim = reqCategory === 'mobile_phone' && reqCompanyTab === 'SIM';
+    const reqIsOnLoan = reqCategory === 'on_loan';
     const reqIsAll = reqCategory === 'all';
     const reqIsOthers = reqCategory === 'others';
     const reqIsPcStock = reqCategory === 'pc';
+    const reqApiCategory = apiCategoryFor(reqCategory);
     const reqCompany =
       companies.find((c) => c.code === reqCompanyTab) ??
       (reqCompanyTab === 'IT'
@@ -818,7 +842,7 @@ export default function AssetsPage() {
 
     try {
       const params = new URLSearchParams();
-      params.set('category', reqCategory);
+      params.set('category', reqApiCategory);
       if (reqIsSim) {
         params.set('is_sim', '1');
         params.set('company_code', 'SIM');
@@ -828,10 +852,16 @@ export default function AssetsPage() {
       } else {
         params.set('company_code', reqCompanyTab);
       }
+      if (reqIsOnLoan) {
+        params.set('is_on_loan', '1');
+      }
       if ((reqIsAll || reqIsOthers) && reqLocationTab != null) {
         params.set('location_id', String(reqLocationTab));
       } else if (
-        (reqCategory === 'laptop' || reqCategory === 'mobile_phone' || reqIsPcStock) &&
+        (reqCategory === 'laptop' ||
+          reqCategory === 'on_loan' ||
+          reqCategory === 'mobile_phone' ||
+          reqIsPcStock) &&
         reqLocationFilter
       ) {
         params.set('location_id', reqLocationFilter);
@@ -841,6 +871,7 @@ export default function AssetsPage() {
       }
       if (
         (reqCategory === 'laptop' ||
+          reqCategory === 'on_loan' ||
           reqCategory === 'mobile_phone' ||
           reqIsPcStock ||
           reqIsAll ||
@@ -1205,6 +1236,7 @@ export default function AssetsPage() {
         (editingId || category === 'other' || category === 'printer' || savingSim
           ? null
           : new Date().toISOString().slice(0, 10));
+      const savingOnLoan = category === 'laptop' && (isOnLoanTab || isOnLoanForm);
       const payload: Record<string, unknown> = {
         company_id: saveCompany.id,
         category,
@@ -1232,6 +1264,7 @@ export default function AssetsPage() {
         phone_number: form.phone_number || null,
         status: form.status || 'available',
         ...(savingSim ? { is_sim: true } : {}),
+        ...(category === 'laptop' ? { is_on_loan: savingOnLoan } : {}),
         ...(statusEventNote.trim() ? { status_note: statusEventNote.trim() } : {}),
       };
 
@@ -1627,27 +1660,35 @@ export default function AssetsPage() {
   const addLabel =
     activeCategory === 'laptop'
       ? 'Add laptop'
-      : activeCategory === 'mobile_phone'
-        ? isSimTab
-          ? 'Add SIM'
-          : 'Add mobile phone'
-        : activeCategory === 'pc'
-          ? 'Add newly purchased PC'
-          : activeCategory === 'all'
-            ? 'Add PC'
-            : activeCategory === 'others'
-              ? 'Add other asset'
-              : 'Add asset';
+      : activeCategory === 'on_loan'
+        ? 'Add on-loan laptop'
+        : activeCategory === 'mobile_phone'
+          ? isSimTab
+            ? 'Add SIM'
+            : 'Add mobile phone'
+          : activeCategory === 'pc'
+            ? 'Add newly purchased PC'
+            : activeCategory === 'all'
+              ? 'Add PC'
+              : activeCategory === 'others'
+                ? 'Add other asset'
+                : 'Add asset';
 
   const showBrandCol =
     !isSimTab &&
-    (categoryTab === 'laptop' || categoryTab === 'mobile_phone' || categoryTab === 'pc' || isAllView);
+    (categoryTab === 'laptop' ||
+      categoryTab === 'on_loan' ||
+      categoryTab === 'mobile_phone' ||
+      categoryTab === 'pc' ||
+      isAllView);
   const showSimNumberCol = isSimTab;
   const showCompanyCol = isSimTab;
+  const showPackageCol = isSimTab;
   const showTypeCol = false;
   /** Hide Location column on PC Inventory only when a specific branch is selected */
   const showLocationCol = !isAllView || locationTab == null;
-  const isPersonAsset = categoryTab === 'laptop' || categoryTab === 'mobile_phone';
+  const isPersonAsset =
+    categoryTab === 'laptop' || categoryTab === 'on_loan' || categoryTab === 'mobile_phone';
 
   async function openQr(id: number, category: string, fallback?: Asset) {
     // Show list row immediately, then refresh with full detail (IMEI etc.)
@@ -1969,7 +2010,9 @@ export default function AssetsPage() {
               ? `New PC purchases for ${COMPANY_TABS.find((t) => t.id === companyTab)?.label ?? companyTab} (stays listed after Assigned). Full fleet is under PC Inventory.`
               : isSimTab
                 ? 'Manage SIM cards for ITL, IMS, and ISP — company, location, department, and handover chain (up to 10)'
-                : `Manage ${CATEGORY_TITLES[categoryTab].toLowerCase()} for ${COMPANY_TABS.find((t) => t.id === companyTab)?.label ?? companyTab}`
+                : isOnLoanTab
+                  ? `Laptops issued on loan for ${COMPANY_TABS.find((t) => t.id === companyTab)?.label ?? companyTab}`
+                  : `Manage ${CATEGORY_TITLES[categoryTab].toLowerCase()} for ${COMPANY_TABS.find((t) => t.id === companyTab)?.label ?? companyTab}`
         }
       />
       {error ? <p className="error-text">{error}</p> : null}
@@ -2031,6 +2074,7 @@ export default function AssetsPage() {
 
       <div className="card asset-list-card">
         {categoryTab === 'laptop' ||
+        categoryTab === 'on_loan' ||
         categoryTab === 'mobile_phone' ||
         isPcStockView ||
         isAllView ||
@@ -2229,6 +2273,7 @@ export default function AssetsPage() {
                     {showLocationCol ? <th className="col-location">Location</th> : null}
                     {showBrandCol ? <th className="col-brand">Brand</th> : null}
                     {showSimNumberCol ? <th className="col-sim">SIM number</th> : null}
+                    {showPackageCol ? <th className="col-package">Package</th> : null}
                     {!isSimTab ? <th className="col-sn">S/N</th> : null}
                     <th className="col-assigned">
                       {isSimTab || isPersonAsset || categoryTab === 'pc' || isAllView
@@ -2252,6 +2297,7 @@ export default function AssetsPage() {
                         (showBrandCol ? 1 : 0) +
                         (showCompanyCol ? 1 : 0) +
                         (showSimNumberCol ? 1 : 0) +
+                        (showPackageCol ? 1 : 0) +
                         (isSimTab ? 0 : 1) +
                         5
                   }>
@@ -2265,7 +2311,9 @@ export default function AssetsPage() {
                               ? 'No newly purchased PCs'
                               : isSimTab
                                 ? 'No SIM cards found'
-                                : `No ${CATEGORY_TITLES[categoryTab].toLowerCase()} found`
+                                : isOnLoanTab
+                                  ? 'No on-loan laptops found'
+                                  : `No ${CATEGORY_TITLES[categoryTab].toLowerCase()} found`
                       }
                       description={
                         (isAllView || isOthersView) && selectedLocation
@@ -2328,6 +2376,7 @@ export default function AssetsPage() {
                       (showBrandCol ? 1 : 0) +
                       (showCompanyCol ? 1 : 0) +
                       (showSimNumberCol ? 1 : 0) +
+                      (showPackageCol ? 1 : 0) +
                       (isSimTab ? 0 : 1) +
                       5;
                   const out: ReactNode[] = [];
@@ -2463,6 +2512,16 @@ export default function AssetsPage() {
                           <td className="col-sim">
                             <span className="cell-oneline" title={String(r.phone_number ?? '')}>
                               {dash(r.phone_number)}
+                            </span>
+                          </td>
+                        ) : null}
+                        {showPackageCol ? (
+                          <td className="col-package">
+                            <span
+                              className="cell-oneline"
+                              title={formatPackagePrice(r.purchase_amount_lkr) || undefined}
+                            >
+                              {formatPackagePrice(r.purchase_amount_lkr) || '—'}
                             </span>
                           </td>
                         ) : null}
@@ -6431,6 +6490,7 @@ function AssetViewModal({
       ? [
           { label: 'Company', value: companyUiLabel(asset.company_code) },
           { label: 'SIM Number', value: String(asset.phone_number ?? ''), copy: true },
+          { label: 'Package', value: formatPackagePrice(asset.purchase_amount_lkr) },
           { label: 'Department', value: String(asset.department_name ?? '') },
           { label: 'Location', value: String(asset.location_name ?? '') },
           {

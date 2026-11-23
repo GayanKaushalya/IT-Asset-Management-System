@@ -20,6 +20,7 @@ function normalize(type: string): string {
   if (t === 'mobile-phones' || t === 'mobile' || t === 'phone' || t === 'tab' || t === 'tablet') {
     return 'mobile_phone';
   }
+  if (t === 'sim' || t === 'sims') return 'mobile_phone';
   if (t === 'others') return 'other';
   return t;
 }

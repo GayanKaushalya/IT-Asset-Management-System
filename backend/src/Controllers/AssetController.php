@@ -36,7 +36,7 @@ final class AssetController
             'handover_on_5', 'handover_on_6', 'handover_on_7', 'handover_on_8',
             'original_assigned_person', 'original_assigned_on', 'allocated_person', 'allocated_on',
             'has_mouse',
-            'is_legacy',
+            'is_legacy', 'is_on_loan',
             'created_by', 'updated_by',
         ],
         'mobile_phones' => [
@@ -154,10 +154,22 @@ final class AssetController
                 || $request->input('is_sim') === 1
                 || $request->input('is_sim') === true
             );
+            $isOnLoanList = $cat === 'laptop' && (
+                $request->input('is_on_loan') === '1'
+                || $request->input('is_on_loan') === 1
+                || $request->input('is_on_loan') === true
+            );
 
             if ($isSimList) {
                 // SIM tab: all SIM cards across ITL / IMS / ISP (and legacy SIM company)
                 $where[] = "{$alias}.is_sim = TRUE";
+            } elseif ($isOnLoanList) {
+                // On Loan tab: laptops marked for temporary loan across companies
+                $where[] = "{$alias}.is_on_loan = TRUE";
+                if ($companyId !== null) {
+                    $where[] = "{$alias}.company_id = :company_id";
+                    $params['company_id'] = $companyId;
+                }
             } elseif ($companyId !== null) {
                 // Count / list only assets that currently belong to this company.
                 // After a company transfer the row moves with company_id (source tab loses it).
@@ -166,6 +178,10 @@ final class AssetController
                 // Keep SIMs off the regular ITL / IMS / ISP phone tabs
                 if ($cat === 'mobile_phone') {
                     $where[] = "{$alias}.is_sim IS NOT TRUE";
+                }
+                // Keep on-loan laptops off the regular Laptops tab
+                if ($cat === 'laptop') {
+                    $where[] = "{$alias}.is_on_loan IS NOT TRUE";
                 }
             }
 
@@ -805,7 +821,7 @@ final class AssetController
             if (in_array($f, ['location_id', 'department_id', 'supplier_id', 'purchase_amount_lkr', 'ram_gb', 'storage_gb', 'hdd_gb', 'ssd_gb'], true)) {
                 $val = self::numericOrNull($val);
             }
-            if (in_array($f, ['has_power_cable', 'has_vga_cable', 'has_ups', 'has_keyboard', 'has_mouse', 'has_charger', 'has_data_cable', 'has_back_cover', 'newly_purchased', 'is_legacy', 'is_sim'], true)) {
+            if (in_array($f, ['has_power_cable', 'has_vga_cable', 'has_ups', 'has_keyboard', 'has_mouse', 'has_charger', 'has_data_cable', 'has_back_cover', 'newly_purchased', 'is_legacy', 'is_sim', 'is_on_loan'], true)) {
                 // PDO+pgsql sends PHP false as "" which breaks boolean columns
                 $val = self::toBool($val) ? 'true' : 'false';
             }
@@ -1170,7 +1186,7 @@ final class AssetController
                        {$alias}.hdd_gb, {$alias}.ssd_gb,
                        NULL::boolean AS has_charger, NULL::boolean AS has_data_cable, NULL::boolean AS has_back_cover,
                        NULL::boolean AS has_keyboard, {$alias}.has_mouse,
-                       {$alias}.is_legacy,
+                       {$alias}.is_legacy, {$alias}.is_on_loan,
                        {$alias}.former_asset_tag, {$alias}.transferred_from_company_id, {$alias}.company_transferred_at,
                        {$alias}.company_id AS current_company_id";
         } elseif ($category === 'other') {
@@ -1775,6 +1791,7 @@ final class AssetController
                 $request->input('is_legacy', $request->input('entry_type') === 'old')
             ),
             'is_sim' => self::toBool($request->input('is_sim')),
+            'is_on_loan' => self::toBool($request->input('is_on_loan')),
             'created_by' => $user['id'],
             'updated_by' => $user['id'],
         ];

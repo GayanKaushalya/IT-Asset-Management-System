@@ -32,6 +32,8 @@ type StockItem = {
   model?: string | null;
   serial_number?: string | null;
   item_name?: string | null;
+  phone_number?: string | null;
+  purchase_amount_lkr?: number | string | null;
   status?: string | null;
   holder_name?: string | null;
   is_legacy?: boolean;
@@ -52,6 +54,7 @@ const CATEGORY_CARDS: { key: string; label: string; tone: string }[] = [
   { key: 'all', label: 'All available', tone: 'cyan' },
   { key: 'laptop', label: 'Laptops', tone: 'blue' },
   { key: 'mobile_phone', label: 'Mobile phones', tone: 'green' },
+  { key: 'sim', label: 'SIM', tone: 'teal' },
   { key: 'pc', label: 'PCs', tone: 'slate' },
   { key: 'other', label: 'Other assets', tone: 'purple' },
   { key: 'printer', label: 'Printers', tone: 'orange' },
@@ -72,6 +75,7 @@ function dash(v: unknown): string {
 
 function catLabel(c: string): string {
   if (c === 'mobile_phone') return 'Mobile phone';
+  if (c === 'sim') return 'SIM';
   if (c === 'laptop') return 'Laptop';
   if (c === 'pc') return 'PC';
   if (c === 'other') return 'Other';
@@ -81,11 +85,19 @@ function catLabel(c: string): string {
 
 function assetPath(category: string): string {
   if (category === 'mobile_phone') return '/assets/mobile-phones';
+  if (category === 'sim') return '/assets/mobile-phones';
   if (category === 'laptop') return '/assets/laptop';
   if (category === 'pc') return '/assets/all';
   if (category === 'other') return '/assets/others';
   if (category === 'printer') return '/assets/others';
   return '/assets/all';
+}
+
+function formatPackagePrice(v: unknown): string {
+  if (v == null || String(v).trim() === '') return '—';
+  const n = Number(v);
+  if (!Number.isFinite(n)) return String(v);
+  return `LKR ${n.toLocaleString('en-LK')}`;
 }
 
 export default function StockReportPage() {
@@ -211,6 +223,7 @@ export default function StockReportPage() {
       const live: Record<string, number> = {
         laptop: 0,
         mobile_phone: 0,
+        sim: 0,
         pc: 0,
         other: 0,
         printer: 0,
@@ -227,6 +240,7 @@ export default function StockReportPage() {
         all: items.length,
         laptop: live.laptop,
         mobile_phone: live.mobile_phone,
+        sim: live.sim,
         pc: live.pc,
         other: live.other,
         printer: live.printer,
@@ -239,6 +253,7 @@ export default function StockReportPage() {
       all: meta.total ?? 0,
       laptop: Number(by.laptop ?? 0),
       mobile_phone: Number(by.mobile_phone ?? 0),
+      sim: Number(by.sim ?? 0),
       pc: Number(by.pc ?? 0),
       other: Number(by.other ?? 0),
       printer: Number(by.printer ?? 0),
@@ -271,8 +286,9 @@ export default function StockReportPage() {
   }
 
   function openAsset(r: StockItem) {
+    const isSim = String(r.category) === 'sim';
     const code = String(r.company_code ?? company).toUpperCase();
-    const companyParam = code === 'ITL' ? 'IT' : code || 'IT';
+    const companyParam = isSim ? 'SIM' : code === 'ITL' ? 'IT' : code || 'IT';
     const params = new URLSearchParams();
     params.set('view', String(r.id));
     params.set('company', companyParam);
@@ -500,6 +516,9 @@ export default function StockReportPage() {
                       <th>Asset ID</th>
                       <th>Name / holder</th>
                       <th>Brand / item</th>
+                      {categoryFilter === 'sim' || categoryFilter === 'all' ? (
+                        <th>Package</th>
+                      ) : null}
                       <th>Location</th>
                       <th>Stock</th>
                       <th>Status</th>
@@ -538,8 +557,17 @@ export default function StockReportPage() {
                           <td>
                             {r.category === 'other'
                               ? dash(r.item_name || r.brand)
-                              : dash([r.brand, r.model].filter(Boolean).join(' '))}
+                              : r.category === 'sim'
+                                ? dash(r.phone_number || r.model)
+                                : dash([r.brand, r.model].filter(Boolean).join(' '))}
                           </td>
+                          {categoryFilter === 'sim' || categoryFilter === 'all' ? (
+                            <td>
+                              {r.category === 'sim'
+                                ? formatPackagePrice(r.purchase_amount_lkr)
+                                : '—'}
+                            </td>
+                          ) : null}
                           <td>{dash(r.location_name)}</td>
                           <td>
                             <span className={`stock-pill ${isOld ? 'old' : 'new'}`}>
