@@ -164,7 +164,7 @@ final class AssetController
                 // SIM tab: all SIM cards across ITL / IMS / ISP (and legacy SIM company)
                 $where[] = "{$alias}.is_sim = TRUE";
             } elseif ($isOnLoanList) {
-                // On Loan tab: laptops marked for temporary loan across companies
+                // On Loan tab: temporary loan flag — same laptop still stays on Laptops tab
                 $where[] = "{$alias}.is_on_loan = TRUE";
                 if ($companyId !== null) {
                     $where[] = "{$alias}.company_id = :company_id";
@@ -179,10 +179,7 @@ final class AssetController
                 if ($cat === 'mobile_phone') {
                     $where[] = "{$alias}.is_sim IS NOT TRUE";
                 }
-                // Keep on-loan laptops off the regular Laptops tab
-                if ($cat === 'laptop') {
-                    $where[] = "{$alias}.is_on_loan IS NOT TRUE";
-                }
+                // On-loan laptops remain visible on the regular Laptops tab
             }
 
             // Newly Purchased PCs tab: flagged on create (keeps Assigned purchases visible)
@@ -1076,6 +1073,57 @@ final class AssetController
             $row['category'] = $category;
         }
         Response::json(['data' => $row]);
+    }
+
+    /**
+     * Toggle temporary On Loan flag for a laptop without moving it off the Laptops tab.
+     */
+    public function setOnLoan(Request $request, array $user, array $params): void
+    {
+        if (! Auth::canWrite($user)) {
+            Response::error('Forbidden', 403);
+            return;
+        }
+
+        $id = (int) ($params['id'] ?? 0);
+        $category = $this->resolveCategory($request, $params) ?? 'laptop';
+        if ($category !== 'laptop' || $id < 1) {
+            Response::error('Laptop id required', 422);
+            return;
+        }
+
+        $asset = $this->find('laptop', $id);
+        if ($asset === null) {
+            Response::error('Laptop not found', 404);
+            return;
+        }
+        Auth::assertCompanyAccess($user, (int) $asset['company_id']);
+
+        $flag = array_key_exists('is_on_loan', $request->body)
+            ? self::toBool($request->body['is_on_loan'])
+            : self::toBool($request->input('is_on_loan', true));
+
+        $this->pdo->prepare(
+            'UPDATE laptops
+             SET is_on_loan = :flag, updated_by = :uid, updated_at = NOW()
+             WHERE id = :id'
+        )->execute([
+            'flag' => $flag ? 'true' : 'false',
+            'uid' => (int) ($user['id'] ?? 0) ?: null,
+            'id' => $id,
+        ]);
+
+        $row = $this->findDetailed('laptop', $id) ?? $this->find('laptop', $id);
+        if (is_array($row)) {
+            $row['category'] = 'laptop';
+            $row['is_on_loan'] = $flag;
+        }
+        Response::json([
+            'data' => $row,
+            'message' => $flag
+                ? 'Laptop added to On Loan (still listed under Laptops)'
+                : 'Laptop removed from On Loan',
+        ]);
     }
 
     public function destroy(Request $request, array $user, array $params): void

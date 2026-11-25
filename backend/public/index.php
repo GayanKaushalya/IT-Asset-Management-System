@@ -216,6 +216,9 @@ $router->add('PUT', '/api/assets/{id}', $authed(static function (Request $req, a
 $router->add('POST', '/api/assets/{category}/{id}/transfer-company', $authed(static function (Request $req, array $user, array $params) use ($assets): void {
     $assets->transferCompany($req, $user, $params);
 }));
+$router->add('PUT', '/api/assets/{category}/{id}/on-loan', $authed(static function (Request $req, array $user, array $params) use ($assets): void {
+    $assets->setOnLoan($req, $user, $params);
+}));
 $router->add('DELETE', '/api/assets/{category}/{id}', $authed(static function (Request $req, array $user, array $params) use ($assets): void {
     $assets->destroy($req, $user, $params);
 }));

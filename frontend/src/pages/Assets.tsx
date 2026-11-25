@@ -588,6 +588,13 @@ export default function AssetsPage() {
     accessoriesNote: string;
     remarks: string;
   } | null>(null);
+  /** On Loan: pick existing Laptops tab rows to flag temporarily (stay on Laptops too) */
+  const [onLoanPickerOpen, setOnLoanPickerOpen] = useState(false);
+  const [onLoanPickerRows, setOnLoanPickerRows] = useState<Asset[]>([]);
+  const [onLoanPickerLoading, setOnLoanPickerLoading] = useState(false);
+  const [onLoanPickerQ, setOnLoanPickerQ] = useState('');
+  const [onLoanPickerSelected, setOnLoanPickerSelected] = useState<Set<number>>(new Set());
+  const [onLoanPickerSaving, setOnLoanPickerSaving] = useState(false);
   const [listLoading, setListLoading] = useState(false);
   const [pageSize, setPageSize] = useState<PageSize>(() => readStoredPageSize());
   const [page, setPage] = useState(1);
@@ -1236,7 +1243,6 @@ export default function AssetsPage() {
         (editingId || category === 'other' || category === 'printer' || savingSim
           ? null
           : new Date().toISOString().slice(0, 10));
-      const savingOnLoan = category === 'laptop' && (isOnLoanTab || isOnLoanForm);
       const payload: Record<string, unknown> = {
         company_id: saveCompany.id,
         category,
@@ -1264,7 +1270,8 @@ export default function AssetsPage() {
         phone_number: form.phone_number || null,
         status: form.status || 'available',
         ...(savingSim ? { is_sim: true } : {}),
-        ...(category === 'laptop' ? { is_on_loan: savingOnLoan } : {}),
+        // Preserve on-loan flag on edit; new laptops from Laptops tab stay off On Loan
+        ...(category === 'laptop' && !editingId ? { is_on_loan: false } : {}),
         ...(statusEventNote.trim() ? { status_note: statusEventNote.trim() } : {}),
       };
 
@@ -1657,11 +1664,87 @@ export default function AssetsPage() {
     }
   }
 
+  async function setLaptopOnLoan(id: number, onLoan: boolean): Promise<boolean> {
+    try {
+      await api(`/api/assets/laptop/${id}/on-loan`, {
+        method: 'PUT',
+        body: JSON.stringify({ is_on_loan: onLoan }),
+      });
+      toast.success(
+        onLoan
+          ? 'Added to On Loan — still listed under Laptops'
+          : 'Removed from On Loan',
+      );
+      await reloadAfterMutation(true);
+      return true;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Could not update On Loan';
+      toast.error(msg);
+      return false;
+    }
+  }
+
+  async function openOnLoanPicker() {
+    if (!activeCompany) {
+      toast.error('Select a company first');
+      return;
+    }
+    setOnLoanPickerOpen(true);
+    setOnLoanPickerQ('');
+    setOnLoanPickerSelected(new Set());
+    setOnLoanPickerLoading(true);
+    try {
+      const params = new URLSearchParams({
+        category: 'laptop',
+        company_id: String(activeCompany.id),
+        company_code: activeCompany.code || companyTab,
+        limit: '500',
+        page: '1',
+      });
+      const res = await api<{ data: Asset[] }>(`/api/assets?${params.toString()}`);
+      const available = (res.data ?? []).filter((r) => !asBool(r.is_on_loan));
+      setOnLoanPickerRows(available);
+    } catch (err) {
+      setOnLoanPickerRows([]);
+      toast.error(err instanceof Error ? err.message : 'Could not load laptops');
+    } finally {
+      setOnLoanPickerLoading(false);
+    }
+  }
+
+  async function confirmOnLoanPicker() {
+    if (onLoanPickerSelected.size === 0) {
+      toast.error('Select at least one laptop');
+      return;
+    }
+    setOnLoanPickerSaving(true);
+    try {
+      const ids = [...onLoanPickerSelected];
+      for (const id of ids) {
+        await api(`/api/assets/laptop/${id}/on-loan`, {
+          method: 'PUT',
+          body: JSON.stringify({ is_on_loan: true }),
+        });
+      }
+      toast.success(
+        ids.length === 1
+          ? 'Laptop added to On Loan (still on Laptops tab)'
+          : `${ids.length} laptops added to On Loan (still on Laptops tab)`,
+      );
+      setOnLoanPickerOpen(false);
+      await reloadAfterMutation(false);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not add to On Loan');
+    } finally {
+      setOnLoanPickerSaving(false);
+    }
+  }
+
   const addLabel =
     activeCategory === 'laptop'
       ? 'Add laptop'
       : activeCategory === 'on_loan'
-        ? 'Add on-loan laptop'
+        ? 'Select from Laptops'
         : activeCategory === 'mobile_phone'
           ? isSimTab
             ? 'Add SIM'
@@ -2011,7 +2094,7 @@ export default function AssetsPage() {
               : isSimTab
                 ? 'Manage SIM cards for ITL, IMS, and ISP — company, location, department, and handover chain (up to 10)'
                 : isOnLoanTab
-                  ? `Laptops issued on loan for ${COMPANY_TABS.find((t) => t.id === companyTab)?.label ?? companyTab}`
+                  ? `Temporary loan list — select laptops from the Laptops tab; they stay on Laptops too`
                   : `Manage ${CATEGORY_TITLES[categoryTab].toLowerCase()} for ${COMPANY_TABS.find((t) => t.id === companyTab)?.label ?? companyTab}`
         }
       />
@@ -2037,6 +2120,10 @@ export default function AssetsPage() {
           type="button"
           className="btn btn-primary company-tabs-add"
           onClick={() => {
+            if (isOnLoanTab) {
+              void openOnLoanPicker();
+              return;
+            }
             setError('');
             void loadMeta(true);
             if (isSimTab) {
@@ -2548,7 +2635,14 @@ export default function AssetsPage() {
                           )}
                         </td>
                         <td className="col-status">
-                          <AssetStatusPill r={r} />
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', alignItems: 'center' }}>
+                            <AssetStatusPill r={r} />
+                            {rowCategory === 'laptop' && asBool(r.is_on_loan) ? (
+                              <span className="avm-pill info" title="Also listed under On Loan">
+                                On loan
+                              </span>
+                            ) : null}
+                          </div>
                         </td>
                       </>
                     )}
@@ -2565,6 +2659,25 @@ export default function AssetsPage() {
                         updateDisabled={!writable}
                         deleteDisabled={!writable}
                         deleteBusy={deletingId === Number(r.id)}
+                        extraItems={
+                          writable && rowCategory === 'laptop'
+                            ? isOnLoanTab || asBool(r.is_on_loan)
+                              ? [
+                                  {
+                                    label: 'Remove from On Loan',
+                                    onClick: () => void setLaptopOnLoan(Number(r.id), false),
+                                  },
+                                ]
+                              : categoryTab === 'laptop'
+                                ? [
+                                    {
+                                      label: 'Add to On Loan',
+                                      onClick: () => void setLaptopOnLoan(Number(r.id), true),
+                                    },
+                                  ]
+                                : []
+                            : []
+                        }
                       />
                     </td>
                   </tr>,
@@ -2605,6 +2718,119 @@ export default function AssetsPage() {
             onChange={(e) => setLostEventDate(e.target.value)}
           />
         </label>
+      </Modal>
+
+      <Modal
+        open={onLoanPickerOpen}
+        title="Add to On Loan"
+        subtitle="Choose laptops from the Laptops register. They stay on the Laptops tab and also appear here."
+        onClose={() => {
+          if (!onLoanPickerSaving) setOnLoanPickerOpen(false);
+        }}
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-soft"
+              disabled={onLoanPickerSaving}
+              onClick={() => setOnLoanPickerOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={onLoanPickerSaving || onLoanPickerSelected.size === 0}
+              onClick={() => void confirmOnLoanPicker()}
+            >
+              {onLoanPickerSaving
+                ? 'Adding…'
+                : `Add ${onLoanPickerSelected.size || ''} to On Loan`.replace(/\s+/g, ' ').trim()}
+            </button>
+          </>
+        }
+      >
+        <label className="asset-field" style={{ display: 'grid', gap: '0.35rem', marginBottom: '0.75rem' }}>
+          <span className="asset-field-label">Search</span>
+          <input
+            className="input"
+            placeholder="Asset ID, name, serial…"
+            value={onLoanPickerQ}
+            onChange={(e) => setOnLoanPickerQ(e.target.value)}
+          />
+        </label>
+        {onLoanPickerLoading ? (
+          <p style={{ color: 'var(--muted)', margin: 0 }}>Loading laptops…</p>
+        ) : (
+          <div className="table-wrap" style={{ maxHeight: '22rem', overflow: 'auto' }}>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th style={{ width: '2.5rem' }}></th>
+                  <th>Asset ID</th>
+                  <th>Name</th>
+                  <th>Brand / model</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(() => {
+                  const term = onLoanPickerQ.trim().toLowerCase();
+                  const filtered = onLoanPickerRows.filter((r) => {
+                    if (!term) return true;
+                    return [
+                      r.asset_tag,
+                      r.allocated_person,
+                      r.pc_name,
+                      r.brand,
+                      r.model,
+                      r.serial_number,
+                    ].some((v) => String(v ?? '').toLowerCase().includes(term));
+                  });
+                  if (filtered.length === 0) {
+                    return (
+                      <tr>
+                        <td colSpan={5} style={{ color: 'var(--muted)' }}>
+                          {onLoanPickerRows.length === 0
+                            ? 'No laptops available to add (all may already be on loan).'
+                            : 'No matches for this search.'}
+                        </td>
+                      </tr>
+                    );
+                  }
+                  return filtered.map((r) => {
+                    const id = Number(r.id);
+                    const checked = onLoanPickerSelected.has(id);
+                    return (
+                      <tr key={id}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => {
+                              setOnLoanPickerSelected((prev) => {
+                                const next = new Set(prev);
+                                if (next.has(id)) next.delete(id);
+                                else next.add(id);
+                                return next;
+                              });
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <strong>{String(r.asset_tag ?? '')}</strong>
+                        </td>
+                        <td>{dash(r.allocated_person ?? r.pc_name)}</td>
+                        <td>{dash([r.brand, r.model].filter(Boolean).join(' '))}</td>
+                        <td>{statusViewLabel(String(r.status ?? 'available'))}</td>
+                      </tr>
+                    );
+                  });
+                })()}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Modal>
 
       {showAddModal ? (

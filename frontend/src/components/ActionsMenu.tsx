@@ -9,11 +9,18 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 
+type ExtraAction = {
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+};
+
 type ActionsMenuProps = {
   onView: () => void;
   onUpdate: () => void;
   onDelete: () => void;
   onQr?: () => void;
+  extraItems?: ExtraAction[];
   viewLabel?: string;
   viewDisabled?: boolean;
   updateDisabled?: boolean;
@@ -26,6 +33,7 @@ export default function ActionsMenu({
   onUpdate,
   onDelete,
   onQr,
+  extraItems = [],
   viewLabel = 'View',
   viewDisabled = false,
   updateDisabled = false,
@@ -122,6 +130,16 @@ export default function ActionsMenu({
               <IconPencil />
               Update
             </MenuButton>
+            {extraItems.map((item) => (
+              <MenuButton
+                key={item.label}
+                tone="update"
+                disabled={Boolean(item.disabled)}
+                onClick={() => run(item.onClick)}
+              >
+                {item.label}
+              </MenuButton>
+            ))}
             <MenuButton
               tone="delete"
               disabled={deleteDisabled || deleteBusy}

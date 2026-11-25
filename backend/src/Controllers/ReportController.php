@@ -1177,7 +1177,7 @@ final class ReportController
                 'legacy_expr' => 'COALESCE(a.is_legacy, FALSE)',
                 'holder' => "COALESCE({$availableItHolder}, NULLIF(TRIM(a.original_assigned_person), ''), NULLIF(TRIM(a.pc_name), ''))",
                 'extra' => 'a.brand, a.model, a.serial_number, NULL::numeric AS purchase_amount_lkr, NULL::varchar AS phone_number',
-                'extra_where' => 'AND COALESCE(a.is_on_loan, FALSE) IS NOT TRUE',
+                'extra_where' => '',
             ],
             'mobile_phone' => [
                 'table' => 'mobile_phones',
