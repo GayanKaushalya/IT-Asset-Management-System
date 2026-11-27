@@ -1293,16 +1293,16 @@ export default function ExpenditurePage() {
           border: 1px solid var(--border);
           border-bottom-width: 3px;
           border-radius: 12px;
-          background: #fff;
+          background: var(--card);
           padding: 0.85rem 0.95rem;
           cursor: pointer;
           display: grid;
           gap: 0.35rem;
           min-height: 6.5rem;
         }
-        .branch-stat-card.tone-blue { border-bottom-color: #2563eb; }
+        .branch-stat-card.tone-blue { border-bottom-color: var(--primary); }
         .branch-stat-card.tone-green { border-bottom-color: #16a34a; }
-        .branch-stat-card.tone-slate { border-bottom-color: #64748b; }
+        .branch-stat-card.tone-slate { border-bottom-color: var(--muted); }
         .branch-stat-card.tone-purple { border-bottom-color: #7c3aed; }
         .branch-stat-card.tone-orange { border-bottom-color: #ea580c; }
         .branch-stat-card.tone-cyan { border-bottom-color: #0891b2; }
@@ -1310,7 +1310,7 @@ export default function ExpenditurePage() {
           box-shadow: 0 0 0 2px #93c5fd;
           background: #f8fbff;
         }
-        .branch-stat-card:hover { background: #f9fafb; }
+        .branch-stat-card:hover { background: var(--bg-elevated); }
         .branch-stat-top {
           display: flex;
           justify-content: space-between;
@@ -1322,7 +1322,7 @@ export default function ExpenditurePage() {
           font-weight: 750;
           letter-spacing: 0.04em;
           text-transform: uppercase;
-          color: #6b7280;
+          color: var(--muted);
         }
         .branch-stat-badge {
           font-size: 0.65rem;
@@ -1331,20 +1331,20 @@ export default function ExpenditurePage() {
           padding: 0.12rem 0.45rem;
           white-space: nowrap;
         }
-        .branch-stat-badge.tone-green { background: #dcfce7; color: #166534; }
-        .branch-stat-badge.tone-blue { background: #dbeafe; color: #1d4ed8; }
-        .branch-stat-badge.tone-slate { background: #f1f5f9; color: #475569; }
+        .branch-stat-badge.tone-green { background: var(--success-soft); color: var(--success); }
+        .branch-stat-badge.tone-blue { background: var(--primary-soft); color: var(--primary); }
+        .branch-stat-badge.tone-slate { background: var(--neutral-soft); color: #475569; }
         .branch-stat-badge.tone-purple { background: #ede9fe; color: #6d28d9; }
-        .branch-stat-badge.tone-orange { background: #ffedd5; color: #c2410c; }
+        .branch-stat-badge.tone-orange { background: var(--warning-soft); color: var(--warning); }
         .branch-stat-badge.tone-cyan { background: #cffafe; color: #0e7490; }
         .branch-stat-value {
           font-size: 1.65rem;
           line-height: 1.1;
-          color: #111827;
+          color: var(--heading);
         }
         .branch-stat-hint {
           font-size: 0.72rem;
-          color: #9ca3af;
+          color: var(--muted);
         }
       `}</style>
     </main>

@@ -1270,7 +1270,7 @@ export default function AgreementsPanel() {
           font-weight: 800;
           letter-spacing: 0.06em;
           text-transform: uppercase;
-          color: #0f172a;
+          color: var(--heading);
         }
         .agr-section-hint {
           font-size: 0.72rem;
@@ -1343,7 +1343,7 @@ export default function AgreementsPanel() {
           border-right: 0;
           font-weight: 700;
           color: #334155;
-          background: #f8fafc;
+          background: var(--bg-elevated);
         }
         .agr-money .input:last-child {
           border-top-left-radius: 0;
@@ -1378,12 +1378,12 @@ export default function AgreementsPanel() {
         .agr-toggle-copy strong {
           display: block;
           font-size: 0.9rem;
-          color: #0f172a;
+          color: var(--heading);
         }
         .agr-toggle-copy p {
           margin: 0.15rem 0 0;
           font-size: 0.78rem;
-          color: #64748b;
+          color: var(--muted);
           line-height: 1.4;
         }
         .agr-switch {
@@ -1403,7 +1403,7 @@ export default function AgreementsPanel() {
           width: 1.25rem;
           height: 1.25rem;
           border-radius: 50%;
-          background: #fff;
+          background: var(--card);
           box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
           transition: transform 0.15s ease;
         }
@@ -1412,14 +1412,14 @@ export default function AgreementsPanel() {
           border: 1px solid #e2e8f0;
           border-radius: 10px;
           overflow: hidden;
-          background: #fff;
+          background: var(--card);
         }
         .agr-md-toolbar {
           display: flex;
           gap: 0.15rem;
           padding: 0.35rem 0.45rem;
           border-bottom: 1px solid #e2e8f0;
-          background: #f8fafc;
+          background: var(--bg-elevated);
         }
         .agr-md-toolbar button {
           width: 1.85rem;
@@ -1457,8 +1457,8 @@ export default function AgreementsPanel() {
         .agr-dropzone:hover { border-color: var(--primary); background: var(--primary-soft); }
         .agr-dropzone.has-file {
           border-style: solid;
-          border-color: #60a5fa;
-          background: #fff;
+          border-color: var(--primary);
+          background: var(--card);
         }
         .agr-dropzone strong {
           display: block;
@@ -1469,7 +1469,7 @@ export default function AgreementsPanel() {
           margin: 0.15rem 0 0;
           font-size: 0.75rem;
           font-weight: 500;
-          color: #64748b;
+          color: var(--muted);
         }
         .agr-footer {
           display: flex;
@@ -1493,15 +1493,15 @@ export default function AgreementsPanel() {
           padding: 0.1rem 0.35rem;
           border: 1px solid #e2e8f0;
           border-radius: 5px;
-          background: #f8fafc;
+          background: var(--bg-elevated);
           font-size: 0.68rem;
           font-family: inherit;
-          color: #64748b;
+          color: var(--muted);
         }
         .agr-footer-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-left: auto; }
         .agr-draft-btn {
-          background: #f1f5f9 !important;
-          color: #334155 !important;
+          background: var(--neutral-soft) !important;
+          color: var(--text-secondary) !important;
           border-color: transparent !important;
         }
         .agr-submit-btn {
@@ -1516,12 +1516,12 @@ export default function AgreementsPanel() {
           margin: 0;
           padding: 0.7rem 0.85rem;
           border-radius: 8px;
-          background: #f8fafc;
+          background: var(--bg-elevated);
           border: 1px solid #e2e8f0;
           font-size: 0.88rem;
-          color: #64748b;
+          color: var(--muted);
         }
-        .agr-renew-current strong { color: #0f172a; }
+        .agr-renew-current strong { color: var(--heading); }
         .agr-renew-form .agr-field {
           display: flex;
           flex-direction: column;
@@ -1532,7 +1532,7 @@ export default function AgreementsPanel() {
           font-weight: 700;
           letter-spacing: 0.04em;
           text-transform: uppercase;
-          color: #64748b;
+          color: var(--muted);
         }
         .agr-renew-form input,
         .agr-renew-form textarea {
@@ -1540,7 +1540,7 @@ export default function AgreementsPanel() {
           border-radius: var(--radius);
           padding: 0.55rem 0.7rem;
           font: inherit;
-          background: #fff;
+          background: var(--card);
         }
         .org-view-grid {
           display: grid;
@@ -1557,14 +1557,14 @@ export default function AgreementsPanel() {
           color: #94a3b8;
           margin-bottom: 0.2rem;
         }
-        .org-view-grid strong { font-size: 0.92rem; color: #0f172a; }
+        .org-view-grid strong { font-size: 0.92rem; color: var(--heading); }
         .org-terms-block {
           margin: 0.15rem 0 0;
           white-space: pre-wrap;
           line-height: 1.5;
-          color: #1e293b;
+          color: var(--text);
           font-size: 0.9rem;
-          background: #f8fafc;
+          background: var(--bg-elevated);
           border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 0.65rem 0.8rem;

@@ -115,10 +115,10 @@ export default function AssetLifecycleTimeline({ category, assetId, refreshKey =
           padding: 0.22rem 0.65rem;
           border-radius: 999px;
           border: 1px solid #e2e8f0;
-          background: #f8fafc;
+          background: var(--bg-elevated);
           font-size: 0.72rem;
           font-weight: 700;
-          color: #64748b;
+          color: var(--muted);
         }
         .lc-timeline {
           list-style: none;
@@ -164,13 +164,13 @@ export default function AssetLifecycleTimeline({ category, assetId, refreshKey =
           display: block;
           font-size: 0.95rem;
           font-weight: 750;
-          color: #0f172a;
+          color: var(--heading);
           line-height: 1.35;
         }
         .lc-detail {
           margin: 0.2rem 0 0;
           font-size: 0.86rem;
-          color: #64748b;
+          color: var(--muted);
           line-height: 1.45;
           white-space: pre-wrap;
           word-break: break-word;

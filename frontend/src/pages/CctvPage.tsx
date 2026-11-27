@@ -303,7 +303,7 @@ export default function CctvPage() {
             gap: 0.35rem 0.65rem;
           }
           .cctv-phone {
-            color: #1d4ed8;
+            color: var(--primary);
             font-weight: 650;
             text-decoration: none;
             white-space: nowrap;
@@ -320,7 +320,7 @@ export default function CctvPage() {
           }
           .cctv-ip {
             font-size: 0.82rem;
-            background: #f1f5f9;
+            background: var(--neutral-soft);
             border-radius: 6px;
             padding: 0.12rem 0.4rem;
           }

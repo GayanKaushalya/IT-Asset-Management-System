@@ -212,16 +212,16 @@ export default function ActionsMenu({
           gap: 0.3rem;
           border: 1px solid var(--border);
           border-radius: 8px;
-          background: #fff;
-          color: #2563eb;
+          background: var(--card);
+          color: var(--primary);
           padding: 0.4rem 0.55rem;
           font-weight: 700;
           font-size: 0.82rem;
           cursor: pointer;
         }
         .actions-qr-btn:hover {
-          background: #eff6ff;
-          border-color: #93c5fd;
+          background: var(--primary-muted);
+          border-color: var(--primary);
         }
         .actions-qr-btn svg {
           width: 0.95rem;
@@ -233,14 +233,14 @@ export default function ActionsMenu({
           border: 1px solid var(--border);
           border-radius: 8px;
           overflow: hidden;
-          background: #fff;
+          background: var(--card);
         }
         .actions-menu-primary {
           display: inline-flex;
           align-items: center;
           gap: 0.4rem;
           border: none;
-          background: #fff;
+          background: var(--card);
           color: var(--text, #111827);
           padding: 0.4rem 0.7rem;
           font-weight: 650;
@@ -248,7 +248,7 @@ export default function ActionsMenu({
           cursor: pointer;
         }
         .actions-menu-primary:hover:not(:disabled) {
-          background: #f8fafc;
+          background: var(--bg-elevated);
         }
         .actions-menu-primary:disabled {
           opacity: 0.55;
@@ -266,18 +266,18 @@ export default function ActionsMenu({
           justify-content: center;
           border: none;
           border-left: 1px solid var(--border);
-          background: #fff;
+          background: var(--card);
           color: var(--text, #111827);
           padding: 0 0.45rem;
           cursor: pointer;
         }
         .actions-menu-trigger:hover {
-          background: #f8fafc;
+          background: var(--bg-elevated);
         }
         .actions-menu-panel {
           padding: 0.35rem;
           border-radius: 10px;
-          background: #fff;
+          background: var(--card);
           border: 1px solid var(--border);
           box-shadow: 0 12px 28px rgba(17, 24, 39, 0.16);
           display: grid;
@@ -291,7 +291,7 @@ export default function ActionsMenu({
           font-size: 0.86rem;
           text-align: left;
           cursor: pointer;
-          background: #fff;
+          background: var(--card);
           display: inline-flex;
           align-items: center;
           gap: 0.45rem;
@@ -303,23 +303,23 @@ export default function ActionsMenu({
         .actions-menu-item.view {
           color: #0d9488;
           border-color: #0d9488;
-          background: #fff;
+          background: var(--card);
         }
         .actions-menu-item.view:hover:not(:disabled) {
           background: #f0fdfa;
         }
         .actions-menu-item.update {
-          color: #2563eb;
-          border-color: #2563eb;
-          background: #fff;
+          color: var(--primary);
+          border-color: var(--primary);
+          background: var(--card);
         }
         .actions-menu-item.update:hover:not(:disabled) {
-          background: #eff6ff;
+          background: var(--primary-muted);
         }
         .actions-menu-item.delete {
-          color: #dc2626;
-          border-color: #dc2626;
-          background: #fff;
+          color: var(--danger);
+          border-color: var(--danger);
+          background: var(--card);
         }
         .actions-menu-item.delete:hover:not(:disabled) {
           background: #fef2f2;

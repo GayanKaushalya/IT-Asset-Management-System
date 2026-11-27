@@ -125,17 +125,17 @@ export default function PaginationBar({
         .pagination-bar {
           display: inline-flex;
           align-items: stretch;
-          border: 1px solid #d1d5db;
+          border: 1px solid var(--border-strong);
           border-radius: 6px;
           overflow: visible;
-          background: #fff;
+          background: var(--card);
           flex-shrink: 0;
         }
         .pagination-btn,
         .pagination-page {
           border: 0;
-          background: #fff;
-          color: #6b7280;
+          background: var(--card);
+          color: var(--muted);
           font-size: 0.8rem;
           font-weight: 500;
           cursor: pointer;
@@ -152,8 +152,8 @@ export default function PaginationBar({
         }
         .pagination-btn:hover:not(:disabled),
         .pagination-page:hover:not(:disabled) {
-          background: #f9fafb;
-          color: #374151;
+          background: var(--bg-elevated);
+          color: var(--text-secondary);
         }
         .pagination-btn:disabled,
         .pagination-page:disabled {
@@ -174,7 +174,7 @@ export default function PaginationBar({
         }
         .pagination-caret {
           font-size: 0.7rem;
-          color: #9ca3af;
+          color: var(--muted);
         }
         .pagination-dropdown {
           position: absolute;
@@ -183,8 +183,8 @@ export default function PaginationBar({
           min-width: 100%;
           max-height: 220px;
           overflow: auto;
-          background: #fff;
-          border: 1px solid #d1d5db;
+          background: var(--card);
+          border: 1px solid var(--border-strong);
           border-radius: 6px;
           box-shadow: 0 10px 28px rgba(17, 24, 39, 0.12);
           z-index: 30;
@@ -198,17 +198,17 @@ export default function PaginationBar({
           text-align: left;
           padding: 0.4rem 0.55rem;
           border-radius: 4px;
-          color: #374151;
+          color: var(--text-secondary);
           font-size: 0.88rem;
           cursor: pointer;
         }
-        .pagination-option:hover { background: #f3f4f6; }
+        .pagination-option:hover { background: var(--neutral-soft); }
         .pagination-option.active {
-          background: #e5e7eb;
+          background: var(--neutral-soft);
           font-weight: 650;
         }
         .pagination-option.old-stock {
-          color: #b91c1c;
+          color: var(--danger);
         }
       `}</style>
     </div>

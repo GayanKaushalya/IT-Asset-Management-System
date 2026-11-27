@@ -107,19 +107,19 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           border: 1px solid transparent;
         }
         .toast-success {
-          background: #ecfdf5;
-          color: #065f46;
-          border-color: #a7f3d0;
+          background: var(--success-soft);
+          color: var(--success);
+          border-color: var(--success);
         }
         .toast-error {
-          background: #fef2f2;
-          color: #991b1b;
-          border-color: #fecaca;
+          background: var(--danger-soft);
+          color: var(--danger);
+          border-color: var(--danger);
         }
         .toast-info {
-          background: #eff6ff;
-          color: #1e40af;
-          border-color: #bfdbfe;
+          background: var(--primary-muted);
+          color: var(--primary);
+          border-color: var(--primary);
         }
         .toast-icon {
           width: 1.4rem;

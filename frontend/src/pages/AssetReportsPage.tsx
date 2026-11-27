@@ -580,14 +580,14 @@ export default function AssetReportsPage() {
 
       <style>{`
         .arp {
-          --arp-blue: #2563eb;
-          --arp-blue-soft: #eff6ff;
-          --arp-blue-border: #bfdbfe;
-          --arp-ink: #0f172a;
-          --arp-muted: #64748b;
-          --arp-line: #e2e8f0;
-          --arp-panel: #ffffff;
-          --arp-wash: #f8fafc;
+          --arp-blue: var(--primary);
+          --arp-blue-soft: var(--primary-muted);
+          --arp-blue-border: var(--border-strong);
+          --arp-ink: var(--heading);
+          --arp-muted: var(--muted);
+          --arp-line: var(--border);
+          --arp-panel: var(--card);
+          --arp-wash: var(--bg-elevated);
           gap: 0.85rem;
         }
         .arp-search-row {
@@ -605,13 +605,13 @@ export default function AssetReportsPage() {
           gap: 0.45rem;
           border: 1px solid var(--arp-line);
           border-radius: 12px;
-          background: #fff;
+          background: var(--card);
           padding: 0 0.75rem;
           min-height: 44px;
           box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
         }
         .arp-search-wrap:focus-within {
-          border-color: #93c5fd;
+          border-color: var(--primary);
           box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.35);
         }
         .arp-search-icon { color: #94a3b8; display: inline-flex; }
@@ -628,7 +628,7 @@ export default function AssetReportsPage() {
         }
         .arp-clear {
           border: none;
-          background: #f1f5f9;
+          background: var(--neutral-soft);
           color: #475569;
           font-size: 0.78rem;
           font-weight: 700;
@@ -642,13 +642,13 @@ export default function AssetReportsPage() {
           gap: 0.3rem;
           padding: 0.25rem;
           border-radius: 999px;
-          background: #f1f5f9;
+          background: var(--neutral-soft);
           border: 1px solid var(--arp-line);
         }
         .arp-pill {
           border: none;
           background: transparent;
-          color: #64748b;
+          color: var(--muted);
           font-size: 0.82rem;
           font-weight: 700;
           padding: 0.4rem 0.85rem;
@@ -696,7 +696,7 @@ export default function AssetReportsPage() {
         .arp-panel--empty { align-items: center; justify-content: center; }
         .arp-list .table tbody tr.is-selected,
         .arp-list .table tbody tr.is-selected td {
-          background: #eff6ff;
+          background: var(--primary-muted);
         }
         .arp-list-count {
           flex-shrink: 0;
@@ -750,8 +750,8 @@ export default function AssetReportsPage() {
           gap: 0.28rem;
           font-size: 0.7rem;
           font-weight: 750;
-          color: #166534;
-          background: #dcfce7;
+          color: var(--success);
+          background: var(--success-soft);
           border: 1px solid #86efac;
           border-radius: 999px;
           padding: 0.15rem 0.55rem;
@@ -871,8 +871,8 @@ export default function AssetReportsPage() {
           padding: 0.12rem 0.5rem;
           font-size: 0.7rem;
           font-weight: 750;
-          background: #dbeafe;
-          color: #1d4ed8;
+          background: var(--primary-soft);
+          color: var(--primary);
         }
         .arp-synced {
           margin: 0;

@@ -250,7 +250,7 @@ export default function AssetQrModal({ open, asset, onClose }: Props) {
           padding: 0.75rem;
           border: 1px solid var(--border);
           border-radius: 12px;
-          background: #fff;
+          background: var(--card);
         }
         .asset-qr-preview img {
           display: block;

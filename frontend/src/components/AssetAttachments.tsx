@@ -323,23 +323,23 @@ export default function AssetAttachments({
         .asset-attach-list li {
           display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;
           padding: 0.45rem 0.65rem; border-radius: 10px;
-          background: #f8fafc; border: 1px solid #e2e8f0;
+          background: var(--bg-elevated); border: 1px solid #e2e8f0;
         }
         .asset-attach-name {
           border: 0; background: transparent; padding: 0;
-          font-weight: 650; color: #1e293b; cursor: pointer; text-align: left;
+          font-weight: 650; color: var(--text); cursor: pointer; text-align: left;
           flex: 1; min-width: 8rem;
         }
-        button.asset-attach-name:hover { color: #2563eb; text-decoration: underline; }
-        .asset-attach-meta { color: #64748b; font-size: 0.78rem; }
+        button.asset-attach-name:hover { color: var(--primary); text-decoration: underline; }
+        .asset-attach-meta { color: var(--muted); font-size: 0.78rem; }
         .asset-attach-empty { margin: 0.55rem 0 0; color: #94a3b8; font-size: 0.85rem; }
         /* Light surfaces (add form) */
         .asset-form-sections .asset-attach-title,
-        .aed-main .asset-attach-title { color: #0f172a; }
+        .aed-main .asset-attach-title { color: var(--heading); }
         .asset-form-sections .asset-attach-optional,
         .aed-main .asset-attach-optional,
         .asset-form-sections .asset-attach-count,
-        .aed-main .asset-attach-count { color: #64748b; }
+        .aed-main .asset-attach-count { color: var(--muted); }
         .asset-form-sections .asset-attach-drop,
         .aed-main .asset-attach-drop {
           background: #0b1220;

@@ -603,16 +603,16 @@ export default function StockReportPage() {
           border: 1px solid var(--border);
           border-bottom-width: 3px;
           border-radius: 12px;
-          background: #fff;
+          background: var(--card);
           padding: 0.85rem 0.95rem;
           cursor: pointer;
           display: grid;
           gap: 0.35rem;
           min-height: 6.25rem;
         }
-        .branch-stat-card.tone-blue { border-bottom-color: #2563eb; }
+        .branch-stat-card.tone-blue { border-bottom-color: var(--primary); }
         .branch-stat-card.tone-green { border-bottom-color: #16a34a; }
-        .branch-stat-card.tone-slate { border-bottom-color: #64748b; }
+        .branch-stat-card.tone-slate { border-bottom-color: var(--muted); }
         .branch-stat-card.tone-purple { border-bottom-color: #7c3aed; }
         .branch-stat-card.tone-orange { border-bottom-color: #ea580c; }
         .branch-stat-card.tone-cyan { border-bottom-color: #0891b2; }
@@ -620,7 +620,7 @@ export default function StockReportPage() {
           box-shadow: 0 0 0 2px #93c5fd;
           background: #f8fbff;
         }
-        .branch-stat-card:hover { background: #f9fafb; }
+        .branch-stat-card:hover { background: var(--bg-elevated); }
         .branch-stat-top {
           display: flex;
           justify-content: space-between;
@@ -632,16 +632,16 @@ export default function StockReportPage() {
           font-weight: 750;
           letter-spacing: 0.04em;
           text-transform: uppercase;
-          color: #6b7280;
+          color: var(--muted);
         }
         .branch-stat-value {
           font-size: 1.65rem;
           line-height: 1.1;
-          color: #111827;
+          color: var(--heading);
         }
         .branch-stat-hint {
           font-size: 0.72rem;
-          color: #9ca3af;
+          color: var(--muted);
         }
         .stock-pill {
           display: inline-block;
@@ -651,11 +651,11 @@ export default function StockReportPage() {
           padding: 0.15rem 0.5rem;
         }
         .stock-pill.new {
-          background: #dcfce7;
-          color: #166534;
+          background: var(--success-soft);
+          color: var(--success);
         }
         .stock-pill.old {
-          background: #f1f5f9;
+          background: var(--neutral-soft);
           color: #475569;
         }
       `}</style>

@@ -724,7 +724,7 @@ export default function HandoverReportsPage() {
                   align-items: center;
                   gap: 1rem;
                   padding: 0.85rem 1.25rem;
-                  background: #fff;
+                  background: var(--card);
                   border-bottom: 1px solid var(--border);
                   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
                 }
@@ -746,10 +746,10 @@ export default function HandoverReportsPage() {
                   font-weight: 700;
                   letter-spacing: 0.04em;
                   text-transform: uppercase;
-                  color: #64748b;
+                  color: var(--muted);
                 }
                 .acceptance-form {
-                  background: #fff;
+                  background: var(--card);
                   border: 1px solid #d0d7de;
                   border-radius: 2px;
                   padding: 1.35rem 1.55rem 1.55rem;
@@ -833,7 +833,7 @@ export default function HandoverReportsPage() {
                   vertical-align: middle;
                   word-break: break-word;
                   overflow-wrap: anywhere;
-                  background: #fff;
+                  background: var(--card);
                 }
                 .af-table th:last-child,
                 .af-table td:last-child {
@@ -843,7 +843,7 @@ export default function HandoverReportsPage() {
                   border-bottom: none;
                 }
                 .af-table th {
-                  background: #f3f4f6;
+                  background: var(--neutral-soft);
                   font-weight: 700;
                   font-size: 10pt;
                   text-align: center;
@@ -883,7 +883,7 @@ export default function HandoverReportsPage() {
                   }
                   .acceptance-overlay {
                     position: static !important;
-                    background: #fff !important;
+                    background: var(--card) !important;
                     overflow: visible !important;
                   }
                   .acceptance-preview {
@@ -945,7 +945,7 @@ export default function HandoverReportsPage() {
           gap: 0.75rem 1rem;
           margin-bottom: 0.85rem;
           padding: 0.75rem 1rem;
-          background: #eff6ff;
+          background: var(--primary-muted);
           border: 1px solid #bfdbfe;
           border-radius: 12px;
         }
@@ -957,13 +957,13 @@ export default function HandoverReportsPage() {
         }
         .hr-select-tag {
           display: inline-block;
-          background: #fff;
+          background: var(--card);
           border: 1px solid #bfdbfe;
           border-radius: 999px;
           padding: 0.12rem 0.55rem;
           font-size: 0.78rem;
           font-weight: 650;
-          color: #1d4ed8;
+          color: var(--primary);
         }
         .hr-select-actions {
           display: flex;

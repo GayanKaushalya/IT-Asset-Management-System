@@ -112,8 +112,8 @@ export default function AgreementHistoryTimeline({ agreementId, refreshKey = 0 }
 
       <style>{`
         .agr-lc-panel.avm-panel {
-          background: #fff;
-          border: 1px solid #e5e7eb;
+          background: var(--card);
+          border: 1px solid var(--border);
           border-radius: 12px;
           padding: 0.95rem 1rem;
           box-shadow: none;
@@ -130,7 +130,7 @@ export default function AgreementHistoryTimeline({ agreementId, refreshKey = 0 }
           font-size: 0.7rem;
           letter-spacing: 0.07em;
           text-transform: uppercase;
-          color: #6b7280;
+          color: var(--muted);
           font-weight: 750;
         }
         .agr-lc-panel .avm-pill {
@@ -144,9 +144,9 @@ export default function AgreementHistoryTimeline({ agreementId, refreshKey = 0 }
           white-space: nowrap;
         }
         .agr-lc-panel .avm-pill.muted {
-          background: #f3f4f6;
-          color: #6b7280;
-          border: 1px solid #e5e7eb;
+          background: var(--neutral-soft);
+          color: var(--muted);
+          border: 1px solid var(--border);
         }
         .agr-lc-timeline.avm-timeline {
           display: grid;
@@ -173,35 +173,35 @@ export default function AgreementHistoryTimeline({ agreementId, refreshKey = 0 }
           top: 14px;
           bottom: 0;
           width: 2px;
-          background: #e5e7eb;
+          background: var(--border);
         }
         .agr-lc-panel .avm-tl-dot {
           width: 14px;
           height: 14px;
           border-radius: 50%;
           margin-top: 3px;
-          border: 2px solid #fff;
-          box-shadow: 0 0 0 1px #e5e7eb;
-          background: #94a3b8;
+          border: 2px solid var(--card);
+          box-shadow: 0 0 0 1px var(--border);
+          background: var(--muted);
         }
         .agr-lc-panel .avm-tl-dot.green { background: #22c55e; box-shadow: 0 0 0 1px #86efac; }
         .agr-lc-panel .avm-tl-dot.blue { background: #2563eb; box-shadow: 0 0 0 1px #93c5fd; }
         .agr-lc-panel .avm-tl-dot.amber { background: #f59e0b; box-shadow: 0 0 0 1px #fcd34d; }
         .agr-lc-panel .avm-tl-dot.red { background: #ef4444; box-shadow: 0 0 0 1px #fca5a5; }
-        .agr-lc-panel .avm-tl-item strong { display: block; font-size: 0.9rem; color: #111827; }
+        .agr-lc-panel .avm-tl-item strong { display: block; font-size: 0.9rem; color: var(--heading); }
         .agr-lc-panel .avm-tl-item p {
           margin: 0.15rem 0 0;
-          color: #6b7280;
+          color: var(--muted);
           font-size: 0.82rem;
           line-height: 1.35;
         }
         .agr-lc-panel .avm-tl-item time {
           display: block;
           margin-top: 0.2rem;
-          color: #9ca3af;
+          color: var(--muted);
           font-size: 0.76rem;
         }
-        .agr-lc-panel .avm-empty { color: #9ca3af; font-size: 0.86rem; margin: 0; }
+        .agr-lc-panel .avm-empty { color: var(--muted); font-size: 0.86rem; margin: 0; }
       `}</style>
     </section>
   );

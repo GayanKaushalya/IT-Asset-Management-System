@@ -558,7 +558,7 @@ export default function PcKitPanel({ pcId, canManage, refreshKey = 0, onChanged 
           border: 1px solid var(--border);
           border-radius: 12px;
           padding: 0.75rem 0.85rem;
-          background: #fff;
+          background: var(--card);
         }
         .pc-kit-card header {
           display: flex; align-items: flex-start; justify-content: space-between;
@@ -566,7 +566,7 @@ export default function PcKitPanel({ pcId, canManage, refreshKey = 0, onChanged 
         }
         .pc-kit-card-title { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
         .pc-kit-card-summary {
-          font-size: 0.8rem; font-weight: 500; color: #64748b; line-height: 1.35;
+          font-size: 0.8rem; font-weight: 500; color: var(--muted); line-height: 1.35;
         }
         .pc-kit-card-actions { display: flex; gap: 0.35rem; flex-shrink: 0; }
         .pc-kit-card-meta {
@@ -578,7 +578,7 @@ export default function PcKitPanel({ pcId, canManage, refreshKey = 0, onChanged 
           margin: 0; font-size: 0.62rem; font-weight: 700;
           letter-spacing: 0.04em; text-transform: uppercase; color: #94a3b8;
         }
-        .pc-kit-card-meta dd { margin: 0.05rem 0 0; font-size: 0.84rem; color: #0f172a; }
+        .pc-kit-card-meta dd { margin: 0.05rem 0 0; font-size: 0.84rem; color: var(--heading); }
         .pc-kit-history h4 { margin: 0 0 0.5rem; font-size: 0.95rem; }
         .pc-kit-form {
           display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1rem;

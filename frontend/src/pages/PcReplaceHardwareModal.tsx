@@ -377,7 +377,7 @@ export default function PcReplaceHardwareModal({ open, asset, onClose, onReplace
           grid-column: 1 / -1;
           padding: 0.75rem 0.9rem;
           border-radius: 10px;
-          background: #f8fafc;
+          background: var(--bg-elevated);
           border: 1px solid #e2e8f0;
         }
         .pc-replace-label {
@@ -386,14 +386,14 @@ export default function PcReplaceHardwareModal({ open, asset, onClose, onReplace
           font-weight: 800;
           letter-spacing: 0.06em;
           text-transform: uppercase;
-          color: #64748b;
+          color: var(--muted);
           margin-bottom: 0.25rem;
         }
         .pc-replace-old p {
           margin: 0;
           font-size: 0.9rem;
           font-weight: 600;
-          color: #0f172a;
+          color: var(--heading);
           line-height: 1.4;
         }
         @media (max-width: 640px) {

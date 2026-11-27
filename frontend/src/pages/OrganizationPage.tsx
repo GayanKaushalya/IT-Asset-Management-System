@@ -849,7 +849,7 @@ const ORG_DIRECTORY_CSS = `
     padding: 0.55rem 1rem;
     border-radius: 999px;
     border: 1px solid var(--border);
-    background: #fff;
+    background: var(--card);
     color: var(--text);
     font-size: 0.9rem;
     font-weight: 600;
@@ -857,12 +857,12 @@ const ORG_DIRECTORY_CSS = `
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   }
   .org-section-tab:hover {
-    border-color: #93c5fd;
-    color: #1d4ed8;
+    border-color: var(--primary);
+    color: var(--primary);
   }
   .org-section-tab.active {
     background: #2563eb;
-    border-color: #2563eb;
+    border-color: var(--primary);
     color: #fff;
     box-shadow: 0 6px 16px rgba(37, 99, 235, 0.28);
   }
@@ -877,7 +877,7 @@ const ORG_DIRECTORY_CSS = `
   .org-table thead th {
     font-size: 0.78rem;
     font-weight: 700;
-    color: #64748b;
+    color: var(--muted);
     text-transform: none;
     letter-spacing: 0;
     border-bottom: 1px solid var(--border);
@@ -892,7 +892,7 @@ const ORG_DIRECTORY_CSS = `
     vertical-align: middle;
   }
   .org-table tbody tr:hover td {
-    background: #f8fafc;
+    background: var(--bg-elevated);
   }
   .org-col-num {
     width: 2.5rem;
@@ -901,7 +901,7 @@ const ORG_DIRECTORY_CSS = `
   }
   .org-emp-name {
     font-weight: 600;
-    color: #0f172a;
+    color: var(--heading);
   }
   .org-sort-btn {
     display: inline-flex;
@@ -915,7 +915,7 @@ const ORG_DIRECTORY_CSS = `
     color: inherit;
     cursor: pointer;
   }
-  .org-sort-btn.active { color: #1d4ed8; }
+  .org-sort-btn.active { color: var(--primary); }
   .org-sort-icons {
     display: inline-flex;
     flex-direction: column;
@@ -923,7 +923,7 @@ const ORG_DIRECTORY_CSS = `
     line-height: 0.7;
     color: #cbd5e1;
   }
-  .org-sort-icons .on { color: #2563eb; }
+  .org-sort-icons .on { color: var(--primary); }
   .org-status-pill {
     display: inline-flex;
     align-items: center;
@@ -941,16 +941,16 @@ const ORG_DIRECTORY_CSS = `
     background: currentColor;
   }
   .org-status-pill.current {
-    background: #dcfce7;
-    color: #15803d;
+    background: var(--success-soft);
+    color: var(--success);
   }
   .org-status-pill.probation {
-    background: #fef3c7;
-    color: #b45309;
+    background: var(--warning-soft);
+    color: var(--warning);
   }
   .org-status-pill.former {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: var(--danger-soft);
+    color: var(--danger);
   }
   .org-status-pill.other {
     background: #e2e8f0;

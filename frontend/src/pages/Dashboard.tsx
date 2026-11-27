@@ -184,8 +184,10 @@ export default function DashboardPage() {
   const chartTooltip = {
     contentStyle: {
       borderRadius: 10,
-      border: '1px solid #e2e8f0',
-      boxShadow: '0 8px 20px rgba(15,23,42,0.08)',
+      border: '1px solid var(--border)',
+      background: 'var(--card)',
+      color: 'var(--text)',
+      boxShadow: 'var(--shadow-md)',
       fontSize: 13,
     },
   };
@@ -354,9 +356,9 @@ export default function DashboardPage() {
             <div style={{ width: '100%', height: 260 }}>
               <ResponsiveContainer>
                 <BarChart data={statusChartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-                  <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                  <XAxis dataKey="label" tick={{ fontSize: 11, fill: 'var(--muted)' }} axisLine={false} tickLine={false} />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: 'var(--muted)' }} axisLine={false} tickLine={false} />
                   <Tooltip {...chartTooltip} formatter={(value: number) => [fmt(value), 'Assets']} />
                   <Bar dataKey="count" radius={[8, 8, 0, 0]} maxBarSize={64}>
                     {statusChartData.map((row) => (
@@ -379,15 +381,15 @@ export default function DashboardPage() {
               ) : (
                 <ResponsiveContainer>
                   <BarChart data={typeChartData} margin={{ top: 22, right: 8, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-                    <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
-                    <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis dataKey="name" tick={{ fontSize: 11, fill: 'var(--muted)' }} axisLine={false} tickLine={false} />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: 'var(--muted)' }} axisLine={false} tickLine={false} />
                     <Tooltip {...chartTooltip} formatter={(value: number) => [fmt(value), 'Assets']} />
                     <Bar dataKey="value" name="Assets" radius={[8, 8, 0, 0]} maxBarSize={48}>
                       {typeChartData.map((entry) => (
                         <Cell key={entry.category} fill={entry.color} />
                       ))}
-                      <LabelList dataKey="value" position="top" style={{ fill: '#64748b', fontSize: 11, fontWeight: 600 }} />
+                      <LabelList dataKey="value" position="top" style={{ fill: 'var(--muted)', fontSize: 11, fontWeight: 600 }} />
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
@@ -592,8 +594,8 @@ export default function DashboardPage() {
         .stat-tile {
           border-radius: 14px;
           padding: 0.9rem 1rem 0.95rem;
-          border: 1px solid #e2e8f0;
-          background: #fff;
+          border: 1px solid var(--border);
+          background: var(--card);
           box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
           display: flex;
           flex-direction: column;
@@ -630,16 +632,16 @@ export default function DashboardPage() {
           display: grid;
           place-items: center;
           flex-shrink: 0;
-          background: #f1f5f9;
-          color: #64748b;
+          background: var(--neutral-soft);
+          color: var(--muted);
         }
-        .stat-tile.tone-blue .stat-icon { background: #eff6ff; color: #2563eb; }
-        .stat-tile.tone-green .stat-icon { background: #f0fdf4; color: #16a34a; }
-        .stat-tile.tone-purple .stat-icon { background: #f5f3ff; color: #7c3aed; }
-        .stat-tile.tone-cyan .stat-icon { background: #ecfeff; color: #0891b2; }
-        .stat-tile.tone-yellow .stat-icon { background: #fffbeb; color: #d97706; }
-        .stat-tile.tone-orange .stat-icon { background: #fff7ed; color: #ea580c; }
-        .stat-tile.tone-slate .stat-icon { background: #f1f5f9; color: #475569; }
+        .stat-tile.tone-blue .stat-icon { background: var(--primary-muted); color: var(--primary); }
+        .stat-tile.tone-green .stat-icon { background: var(--success-soft); color: var(--success); }
+        .stat-tile.tone-purple .stat-icon { background: var(--security-soft); color: var(--security); }
+        .stat-tile.tone-cyan .stat-icon { background: var(--info-soft); color: var(--info); }
+        .stat-tile.tone-yellow .stat-icon { background: var(--warning-soft); color: var(--warning); }
+        .stat-tile.tone-orange .stat-icon { background: var(--warning-soft); color: var(--warning); }
+        .stat-tile.tone-slate .stat-icon { background: var(--neutral-soft); color: var(--muted); }
         .stat-tile .stat-icon svg {
           width: 15px;
           height: 15px;
@@ -664,7 +666,7 @@ export default function DashboardPage() {
           font-size: 1.55rem;
           font-weight: 750;
           letter-spacing: -0.03em;
-          color: #0f172a;
+          color: var(--heading);
           line-height: 1;
         }
         .stat-badge {
@@ -676,13 +678,13 @@ export default function DashboardPage() {
           font-weight: 650;
           line-height: 1;
         }
-        .stat-badge.tone-green { background: #dcfce7; color: #15803d; }
-        .stat-badge.tone-blue { background: #dbeafe; color: #1d4ed8; }
-        .stat-badge.tone-purple { background: #ede9fe; color: #6d28d9; }
-        .stat-badge.tone-cyan { background: #cffafe; color: #0e7490; }
-        .stat-badge.tone-yellow { background: #fef3c7; color: #b45309; }
-        .stat-badge.tone-orange { background: #ffedd5; color: #c2410c; }
-        .stat-badge.tone-slate { background: #e2e8f0; color: #475569; }
+        .stat-badge.tone-green { background: var(--success-soft); color: var(--success); }
+        .stat-badge.tone-blue { background: var(--primary-soft); color: var(--primary); }
+        .stat-badge.tone-purple { background: var(--security-soft); color: var(--security); }
+        .stat-badge.tone-cyan { background: var(--info-soft); color: var(--info); }
+        .stat-badge.tone-yellow { background: var(--warning-soft); color: var(--warning); }
+        .stat-badge.tone-orange { background: var(--warning-soft); color: var(--warning); }
+        .stat-badge.tone-slate { background: var(--neutral-soft); color: var(--muted); }
         .performance-card {
           margin-top: 0.25rem;
           padding: 1.15rem 1.2rem 1.25rem;
@@ -710,23 +712,23 @@ export default function DashboardPage() {
           border: 1px solid transparent;
         }
         .perf-pill.tone-blue {
-          background: #eff6ff;
+          background: var(--primary-muted);
           border-color: #dbeafe;
         }
         .perf-pill.tone-green {
-          background: #f0fdf4;
+          background: var(--success-soft);
           border-color: #dcfce7;
         }
         .perf-pill.tone-sky {
-          background: #f0f9ff;
+          background: var(--info-soft);
           border-color: #bae6fd;
         }
         .perf-box-icon {
           width: 30px;
           height: 30px;
           border-radius: 999px;
-          background: #fff;
-          color: #2563eb;
+          background: var(--card);
+          color: var(--primary);
           display: inline-grid;
           place-items: center;
           flex-shrink: 0;
@@ -745,7 +747,7 @@ export default function DashboardPage() {
         .perf-pill > div > span {
           display: block;
           font-size: 0.62rem;
-          color: #64748b;
+          color: var(--muted);
           text-transform: uppercase;
           letter-spacing: 0.04em;
           font-weight: 650;
@@ -754,7 +756,7 @@ export default function DashboardPage() {
           display: block;
           margin-top: 0.05rem;
           font-size: 0.92rem;
-          color: #0f172a;
+          color: var(--heading);
           letter-spacing: -0.02em;
           font-weight: 700;
         }
@@ -764,10 +766,10 @@ export default function DashboardPage() {
           gap: 0.9rem;
         }
         .chart-panel {
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--border);
           border-radius: 14px;
           padding: 0.85rem 0.9rem 0.95rem;
-          background: #fff;
+          background: var(--card);
           min-width: 0;
         }
         .chart-panel-head {
@@ -783,7 +785,7 @@ export default function DashboardPage() {
           font-weight: 750;
           letter-spacing: 0.06em;
           text-transform: uppercase;
-          color: #64748b;
+          color: var(--muted);
         }
         .chart-meta {
           font-size: 0.75rem;
@@ -796,8 +798,8 @@ export default function DashboardPage() {
           align-items: center;
           padding: 0.2rem 0.55rem;
           border-radius: 999px;
-          background: #dcfce7;
-          color: #15803d;
+          background: var(--success-soft);
+          color: var(--success);
           font-size: 0.72rem;
           font-weight: 700;
           white-space: nowrap;
@@ -825,7 +827,7 @@ export default function DashboardPage() {
         .donut-center strong {
           margin-top: 0.1rem;
           font-size: 1.45rem;
-          color: #0f172a;
+          color: var(--heading);
           letter-spacing: -0.02em;
         }
         .donut-verified {

@@ -121,8 +121,8 @@ export function DashboardCharts(props: ChartsProps) {
 }
 
 const panelStyle: CSSProperties = {
-  background: '#ffffff',
-  border: '1px solid #e4ebe7',
+  background: 'var(--card)',
+  border: '1px solid var(--border)',
   borderRadius: 12,
   padding: '1rem 1.1rem 0.5rem',
 };
@@ -131,5 +131,5 @@ const titleStyle: CSSProperties = {
   margin: '0 0 0.5rem',
   fontSize: 15,
   fontWeight: 650,
-  color: '#16382c',
+  color: 'var(--heading)',
 };

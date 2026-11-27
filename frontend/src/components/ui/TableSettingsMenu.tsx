@@ -108,8 +108,8 @@ export default function TableSettingsMenu({
           align-items: center;
           gap: 0.28rem;
           border: 1px solid var(--border);
-          background: #f3f4f6;
-          color: #111827;
+          background: var(--neutral-soft);
+          color: var(--heading);
           border-radius: 8px;
           padding: 0.28rem 0.45rem;
           cursor: pointer;
@@ -117,8 +117,8 @@ export default function TableSettingsMenu({
         }
         .table-settings-trigger:hover,
         .table-settings-trigger.open {
-          background: #e5e7eb;
-          border-color: #d1d5db;
+          background: var(--neutral-soft);
+          border-color: var(--border-strong);
         }
         .table-settings-menu {
           position: absolute;
@@ -126,7 +126,7 @@ export default function TableSettingsMenu({
           right: 0;
           z-index: 40;
           min-width: 260px;
-          background: #fff;
+          background: var(--card);
           border: 1px solid var(--border);
           border-radius: 10px;
           box-shadow: 0 12px 32px rgba(17, 24, 39, 0.14);
@@ -138,7 +138,7 @@ export default function TableSettingsMenu({
           font-weight: 700;
           letter-spacing: 0.06em;
           text-transform: uppercase;
-          color: #4b5563;
+          color: var(--muted);
         }
         .table-settings-sizes {
           display: grid;
@@ -147,18 +147,18 @@ export default function TableSettingsMenu({
         }
         .table-settings-size {
           border: 1px solid var(--border);
-          background: #fff;
-          color: #111827;
+          background: var(--card);
+          color: var(--heading);
           border-radius: 6px;
           padding: 0.4rem 0.2rem;
           font-weight: 650;
           font-size: 0.88rem;
           cursor: pointer;
         }
-        .table-settings-size:hover { background: #f9fafb; }
+        .table-settings-size:hover { background: var(--bg-elevated); }
         .table-settings-size.active {
-          background: #e5e7eb;
-          border-color: #d1d5db;
+          background: var(--neutral-soft);
+          border-color: var(--border-strong);
         }
         .table-settings-divider {
           height: 1px;
@@ -172,7 +172,7 @@ export default function TableSettingsMenu({
           width: 100%;
           border: 0;
           background: transparent;
-          color: #111827;
+          color: var(--heading);
           border-radius: 6px;
           padding: 0.45rem 0.35rem;
           font-weight: 600;
@@ -180,7 +180,7 @@ export default function TableSettingsMenu({
           cursor: pointer;
           text-align: left;
         }
-        .table-settings-refresh:hover:not(:disabled) { background: #f3f4f6; }
+        .table-settings-refresh:hover:not(:disabled) { background: var(--neutral-soft); }
         .table-settings-refresh:disabled { opacity: 0.55; cursor: default; }
       `}</style>
     </div>

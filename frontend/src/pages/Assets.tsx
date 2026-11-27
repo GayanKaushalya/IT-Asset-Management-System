@@ -3648,7 +3648,7 @@ export default function AssetsPage() {
                               padding: '0.7rem 0.85rem',
                               borderRadius: 10,
                               border: '1px solid #e2e8f0',
-                              background: '#f8fafc',
+                              background: 'var(--bg-elevated)',
                             }}
                           >
                             <div style={{ minWidth: 0 }}>
@@ -4866,7 +4866,7 @@ export default function AssetsPage() {
           font-weight: 700;
           letter-spacing: 0.04em;
           text-transform: uppercase;
-          color: #6b7280;
+          color: var(--muted);
         }
         .phone-ho-checks {
           display: flex;
@@ -4875,7 +4875,7 @@ export default function AssetsPage() {
           padding: 0.55rem 0.65rem;
           border: 1px solid var(--border);
           border-radius: 8px;
-          background: #f8fafc;
+          background: var(--bg-elevated);
         }
         .hod-remarks {
           display: grid;
@@ -4887,7 +4887,7 @@ export default function AssetsPage() {
           font-weight: 700;
           letter-spacing: 0.04em;
           text-transform: uppercase;
-          color: #6b7280;
+          color: var(--muted);
         }
         .hod-remarks textarea {
           resize: vertical;
@@ -4900,11 +4900,11 @@ export default function AssetsPage() {
         .transfer-tag-former {
           font-size: 0.82rem;
           font-weight: 700;
-          color: #dc2626;
+          color: var(--danger);
           line-height: 1.25;
         }
         .old-stock-section-row td {
-          background: #f8fafc;
+          background: var(--bg-elevated);
           border-top: 2px solid #e2e8f0;
           padding: 0.55rem 0.75rem !important;
         }
@@ -4915,8 +4915,8 @@ export default function AssetsPage() {
           font-weight: 800;
           letter-spacing: 0.06em;
           text-transform: uppercase;
-          color: #b91c1c;
-          background: #fee2e2;
+          color: var(--danger);
+          background: var(--danger-soft);
           border: 1px solid #fecaca;
           border-radius: 999px;
           padding: 0.2rem 0.65rem;
@@ -4925,21 +4925,21 @@ export default function AssetsPage() {
           cursor: pointer;
         }
         .asset-row-click:hover td {
-          background: #f8fafc;
+          background: var(--bg-elevated);
         }
         .asset-row-click:focus-visible {
           outline: 2px solid #93c5fd;
           outline-offset: -2px;
         }
         .old-stock-row td {
-          background: #fffafa;
+          background: var(--danger-soft);
         }
         .avm-transfer-banner {
           margin: 0 1.35rem 0.85rem;
           padding: 0.75rem 0.95rem;
           border-radius: 10px;
           border: 1px solid #fcd34d;
-          background: #fffbeb;
+          background: var(--warning-soft);
           color: #92400e;
           font-size: 0.86rem;
           line-height: 1.45;
@@ -4963,13 +4963,13 @@ export default function AssetsPage() {
           font-weight: 650;
         }
         .tab-btn {
-          border: 1px solid var(--border); background: #fff; color: var(--muted);
+          border: 1px solid var(--border); background: var(--card); color: var(--muted);
           border-radius: 999px; padding: 0.28rem 0.75rem; font-size: 0.8rem; font-weight: 650;
           cursor: pointer; line-height: 1.2;
         }
         .tab-btn.sm { padding: 0.22rem 0.65rem; font-size: 0.76rem; }
         .tab-btn.active { background: var(--navy); border-color: var(--navy); color: #fff; }
-        .tabs-secondary .tab-btn.active { background: #2563eb; border-color: #2563eb; }
+        .tabs-secondary .tab-btn.active { background: #2563eb; border-color: var(--primary); }
         .edit-modal-tabs {
           display: inline-flex;
           flex-wrap: nowrap;
@@ -4977,7 +4977,7 @@ export default function AssetsPage() {
           gap: 0.15rem;
           margin: 0;
           padding: 0.22rem;
-          background: #eef2f7;
+          background: var(--neutral-soft);
           border-radius: 999px;
           border: none;
         }
@@ -4998,7 +4998,7 @@ export default function AssetsPage() {
           font-size: 0.8rem;
         }
         .edit-modal-tabs .tab-btn:hover:not(.active) {
-          color: #1e293b;
+          color: var(--text);
           background: rgba(255, 255, 255, 0.55);
         }
         .edit-modal-tabs .tab-btn.active {
@@ -5015,7 +5015,7 @@ export default function AssetsPage() {
           position: relative;
           z-index: 30;
           overflow: visible;
-          background: #fff;
+          background: var(--card);
         }
         .hod-scroll {
           flex: 1;
@@ -5031,32 +5031,32 @@ export default function AssetsPage() {
           display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem;
         }
         .handover-summary-card {
-          border: 1px solid #e5e7eb; border-radius: 12px; padding: 0.85rem 1rem;
-          display: grid; gap: 0.35rem; background: #fff;
+          border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem;
+          display: grid; gap: 0.35rem; background: var(--card);
         }
-        .handover-summary-card.original { border-color: #86efac; background: #f0fdf4; }
-        .handover-summary-card.current { border-color: #93c5fd; background: #eff6ff; }
+        .handover-summary-card.original { border-color: var(--success); background: var(--success-soft); }
+        .handover-summary-card.current { border-color: var(--primary); background: var(--primary-muted); }
         .handover-summary-card .slot-label {
           font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase;
-          color: #6b7280; font-weight: 750;
+          color: var(--muted); font-weight: 750;
         }
         .handover-summary-card strong {
-          font-size: 1.05rem; color: #111827; font-weight: 750; line-height: 1.3;
+          font-size: 1.05rem; color: var(--heading); font-weight: 750; line-height: 1.3;
         }
         .hod-date-line {
           display: inline-flex; align-items: center; gap: 0.35rem;
-          color: #6b7280; font-size: 0.84rem;
+          color: var(--muted); font-size: 0.84rem;
         }
-        .hod-date-line svg { width: 14px; height: 14px; flex-shrink: 0; color: #9ca3af; }
+        .hod-date-line svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--muted); }
         .handover-assign-box {
-          border: 1px solid #e5e7eb; border-radius: 12px; padding: 0.9rem 1rem; background: #f8fafc;
+          border: 1px solid var(--border); border-radius: 12px; padding: 0.9rem 1rem; background: var(--bg-elevated);
         }
         .handover-assign-box h4 {
-          margin: 0 0 0.65rem; font-size: 0.95rem; font-weight: 700; color: #111827;
+          margin: 0 0 0.65rem; font-size: 0.95rem; font-weight: 700; color: var(--heading);
         }
-        .handover-help { margin: 0.55rem 0 0; color: #6b7280; font-size: 0.8rem; line-height: 1.45; }
+        .handover-help { margin: 0.55rem 0 0; color: var(--muted); font-size: 0.8rem; line-height: 1.45; }
         .hod-section-title {
-          margin: 0 0 0.55rem; font-size: 0.95rem; font-weight: 700; color: #111827;
+          margin: 0 0 0.55rem; font-size: 0.95rem; font-weight: 700; color: var(--heading);
         }
         .hod-foot {
           flex-shrink: 0;
@@ -5065,8 +5065,8 @@ export default function AssetsPage() {
           align-items: center;
           gap: 0.5rem;
           padding: 0.75rem 1.15rem;
-          background: #fff;
-          border-top: 1px solid #eef0f3;
+          background: var(--card);
+          border-top: 1px solid var(--border);
         }
         .hod-foot .btn {
           padding: 0.42rem 0.9rem;
@@ -5075,12 +5075,12 @@ export default function AssetsPage() {
         }
         .handover-panel.in-edit .btn-primary {
           background: #2563eb;
-          border-color: #2563eb;
+          border-color: var(--primary);
           color: #fff;
         }
         .handover-panel.in-edit .btn-primary:hover:not(:disabled) {
           background: #1d4ed8;
-          border-color: #1d4ed8;
+          border-color: var(--primary);
         }
         .modal-backdrop {
           position: fixed; inset: 0; background: rgba(17,24,39,0.45);
@@ -5088,7 +5088,7 @@ export default function AssetsPage() {
         }
         .modal-card {
           width: min(760px, 100%); max-height: 90vh; overflow: auto;
-          background: #fff; border-radius: 16px; padding: 1.25rem 1.35rem;
+          background: var(--card); border-radius: 16px; padding: 1.25rem 1.35rem;
           box-shadow: 0 24px 60px rgba(17,24,39,0.35);
         }
         .modal-card.detail-wide { width: min(880px, 100%); }
@@ -5096,7 +5096,7 @@ export default function AssetsPage() {
           width: min(1180px, 100%);
           max-height: 94vh;
           padding: 0;
-          background: #ffffff;
+          background: var(--card);
           overflow: hidden;
           display: flex;
           flex-direction: column;
@@ -5104,34 +5104,34 @@ export default function AssetsPage() {
         }
         .avm-head {
           display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start;
-          padding: 1.15rem 1.4rem 1rem; background: #fff; border-bottom: 1px solid #eef0f3;
+          padding: 1.15rem 1.4rem 1rem; background: var(--card); border-bottom: 1px solid var(--border);
         }
         .avm-head-left { display: flex; gap: 0.75rem; align-items: flex-start; min-width: 0; }
         .avm-icon {
-          width: 40px; height: 40px; border-radius: 10px; background: #eff6ff; color: #2563eb;
+          width: 40px; height: 40px; border-radius: 10px; background: var(--primary-muted); color: var(--primary);
           display: grid; place-items: center; flex-shrink: 0; margin-top: 2px;
         }
         .avm-icon svg { width: 20px; height: 20px; }
         .avm-title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.5rem; }
-        .avm-title { margin: 0; font-size: 1.35rem; font-weight: 800; color: #111827; letter-spacing: -0.02em; }
+        .avm-title { margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--heading); letter-spacing: -0.02em; }
         .avm-pill {
           display: inline-flex; align-items: center; gap: 0.3rem;
           border-radius: 999px; padding: 0.2rem 0.7rem; font-size: 0.72rem; font-weight: 700;
           white-space: nowrap; flex-shrink: 0;
         }
-        .avm-pill.ok { background: #dcfce7; color: #166534; }
+        .avm-pill.ok { background: var(--success-soft); color: var(--success); }
         .avm-pill.ok::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
-        .avm-pill.muted { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
-        .avm-pill.info { background: #dbeafe; color: #1d4ed8; }
-        .avm-pill.warn { background: #ffedd5; color: #c2410c; }
-        .avm-pill.danger { background: #fee2e2; color: #b91c1c; }
+        .avm-pill.muted { background: var(--neutral-soft); color: var(--muted); border: 1px solid var(--border); }
+        .avm-pill.info { background: var(--primary-soft); color: var(--primary); }
+        .avm-pill.warn { background: var(--warning-soft); color: var(--warning); }
+        .avm-pill.danger { background: var(--danger-soft); color: var(--danger); }
         .avm-pill.check::before { content: '✓'; font-size: 0.7rem; }
-        .avm-sub { margin: 0.3rem 0 0; color: #6b7280; font-size: 0.875rem; }
+        .avm-sub { margin: 0.3rem 0 0; color: var(--muted); font-size: 0.875rem; }
         .avm-head-actions { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
         .avm-body {
           display: grid; grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
           gap: 1.1rem; padding: 1.05rem 1.35rem; overflow: hidden; flex: 1; min-height: 0;
-          background: #f8fafc; align-items: stretch;
+          background: var(--bg-elevated); align-items: stretch;
         }
         .avm-col {
           display: flex; flex-direction: column; gap: 0.9rem;
@@ -5148,7 +5148,7 @@ export default function AssetsPage() {
           padding-right: 0;
         }
         .avm-panel {
-          background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+          background: var(--card); border: 1px solid var(--border); border-radius: 12px;
           padding: 0.95rem 1rem; box-shadow: none;
         }
         .avm-col--right .avm-panel--chain,
@@ -5172,26 +5172,26 @@ export default function AssetsPage() {
         }
         .avm-panel-head h4 {
           margin: 0; font-size: 0.7rem; letter-spacing: 0.07em; text-transform: uppercase;
-          color: #6b7280; font-weight: 750;
+          color: var(--muted); font-weight: 750;
         }
         .avm-assignee-box {
-          border: 1px solid #eef2f7; background: #f8fafc; border-radius: 10px;
+          border: 1px solid var(--border); background: var(--bg-elevated); border-radius: 10px;
           padding: 0.75rem 0.85rem; display: flex; gap: 0.7rem; align-items: flex-start;
         }
         .avm-avatar {
           width: 42px; height: 42px; border-radius: 999px; background: #1e3a8a; color: #fff;
           display: grid; place-items: center; font-weight: 750; font-size: 0.82rem; flex-shrink: 0;
         }
-        .avm-assignee-box strong { display: block; font-size: 0.95rem; color: #111827; line-height: 1.3; }
+        .avm-assignee-box strong { display: block; font-size: 0.95rem; color: var(--heading); line-height: 1.3; }
         .avm-meta-line {
-          display: flex; align-items: center; gap: 0.35rem; color: #6b7280; font-size: 0.8rem; margin-top: 0.22rem;
+          display: flex; align-items: center; gap: 0.35rem; color: var(--muted); font-size: 0.8rem; margin-top: 0.22rem;
         }
-        .avm-meta-line svg { width: 12px; height: 12px; flex-shrink: 0; color: #9ca3af; }
+        .avm-meta-line svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--muted); }
         .avm-assignee-grid {
           display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-top: 0.75rem;
         }
-        .avm-kv span { display: block; font-size: 0.7rem; color: #9ca3af; font-weight: 650; margin-bottom: 0.15rem; }
-        .avm-kv strong { font-size: 0.88rem; color: #111827; font-weight: 650; word-break: break-word; }
+        .avm-kv span { display: block; font-size: 0.7rem; color: var(--muted); font-weight: 650; margin-bottom: 0.15rem; }
+        .avm-kv strong { font-size: 0.88rem; color: var(--heading); font-weight: 650; word-break: break-word; }
         .avm-spec-list { display: grid; gap: 0.62rem; }
         .avm-spec-row {
           display: grid;
@@ -5202,9 +5202,9 @@ export default function AssetsPage() {
           min-width: 0;
         }
         .avm-spec-row:last-child { border-bottom: none; padding-bottom: 0; }
-        .avm-spec-row > span { color: #6b7280; font-weight: 500; min-width: 0; }
+        .avm-spec-row > span { color: var(--muted); font-weight: 500; min-width: 0; }
         .avm-spec-row > strong {
-          color: #111827; font-weight: 650; text-align: right;
+          color: var(--heading); font-weight: 650; text-align: right;
           display: inline-flex; align-items: center; justify-content: flex-end; gap: 0.3rem;
           min-width: 0; max-width: 100%;
         }
@@ -5227,23 +5227,23 @@ export default function AssetsPage() {
           letter-spacing: 0.01em;
         }
         .avm-copy {
-          border: none; background: transparent; color: #9ca3af; cursor: pointer;
+          border: none; background: transparent; color: var(--muted); cursor: pointer;
           padding: 0; margin: 0; display: inline-flex; flex-shrink: 0; line-height: 1;
         }
-        .avm-copy:hover { color: #2563eb; }
+        .avm-copy:hover { color: var(--primary); }
         .avm-copy svg { width: 13px; height: 13px; display: block; }
         .avm-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.8rem; }
         .avm-mini {
-          background: #f8fafc; border: 1px solid #eef2f7; border-radius: 10px; padding: 0.7rem 0.75rem;
+          background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.75rem;
         }
-        .avm-mini span { display: block; font-size: 0.7rem; color: #9ca3af; font-weight: 650; margin-bottom: 0.25rem; }
-        .avm-mini strong { font-size: 0.98rem; color: #111827; }
+        .avm-mini span { display: block; font-size: 0.7rem; color: var(--muted); font-weight: 650; margin-bottom: 0.25rem; }
+        .avm-mini strong { font-size: 0.98rem; color: var(--heading); }
         .avm-right-head { margin-bottom: 0.1rem; align-items: flex-start !important; }
-        .avm-right-head h3 { margin: 0; font-size: 1.05rem; color: #111827; font-weight: 750; }
-        .avm-right-head p { margin: 0.28rem 0 0; color: #6b7280; font-size: 0.82rem; line-height: 1.4; max-width: 36rem; }
+        .avm-right-head h3 { margin: 0; font-size: 1.05rem; color: var(--heading); font-weight: 750; }
+        .avm-right-head p { margin: 0.28rem 0 0; color: var(--muted); font-size: 0.82rem; line-height: 1.4; max-width: 36rem; }
         .avm-chain-label {
           margin: 0.9rem 0 0.55rem; font-size: 0.7rem; letter-spacing: 0.07em;
-          text-transform: uppercase; color: #6b7280; font-weight: 750;
+          text-transform: uppercase; color: var(--muted); font-weight: 750;
         }
         .avm-chain {
           display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.55rem;
@@ -5262,40 +5262,40 @@ export default function AssetsPage() {
           padding-right: 0.15rem;
         }
         .avm-slot {
-          border: 1px solid #e5e7eb; border-radius: 12px; padding: 0.65rem 0.75rem;
-          background: #fff; min-height: 7.1rem; height: 100%;
+          border: 1px solid var(--border); border-radius: 12px; padding: 0.65rem 0.75rem;
+          background: var(--card); min-height: 7.1rem; height: 100%;
           display: flex; flex-direction: column; gap: 0.22rem;
         }
-        .avm-slot.active { border-color: #60a5fa; background: #eff6ff; box-shadow: inset 0 0 0 1px #93c5fd; }
-        .avm-slot.original { border-color: #86efac; background: #f0fdf4; }
+        .avm-slot.active { border-color: var(--primary); background: var(--primary-muted); box-shadow: inset 0 0 0 1px var(--primary); }
+        .avm-slot.original { border-color: var(--success); background: var(--success-soft); }
         .avm-slot.original.active {
-          border-color: #60a5fa;
+          border-color: var(--primary);
           background: linear-gradient(180deg, #f0fdf4 0%, #eff6ff 100%);
-          box-shadow: inset 0 0 0 1px #93c5fd;
+          box-shadow: inset 0 0 0 1px var(--primary);
         }
-        .avm-slot.vacant { border-style: dashed; border-color: #fb923c; background: #fff7ed; }
-        .avm-slot.locked { background: #f9fafb; border-color: #e5e7eb; color: #9ca3af; }
+        .avm-slot.vacant { border-style: dashed; border-color: #fb923c; background: var(--warning-soft); }
+        .avm-slot.locked { background: var(--bg-elevated); border-color: var(--border); color: var(--muted); }
         .avm-slot-top { display: flex; justify-content: space-between; align-items: center; gap: 0.25rem; }
         .avm-slot-n {
           font-size: 0.68rem; letter-spacing: 0.04em; text-transform: uppercase;
-          color: #6b7280; font-weight: 750;
+          color: var(--muted); font-weight: 750;
         }
         .avm-slot-state {
           font-size: 0.68rem; font-weight: 750; border-radius: 999px; padding: 0.12rem 0.45rem;
         }
-        .avm-slot-state.vacant { background: #ffedd5; color: #c2410c; }
-        .avm-slot-state.locked { background: #e5e7eb; color: #6b7280; }
-        .avm-slot strong { font-size: 0.9rem; color: #111827; line-height: 1.3; }
-        .avm-slot.locked strong { color: #9ca3af; }
-        .avm-slot .slot-date { color: #6b7280; font-size: 0.78rem; }
+        .avm-slot-state.vacant { background: var(--warning-soft); color: var(--warning); }
+        .avm-slot-state.locked { background: var(--neutral-soft); color: var(--muted); }
+        .avm-slot strong { font-size: 0.9rem; color: var(--heading); line-height: 1.3; }
+        .avm-slot.locked strong { color: var(--muted); }
+        .avm-slot .slot-date { color: var(--muted); font-size: 0.78rem; }
         .avm-slot-badges { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: auto; padding-top: 0.4rem; }
         .avm-slot-btn {
-          margin-top: auto; border: 1px dashed #fb923c; background: #fff; color: #ea580c;
+          margin-top: auto; border: 1px dashed #fb923c; background: var(--card); color: #ea580c;
           border-radius: 8px; padding: 0.5rem 0.45rem; font-size: 0.8rem; font-weight: 700;
           cursor: pointer; width: 100%;
         }
-        .avm-slot-btn:hover { background: #fff7ed; }
-        .avm-locked-ico { margin: 0.55rem auto 0.2rem; color: #9ca3af; display: grid; place-items: center; }
+        .avm-slot-btn:hover { background: var(--warning-soft); }
+        .avm-locked-ico { margin: 0.55rem auto 0.2rem; color: var(--muted); display: grid; place-items: center; }
         .avm-locked-ico svg { width: 22px; height: 22px; }
         .avm-timeline {
           display: grid; gap: 0; position: relative;
@@ -5313,25 +5313,25 @@ export default function AssetsPage() {
         }
         .avm-tl-item:last-child { padding-bottom: 0; }
         .avm-tl-item:not(:last-child)::before {
-          content: ''; position: absolute; left: 7px; top: 14px; bottom: 0; width: 2px; background: #e5e7eb;
+          content: ''; position: absolute; left: 7px; top: 14px; bottom: 0; width: 2px; background: var(--border);
         }
         .avm-tl-dot {
           width: 14px; height: 14px; border-radius: 50%; margin-top: 3px; border: 2px solid #fff;
-          box-shadow: 0 0 0 1px #e5e7eb; background: #94a3b8;
+          box-shadow: 0 0 0 1px var(--border); background: var(--muted);
         }
         .avm-tl-dot.green { background: #22c55e; box-shadow: 0 0 0 1px #86efac; }
         .avm-tl-dot.blue { background: #2563eb; box-shadow: 0 0 0 1px #93c5fd; }
-        .avm-tl-item strong { display: block; font-size: 0.9rem; color: #111827; }
-        .avm-tl-item p { margin: 0.15rem 0 0; color: #6b7280; font-size: 0.82rem; line-height: 1.35; }
-        .avm-tl-item time { display: block; margin-top: 0.2rem; color: #9ca3af; font-size: 0.76rem; }
-        .avm-empty { color: #9ca3af; font-size: 0.86rem; margin: 0; }
+        .avm-tl-item strong { display: block; font-size: 0.9rem; color: var(--heading); }
+        .avm-tl-item p { margin: 0.15rem 0 0; color: var(--muted); font-size: 0.82rem; line-height: 1.35; }
+        .avm-tl-item time { display: block; margin-top: 0.2rem; color: var(--muted); font-size: 0.76rem; }
+        .avm-empty { color: var(--muted); font-size: 0.86rem; margin: 0; }
         .avm-foot {
           display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap;
-          padding: 0.55rem 1.15rem; background: #fff; border-top: 1px solid #eef0f3;
+          padding: 0.55rem 1.15rem; background: var(--card); border-top: 1px solid var(--border);
           min-height: 0;
         }
-        .avm-tag-id span { display: block; font-size: 0.65rem; color: #9ca3af; font-weight: 650; margin-bottom: 0.05rem; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.2; }
-        .avm-tag-id strong { font-size: 0.88rem; color: #111827; line-height: 1.2; }
+        .avm-tag-id span { display: block; font-size: 0.65rem; color: var(--muted); font-weight: 650; margin-bottom: 0.05rem; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.2; }
+        .avm-tag-id strong { font-size: 0.88rem; color: var(--heading); line-height: 1.2; }
         .avm-foot-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: flex-end; align-items: center; }
         .avm-foot-actions .avm-btn-outline,
         .avm-foot-actions .avm-btn-primary {
@@ -5344,9 +5344,9 @@ export default function AssetsPage() {
           width: 13px; height: 13px; flex-shrink: 0;
         }
         .avm-foot-actions .avm-btn-outline {
-          background: #fff; border: 1px solid #d1d5db; color: #374151; font-weight: 650;
+          background: var(--card); border: 1px solid var(--border-strong); color: var(--text-secondary); font-weight: 650;
         }
-        .avm-foot-actions .avm-btn-outline:hover { background: #f9fafb; }
+        .avm-foot-actions .avm-btn-outline:hover { background: var(--bg-elevated); }
         .avm-foot-actions .avm-btn-primary {
           background: #2563eb; border: 1px solid #2563eb; color: #fff; font-weight: 700;
         }
@@ -5371,15 +5371,15 @@ export default function AssetsPage() {
           max-height: min(52vh, 28rem);
           overflow: auto;
           overscroll-behavior: contain;
-          border: 1px solid #e5e7eb;
+          border: 1px solid var(--border);
           border-radius: 10px;
         }
         .lifecycle-history-scroll .table { margin: 0; }
         @media print {
-          .modal-backdrop { position: static; background: #fff; padding: 0; display: block; }
+          .modal-backdrop { position: static; background: var(--card); padding: 0; display: block; }
           .modal-card.avm-card { box-shadow: none; max-height: none; width: 100%; }
           .avm-head-actions, .avm-foot-actions, .avm-slot-btn, .avm-copy { display: none !important; }
-          .avm-body { background: #fff; }
+          .avm-body { background: var(--card); }
         }
         .handover-panel {
           margin-top: 1.15rem; padding-top: 1rem; border-top: 1px solid var(--border);
@@ -5406,25 +5406,25 @@ export default function AssetsPage() {
         }
         .handover-slot {
           position: relative;
-          border: 1px solid #e5e7eb;
+          border: 1px solid var(--border);
           border-radius: 12px;
           padding: 0.7rem 0.8rem 0.75rem;
           display: grid;
           gap: 0.22rem;
-          background: #fff;
+          background: var(--card);
           min-height: 6.5rem;
           align-content: start;
         }
         .handover-slot.empty {
           border-style: solid;
-          border-color: #e5e7eb;
-          background: #fff;
+          border-color: var(--border);
+          background: var(--card);
           opacity: 1;
         }
         .handover-slot.next-available {
           border-style: dashed;
           border-color: #d1d5db;
-          background: #fafafa;
+          background: var(--bg-elevated);
         }
         .handover-panel.view-handovers {
           margin-top: 1.15rem;
@@ -5432,28 +5432,28 @@ export default function AssetsPage() {
           border-top: 1px solid var(--border);
         }
         .handover-slot.current {
-          border-color: #93c5fd;
-          background: #eff6ff;
-          box-shadow: inset 0 0 0 1px #93c5fd;
+          border-color: var(--primary);
+          background: var(--primary-muted);
+          box-shadow: inset 0 0 0 1px var(--primary);
         }
         .handover-slot.original {
-          border-color: #86efac;
-          background: #f0fdf4;
+          border-color: var(--success);
+          background: var(--success-soft);
         }
         .handover-slot.original.current {
-          border-color: #93c5fd;
+          border-color: var(--primary);
           background: linear-gradient(180deg, #f0fdf4 0%, #eff6ff 100%);
-          box-shadow: inset 0 0 0 1px #93c5fd;
+          box-shadow: inset 0 0 0 1px var(--primary);
         }
         .handover-slot .slot-label {
           font-size: 0.7rem;
           letter-spacing: 0.06em;
           text-transform: uppercase;
-          color: #9ca3af;
+          color: var(--muted);
           font-weight: 700;
         }
-        .handover-slot.current .slot-label { color: #2563eb; }
-        .handover-slot.original .slot-label { color: #166534; }
+        .handover-slot.current .slot-label { color: var(--primary); }
+        .handover-slot.original .slot-label { color: var(--success); }
         .handover-slot .avm-slot-badges {
           display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.25rem;
         }
@@ -5469,19 +5469,19 @@ export default function AssetsPage() {
         .handover-slot strong {
           font-size: 0.92rem;
           font-weight: 700;
-          color: #111827;
+          color: var(--heading);
           line-height: 1.3;
           word-break: break-word;
         }
         .handover-slot.empty strong,
         .handover-slot.next-available strong {
-          color: #9ca3af;
+          color: var(--muted);
           font-weight: 600;
         }
-        .handover-slot .slot-date { color: #9ca3af; font-size: 0.78rem; }
+        .handover-slot .slot-date { color: var(--muted); font-size: 0.78rem; }
         .handover-badge.next-slot {
-          background: #f3f4f6;
-          color: #6b7280;
+          background: var(--neutral-soft);
+          color: var(--muted);
           width: fit-content;
           margin-top: 0.15rem;
         }
@@ -5494,12 +5494,12 @@ export default function AssetsPage() {
           padding: 0.15rem 0.55rem; font-size: 0.78rem; font-weight: 700;
         }
         .handover-badge.holds-now {
-          background: #dbeafe; color: #1d4ed8;
+          background: var(--primary-soft); color: var(--primary);
           width: fit-content;
           margin-top: 0.15rem;
         }
         .handover-badge.originally {
-          background: #dcfce7; color: #166534;
+          background: var(--success-soft); color: var(--success);
         }
         .person-name-cell {
           display: inline-flex;
@@ -5513,7 +5513,7 @@ export default function AssetsPage() {
           overflow: visible;
         }
         .person-name-text {
-          color: #111827;
+          color: var(--heading);
           font-weight: 700;
           font-size: 0.8rem;
           white-space: nowrap;
@@ -5529,13 +5529,13 @@ export default function AssetsPage() {
           flex-shrink: 0;
         }
         .person-sign.current-holder {
-          background: #dbeafe; color: #1d4ed8;
+          background: var(--primary-soft); color: var(--primary);
         }
         .person-sign.holds-now {
           background: #e0e7ff; color: #3730a3;
         }
         .person-sign.originally-assigned {
-          background: #dcfce7; color: #166534;
+          background: var(--success-soft); color: var(--success);
         }
         .handover-meta { color: var(--muted); font-size: 0.86rem; }
         .handover-actions {
@@ -5546,19 +5546,19 @@ export default function AssetsPage() {
         .handover-actions .emp-suggest { min-width: 160px; flex: 1; }
         .hod-field {
           display: flex; align-items: center; gap: 0.45rem;
-          border: 1px solid #e5e7eb; border-radius: 10px; background: #fff;
+          border: 1px solid var(--border); border-radius: 10px; background: var(--card);
           padding: 0 0.7rem; min-height: 42px; flex: 1; min-width: 160px;
           overflow: visible; position: relative;
         }
         .hod-field:focus-within {
-          border-color: #93c5fd;
+          border-color: var(--primary);
           box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.3);
         }
         /* Clip only date fields (native calendar icon); keep emp suggest visible */
         .hod-field:has(input[type="date"]) {
           overflow: hidden;
         }
-        .hod-field svg { width: 15px; height: 15px; color: #9ca3af; flex-shrink: 0; }
+        .hod-field svg { width: 15px; height: 15px; color: var(--muted); flex-shrink: 0; }
         .hod-field .input,
         .hod-field .asset-control {
           border: none; outline: none; background: transparent; width: 100%;
@@ -5588,7 +5588,7 @@ export default function AssetsPage() {
           overflow: visible;
         }
         .handover-history {
-          border: 1px solid #e5e7eb; border-radius: 12px; padding: 0.85rem 1rem; background: #fff;
+          border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem; background: var(--card);
           display: flex; flex-direction: column; min-height: 0;
         }
         .assign-timeline-card .avm-panel-head {
@@ -5610,10 +5610,10 @@ export default function AssetsPage() {
         }
         .handover-history .table th {
           font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase;
-          color: #9ca3af; font-weight: 700;
+          color: var(--muted); font-weight: 700;
         }
-        .handover-history .table td:nth-child(2) { font-weight: 700; color: #111827; }
-        .handover-history .table tr.is-current td { background: #f0fdf4; }
+        .handover-history .table td:nth-child(2) { font-weight: 700; color: var(--heading); }
+        .handover-history .table tr.is-current td { background: var(--success-soft); }
         @media (max-width: 960px) {
           .handover-panel.in-edit .handover-slot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
@@ -5630,7 +5630,7 @@ export default function AssetsPage() {
           width: min(920px, 100%);
           max-height: 92vh;
           overflow: auto;
-          background: #fff;
+          background: var(--card);
           border-radius: 18px;
           padding: 1.35rem 1.5rem 1.25rem;
           box-shadow: 0 28px 70px rgba(17,24,39,0.28);
@@ -5641,13 +5641,13 @@ export default function AssetsPage() {
           display: flex;
           flex-direction: column;
           overflow: hidden;
-          background: #f8fafc;
+          background: var(--bg-elevated);
         }
         .asset-modal--studio .asset-modal-head {
           margin: 0;
           padding: 0.85rem 1.15rem;
-          background: #fff;
-          border-bottom: 1px solid #eef0f3;
+          background: var(--card);
+          border-bottom: 1px solid var(--border);
           align-items: center;
         }
         .asset-modal--studio .edit-modal-tabs { margin: 0; }
@@ -5664,7 +5664,7 @@ export default function AssetsPage() {
           padding: 0;
           display: flex;
           flex-direction: column;
-          background: #fff;
+          background: var(--card);
         }
         .asset-modal-head {
           display: flex;
@@ -5695,8 +5695,8 @@ export default function AssetsPage() {
           width: 42px;
           height: 42px;
           border-radius: 12px;
-          background: #dbeafe;
-          color: #2563eb;
+          background: var(--primary-soft);
+          color: var(--primary);
           display: grid;
           place-items: center;
           flex-shrink: 0;
@@ -5707,23 +5707,23 @@ export default function AssetsPage() {
           font-size: 0.72rem;
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          color: #9ca3af;
+          color: var(--muted);
           font-weight: 650;
         }
         .asset-modal-title {
           margin: 0.15rem 0 0;
           font-size: 1.2rem;
-          color: #111827;
+          color: var(--heading);
           font-weight: 750;
         }
         .asset-modal-title-muted {
-          color: #6b7280;
+          color: var(--muted);
           font-weight: 600;
           font-size: 0.95rem;
         }
         .asset-modal-hint {
           margin: 0.3rem 0 0;
-          color: #6b7280;
+          color: var(--muted);
           font-size: 0.9rem;
         }
         .asset-modal-close {
@@ -5731,13 +5731,13 @@ export default function AssetsPage() {
           height: 36px;
           border: none;
           background: transparent;
-          color: #9ca3af;
+          color: var(--muted);
           border-radius: 10px;
           cursor: pointer;
           display: grid;
           place-items: center;
         }
-        .asset-modal-close:hover { background: #f3f4f6; color: #374151; }
+        .asset-modal-close:hover { background: var(--neutral-soft); color: var(--text-secondary); }
         .asset-modal-close svg { width: 18px; height: 18px; }
         .edit-modal-tabs .tab-count {
           display: inline-flex; align-items: center; justify-content: center;
@@ -5763,8 +5763,8 @@ export default function AssetsPage() {
           top: 0;
         }
         .aed-side-card {
-          background: #fff;
-          border: 1px solid #e5e7eb;
+          background: var(--card);
+          border: 1px solid var(--border);
           border-radius: 12px;
           padding: 0.75rem 0.85rem;
         }
@@ -5773,14 +5773,14 @@ export default function AssetsPage() {
           font-size: 0.68rem;
           letter-spacing: 0.06em;
           text-transform: uppercase;
-          color: #9ca3af;
+          color: var(--muted);
           font-weight: 750;
           margin-bottom: 0.35rem;
         }
         .aed-side-title {
           display: block;
           font-size: 0.92rem;
-          color: #111827;
+          color: var(--heading);
           font-weight: 750;
           line-height: 1.3;
           margin-bottom: 0.4rem;
@@ -5788,11 +5788,11 @@ export default function AssetsPage() {
         .aed-side-specs {
           list-style: none; margin: 0; padding: 0;
           display: grid; gap: 0.2rem;
-          color: #6b7280; font-size: 0.78rem;
+          color: var(--muted); font-size: 0.78rem;
         }
         .aed-side-nav {
-          background: #fff;
-          border: 1px solid #e5e7eb;
+          background: var(--card);
+          border: 1px solid var(--border);
           border-radius: 12px;
           padding: 0.35rem;
           display: grid;
@@ -5804,24 +5804,24 @@ export default function AssetsPage() {
           padding: 0.55rem 0.65rem; border-radius: 8px; cursor: pointer;
           color: #4b5563; font-size: 0.82rem; font-weight: 600;
         }
-        .aed-nav-btn:hover { background: #f3f4f6; }
-        .aed-nav-btn.active { background: #eff6ff; color: #1d4ed8; }
+        .aed-nav-btn:hover { background: var(--neutral-soft); }
+        .aed-nav-btn.active { background: var(--primary-muted); color: var(--primary); }
         .aed-nav-active {
           font-size: 0.65rem; font-weight: 750; letter-spacing: 0.04em;
-          text-transform: uppercase; color: #2563eb;
-          background: #dbeafe; border-radius: 999px; padding: 0.12rem 0.4rem;
+          text-transform: uppercase; color: var(--primary);
+          background: var(--primary-soft); border-radius: 999px; padding: 0.12rem 0.4rem;
         }
         .aed-side-foot {
           margin: 0.15rem 0 0; padding: 0 0.2rem;
-          color: #9ca3af; font-size: 0.72rem; line-height: 1.35;
+          color: var(--muted); font-size: 0.72rem; line-height: 1.35;
         }
         .aed-main { min-width: 0; }
         .aed-foot-note {
           margin: 0; display: inline-flex; align-items: center; gap: 0.4rem;
-          color: #6b7280; font-size: 0.8rem;
+          color: var(--muted); font-size: 0.8rem;
         }
         .aed-foot-check {
-          width: 18px; height: 18px; border-radius: 999px; background: #dcfce7; color: #166534;
+          width: 18px; height: 18px; border-radius: 999px; background: var(--success-soft); color: var(--success);
           display: inline-grid; place-items: center; font-size: 0.7rem; font-weight: 800;
         }
         .asset-form-sections-wrap {
@@ -5835,10 +5835,10 @@ export default function AssetsPage() {
           gap: 0.85rem;
         }
         .asset-form-section {
-          border: 1px solid #e5e7eb;
+          border: 1px solid var(--border);
           border-radius: 12px;
           overflow: visible;
-          background: #fff;
+          background: var(--card);
           scroll-margin-top: 0.75rem;
         }
         .asset-form-section-head {
@@ -5846,7 +5846,7 @@ export default function AssetsPage() {
           align-items: center;
           gap: 0.55rem;
           padding: 0.6rem 0.9rem;
-          background: #f8fafc;
+          background: var(--bg-elevated);
           border-bottom: 1px solid #eef2f7;
         }
         .asset-form-section-badge { margin-left: auto; }
@@ -5854,8 +5854,8 @@ export default function AssetsPage() {
           width: 26px;
           height: 26px;
           border-radius: 8px;
-          background: #dbeafe;
-          color: #2563eb;
+          background: var(--primary-soft);
+          color: var(--primary);
           display: grid;
           place-items: center;
           flex-shrink: 0;
@@ -5883,58 +5883,58 @@ export default function AssetsPage() {
         .asset-field-label {
           font-size: 0.82rem;
           font-weight: 600;
-          color: #374151;
+          color: var(--text-secondary);
         }
         .req-star {
-          color: #dc2626;
+          color: var(--danger);
           font-weight: 700;
         }
         .asset-cancel-btn {
-          background: #fff;
+          background: var(--card);
           border: 1.5px solid #2563eb;
-          color: #2563eb;
+          color: var(--primary);
           font-weight: 650;
         }
         .asset-cancel-btn:hover {
-          background: #eff6ff;
+          background: var(--primary-muted);
         }
         .asset-check-row {
           display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.15rem;
-          border: 1px solid #e5e7eb; border-radius: 12px; background: #fff;
+          border: 1px solid var(--border); border-radius: 12px; background: var(--card);
           padding: 0.7rem 0.9rem; min-height: 46px;
         }
         .asset-check {
           display: inline-flex; align-items: center; gap: 0.4rem;
-          font-size: 0.9rem; color: #111827; font-weight: 550; cursor: pointer;
+          font-size: 0.9rem; color: var(--heading); font-weight: 550; cursor: pointer;
           user-select: none;
         }
         .asset-check input {
-          width: 1rem; height: 1rem; accent-color: #2563eb; cursor: pointer;
+          width: 1rem; height: 1rem; accent-color: var(--primary); cursor: pointer;
         }
         .asset-ups-model {
           width: 7.5rem; min-width: 6rem; flex: 0 0 auto;
-          border: 1px solid #e5e7eb; border-radius: 8px;
+          border: 1px solid var(--border); border-radius: 8px;
           padding: 0.4rem 0.55rem; font-size: 0.88rem;
         }
         .asset-ups-brand {
           width: 9.5rem; min-width: 8rem; flex: 0 0 auto;
-          border: 1px solid #e5e7eb; border-radius: 8px;
+          border: 1px solid var(--border); border-radius: 8px;
           padding: 0.4rem 0.55rem; font-size: 0.88rem;
-          background: #fff;
+          background: var(--card);
         }
         .asset-field-box {
           display: flex;
           align-items: center;
           gap: 0.55rem;
-          border: 1px solid #e5e7eb;
+          border: 1px solid var(--border);
           border-radius: 12px;
-          background: #fff;
+          background: var(--card);
           padding: 0 0.75rem;
           min-height: 46px;
           transition: border-color 0.15s, box-shadow 0.15s;
         }
         .asset-field-box:focus-within {
-          border-color: #93c5fd;
+          border-color: var(--primary);
           box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.35);
         }
         .asset-field-box.tall {
@@ -5943,7 +5943,7 @@ export default function AssetsPage() {
           min-height: 110px;
         }
         .asset-field-icon {
-          color: #9ca3af;
+          color: var(--muted);
           display: inline-flex;
           flex-shrink: 0;
         }
@@ -5963,7 +5963,7 @@ export default function AssetsPage() {
           padding: 0.55rem 0;
           font-size: 0.9rem;
           font-weight: 600;
-          color: #111827;
+          color: var(--heading);
           cursor: pointer;
           text-align: left;
         }
@@ -5972,7 +5972,7 @@ export default function AssetsPage() {
           margin-left: auto;
           width: 14px;
           height: 14px;
-          color: #9ca3af;
+          color: var(--muted);
           flex-shrink: 0;
         }
         .status-select-menu {
@@ -5981,8 +5981,8 @@ export default function AssetsPage() {
           right: -0.65rem;
           top: calc(100% + 0.45rem);
           z-index: 40;
-          background: #fff;
-          border: 1px solid #e5e7eb;
+          background: var(--card);
+          border: 1px solid var(--border);
           border-radius: 12px;
           box-shadow: 0 14px 36px rgba(15, 23, 42, 0.14);
           padding: 0.35rem;
@@ -6000,13 +6000,13 @@ export default function AssetsPage() {
           padding: 0.5rem 0.65rem;
           font-size: 0.88rem;
           font-weight: 600;
-          color: #111827;
+          color: var(--heading);
           cursor: pointer;
           text-align: left;
         }
         .status-select-option:hover,
         .status-select-option.is-active {
-          background: #f3f4f6;
+          background: var(--neutral-soft);
         }
         .status-select-option.is-active { font-weight: 700; }
         .status-filter-select {
@@ -6022,13 +6022,13 @@ export default function AssetsPage() {
           min-height: 2.15rem;
           border: 1px solid #dbe3ee !important;
           border-radius: 8px !important;
-          background: #fff !important;
+          background: var(--card) !important;
           box-shadow: none;
           cursor: pointer;
           text-align: left;
           font-size: 0.84rem;
           font-weight: 500;
-          color: #0f172a;
+          color: var(--heading);
         }
         .status-filter-select .status-select-trigger.asset-filter-control:focus,
         .status-filter-select .status-select-trigger.asset-filter-control[aria-expanded='true'] {
@@ -6056,17 +6056,17 @@ export default function AssetsPage() {
           flex-shrink: 0;
         }
         .status-dot svg { width: 0.85rem; height: 0.85rem; }
-        .status-dot.tone-available { background: #dbeafe; color: #1d4ed8; }
-        .status-dot.tone-assigned { background: #dcfce7; color: #166534; }
-        .status-dot.tone-repair { background: #fef3c7; color: #b45309; }
-        .status-dot.tone-lost { background: #fee2e2; color: #b91c1c; }
-        .status-dot.tone-disposed { background: #f1f5f9; color: #64748b; }
+        .status-dot.tone-available { background: var(--primary-soft); color: var(--primary); }
+        .status-dot.tone-assigned { background: var(--success-soft); color: var(--success); }
+        .status-dot.tone-repair { background: var(--warning-soft); color: var(--warning); }
+        .status-dot.tone-lost { background: var(--danger-soft); color: var(--danger); }
+        .status-dot.tone-disposed { background: var(--neutral-soft); color: var(--muted); }
         .asset-control.bare {          border: none;
           outline: none;
           background: transparent;
           width: 100%;
           padding: 0.7rem 0;
-          color: #111827;
+          color: var(--heading);
           font-size: 0.92rem;
         }
         .asset-control.bare.area {
@@ -6075,7 +6075,7 @@ export default function AssetsPage() {
           line-height: 1.4;
           padding-top: 0;
         }
-        .asset-control.bare::placeholder { color: #9ca3af; }
+        .asset-control.bare::placeholder { color: var(--muted); }
         .asset-dates {
           display: flex;
           flex-direction: column;
@@ -6095,8 +6095,8 @@ export default function AssetsPage() {
           flex-wrap: wrap;
           margin: 0;
           padding: 0.55rem 1.1rem;
-          background: #fff;
-          border-top: 1px solid #eef0f3;
+          background: var(--card);
+          border-top: 1px solid var(--border);
           position: sticky;
           bottom: 0;
         }
@@ -6129,7 +6129,7 @@ export default function AssetsPage() {
           display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;
         }
         .detail-item {
-          background: #f9fafb; border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.8rem;
+          background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.8rem;
         }
         .detail-item > span:first-child {
           display: block; font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase;

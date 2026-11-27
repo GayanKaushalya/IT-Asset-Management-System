@@ -1479,7 +1479,7 @@ export default function CredentialsPage() {
           border: 1px solid var(--border);
           border-radius: 10px;
           padding: 0.65rem 0.8rem;
-          background: #f8fafc;
+          background: var(--bg-elevated);
         }
         .current-password-row {
           display: flex;
@@ -1494,7 +1494,7 @@ export default function CredentialsPage() {
         }
         .modal-card {
           width: min(560px, 100%); max-height: 90vh; overflow: auto;
-          background: #fff; border-radius: 16px; padding: 1.25rem 1.35rem;
+          background: var(--card); border-radius: 16px; padding: 1.25rem 1.35rem;
           box-shadow: 0 24px 60px rgba(17,24,39,0.35);
         }
         .modal-head {
@@ -1507,7 +1507,7 @@ export default function CredentialsPage() {
         }
         .reveal-item {
           border: 1px solid var(--border); border-radius: 10px;
-          padding: 0.65rem 0.8rem; background: #f8fafc;
+          padding: 0.65rem 0.8rem; background: var(--bg-elevated);
           display: grid; gap: 0.2rem;
         }
         .reveal-item span {
@@ -1516,10 +1516,10 @@ export default function CredentialsPage() {
         }
         .reveal-item strong { font-size: 0.98rem; word-break: break-all; }
         .reveal-item.password {
-          border-color: #86efac; background: #f0fdf4;
+          border-color: var(--success); background: var(--success-soft);
         }
         .reveal-item.password code {
-          color: #166534; font-size: 1.05rem; font-weight: 700;
+          color: var(--success); font-size: 1.05rem; font-weight: 700;
         }
         .reveal-password-row {
           display: flex; align-items: center; justify-content: space-between;

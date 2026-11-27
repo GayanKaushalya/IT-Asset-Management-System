@@ -349,8 +349,8 @@ export default function MaintenanceReportsPage() {
     html, body {
       margin: 0;
       padding: 0;
-      background: #fff !important;
-      color: #0f172a;
+      background: var(--card) !important;
+      color: var(--heading);
       height: auto !important;
       max-height: none !important;
       overflow: visible !important;
@@ -848,7 +848,7 @@ export default function MaintenanceReportsPage() {
 
       <style>{`
         .asset-row-click { cursor: pointer; }
-        .asset-row-click:hover { background: #f8fafc; }
+        .asset-row-click:hover { background: var(--bg-elevated); }
         .maint-report-toolbar {
           display: flex;
           justify-content: space-between;
@@ -859,7 +859,7 @@ export default function MaintenanceReportsPage() {
         .maint-report-doc {
           border: 1px solid var(--border);
           border-radius: 14px;
-          background: #fff;
+          background: var(--card);
           padding: 1.25rem 1.35rem 1.5rem;
           box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
         }
@@ -874,7 +874,7 @@ export default function MaintenanceReportsPage() {
           font-weight: 800;
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          color: #2563eb;
+          color: var(--primary);
         }
         .maint-report-meta {
           margin: 0;
@@ -885,7 +885,7 @@ export default function MaintenanceReportsPage() {
           margin: 1rem 0 1.25rem;
           padding: 0.85rem 1rem;
           border-radius: 12px;
-          background: #f8fafc;
+          background: var(--bg-elevated);
           border: 1px solid #e2e8f0;
         }
         .maint-report-filters h3 {
@@ -893,7 +893,7 @@ export default function MaintenanceReportsPage() {
           font-size: 0.82rem;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          color: #64748b;
+          color: var(--muted);
         }
         .maint-report-filters ul {
           margin: 0;
@@ -904,7 +904,7 @@ export default function MaintenanceReportsPage() {
           gap: 0.4rem;
         }
         .maint-report-filters li {
-          background: #fff;
+          background: var(--card);
           border: 1px solid #e2e8f0;
           border-radius: 999px;
           padding: 0.22rem 0.65rem;
@@ -960,8 +960,8 @@ export default function MaintenanceReportsPage() {
           font-size: 0.72rem;
           letter-spacing: 0.04em;
           text-transform: uppercase;
-          color: #64748b;
-          background: #f8fafc;
+          color: var(--muted);
+          background: var(--bg-elevated);
         }
         .maint-report-branch-row td {
           padding: 0.85rem 0.5rem 0.35rem;
@@ -981,7 +981,7 @@ export default function MaintenanceReportsPage() {
         .maint-report-branch-head h4 {
           margin: 0;
           font-size: 0.95rem;
-          color: #1e293b;
+          color: var(--text);
           text-transform: none;
           letter-spacing: normal;
           font-weight: 700;
@@ -1007,7 +1007,7 @@ export default function MaintenanceReportsPage() {
         .maint-report-summary-grid > div {
           border: 1px solid #e2e8f0;
           border-radius: 10px;
-          background: #f8fafc;
+          background: var(--bg-elevated);
           padding: 0.55rem 0.7rem;
           display: flex;
           justify-content: space-between;

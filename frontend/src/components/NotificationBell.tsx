@@ -143,12 +143,12 @@ export default function NotificationBell() {
           width: 38px; height: 38px;
           border-radius: 10px;
           border: 1px solid var(--border);
-          background: #fff;
+          background: var(--card);
           color: #334155;
           display: grid; place-items: center;
           cursor: pointer;
         }
-        .notif-bell-btn:hover { background: #f8fafc; }
+        .notif-bell-btn:hover { background: var(--bg-elevated); }
         .notif-badge {
           position: absolute; top: -4px; right: -4px;
           min-width: 18px; height: 18px; padding: 0 4px;
@@ -159,7 +159,7 @@ export default function NotificationBell() {
         .notif-panel {
           position: absolute; right: 0; top: calc(100% + 8px);
           width: min(360px, 92vw);
-          background: #fff; border: 1px solid var(--border);
+          background: var(--card); border: 1px solid var(--border);
           border-radius: 12px; box-shadow: 0 16px 40px rgba(15,23,42,0.14);
           z-index: 80; overflow: hidden;
         }
@@ -180,8 +180,8 @@ export default function NotificationBell() {
           padding: 0.7rem 0.85rem; padding-right: 2rem;
           text-decoration: none; color: inherit;
         }
-        .notif-list li.unread { background: #eff6ff; }
-        .notif-list li a:hover { background: #f8fafc; }
+        .notif-list li.unread { background: var(--primary-muted); }
+        .notif-list li a:hover { background: var(--bg-elevated); }
         .notif-dismiss {
           position: absolute; top: 0.45rem; right: 0.45rem;
           width: 24px; height: 24px;
@@ -189,9 +189,9 @@ export default function NotificationBell() {
           background: transparent; color: #94a3b8;
           font-size: 1.1rem; line-height: 1; cursor: pointer;
         }
-        .notif-dismiss:hover { background: #e2e8f0; color: #0f172a; }
-        .notif-title { font-weight: 650; font-size: 0.88rem; color: #0f172a; }
-        .notif-body { font-size: 0.8rem; color: #64748b; }
+        .notif-dismiss:hover { background: #e2e8f0; color: var(--heading); }
+        .notif-title { font-weight: 650; font-size: 0.88rem; color: var(--heading); }
+        .notif-body { font-size: 0.8rem; color: var(--muted); }
         .notif-empty { padding: 1.25rem; color: #94a3b8; font-size: 0.88rem; text-align: center; }
       `}</style>
     </div>

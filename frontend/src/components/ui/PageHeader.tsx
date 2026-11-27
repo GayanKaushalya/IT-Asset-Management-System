@@ -46,8 +46,8 @@ export default function PageHeader({ title, subtitle, actions, eyebrow, badge }:
           font-weight: 700;
           letter-spacing: 0.04em;
           text-transform: uppercase;
-          color: #166534;
-          background: #dcfce7;
+          color: var(--success);
+          background: var(--success-soft);
           border: 1px solid #86efac;
           border-radius: 999px;
           padding: 0.18rem 0.55rem;
