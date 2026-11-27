@@ -165,13 +165,29 @@ html[data-theme='dark'] .theme-toggle {
   border-color: #334155;
 }
 
-html[data-theme='dark'] .table thead th {
-  background: #0b1220;
-  color: var(--muted);
+html[data-theme='dark'] .table thead th,
+html[data-theme='dark'] .asset-data-table thead th,
+html[data-theme='dark'] .org-table thead th {
+  background: #020617;
+  color: #94a3b8;
+  border-bottom-color: #1e293b;
 }
 
-html[data-theme='dark'] .table tbody tr:hover {
-  background: rgba(30, 41, 59, 0.65);
+html[data-theme='dark'] .table tbody tr:hover,
+html[data-theme='dark'] .asset-data-table tbody tr:hover,
+html[data-theme='dark'] .org-table tbody tr:hover {
+  background: rgba(51, 102, 255, 0.08);
+}
+
+html[data-theme='dark'] .table tbody tr:hover td:first-child,
+html[data-theme='dark'] .asset-data-table tbody tr:hover td:first-child {
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+
+html[data-theme='dark'] .asset-table-scroll {
+  background: #111827;
+  border-color: #1e293b;
+  box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.06);
 }
 
 html[data-theme='dark'] .branch-stat-card {
@@ -285,7 +301,7 @@ html[data-theme='dark'] .asset-filter-clear:hover:not(:disabled) {
 }
 
 html[data-theme='dark'] .asset-row-click:hover td {
-  background: rgba(30, 41, 59, 0.65);
+  background: transparent;
 }
 
 html[data-theme='dark'] .auth-theme-toggle {
@@ -439,8 +455,9 @@ a {
   -webkit-overflow-scrolling: touch;
   margin-top: 0.35rem;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 14px;
   background: var(--card);
+  box-shadow: var(--shadow-xs);
   /* Keep full cell text reachable on every tab */
   scrollbar-gutter: stable;
 }
@@ -471,7 +488,8 @@ a {
   width: max-content;
   min-width: 100%;
   height: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .asset-table-scroll--fit-10 .asset-data-table thead th,
@@ -507,7 +525,7 @@ a {
 
 .asset-table-scroll .asset-data-table th,
 .asset-table-scroll .asset-data-table td {
-  padding: 0.4rem 0.55rem;
+  padding: 0.55rem 0.85rem;
 }
 
 .asset-table-scroll--fit-10 .asset-data-table th,
@@ -550,15 +568,15 @@ a {
   position: sticky;
   top: 0;
   z-index: 2;
-  background: var(--bg-elevated) !important;
-  box-shadow: inset 0 -1px 0 var(--border);
+  background: color-mix(in srgb, var(--bg) 72%, var(--card)) !important;
+  box-shadow: inset 0 -1px 0 var(--border-strong);
 }
 
-/* Sticky header fights equal-row fill ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ keep header in normal flow for 10/page */
+/* Sticky header fights equal-row fill — keep header in normal flow for 10/page */
 .asset-table-scroll--fit-10 .asset-data-table thead th,
 .asset-table-scroll--fit-10 .table thead th {
   position: static;
-  box-shadow: inset 0 -1px 0 var(--border);
+  box-shadow: inset 0 -1px 0 var(--border-strong);
 }
 
 .page--fill.org-directory .org-section-tabs {
@@ -727,35 +745,80 @@ a {
   background: var(--security-hover);
 }
 
-.table {
+.table,
+.asset-data-table,
+.org-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 0.875rem;
+  color: var(--text-secondary);
 }
 
 .table th,
-.table td {
-  padding: 0.75rem 0.65rem;
-  border-bottom: 1px solid var(--border);
+.table td,
+.asset-data-table th,
+.asset-data-table td,
+.org-table th,
+.org-table td {
+  padding: 0.9rem 1rem;
   text-align: left;
   vertical-align: middle;
+  border-bottom: 1px solid var(--border);
 }
 
-.table th {
+.table thead th,
+.asset-data-table thead th,
+.org-table thead th {
   color: var(--muted);
-  font-weight: 600;
-  font-size: 0.72rem;
+  font-weight: 700;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: var(--bg-elevated);
+  letter-spacing: 0.07em;
+  background: color-mix(in srgb, var(--bg) 72%, var(--card));
+  border-bottom: 1px solid var(--border-strong);
+  white-space: nowrap;
 }
 
-.table tbody tr {
-  transition: background var(--motion-fast) var(--ease-in-out);
+.table tbody td,
+.asset-data-table tbody td,
+.org-table tbody td {
+  background: transparent;
 }
 
-.table tbody tr:hover {
+.table tbody tr,
+.asset-data-table tbody tr,
+.org-table tbody tr {
+  transition:
+    background var(--motion-fast) var(--ease-in-out),
+    box-shadow var(--motion-fast) var(--ease-in-out);
+}
+
+.table tbody tr:hover,
+.asset-data-table tbody tr:hover,
+.org-table tbody tr:hover {
   background: var(--primary-muted);
+}
+
+.table tbody tr:hover td:first-child,
+.asset-data-table tbody tr:hover td:first-child,
+.org-table tbody tr:hover td:first-child {
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+
+.table tbody tr:last-child td,
+.asset-data-table tbody tr:last-child td,
+.org-table tbody tr:last-child td {
+  border-bottom-color: transparent;
+}
+
+.table-wrap {
+  width: 100%;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  box-shadow: var(--shadow-xs);
 }
 
 .error-text {
@@ -2049,25 +2112,24 @@ a {
   table-layout: auto;
   width: max-content;
   min-width: 100%;
-  border-collapse: collapse;
 }
 
 .asset-data-table tbody tr {
-  height: 3.35rem;
+  height: 3.45rem;
 }
 
 .asset-data-table tbody td {
-  height: 3.35rem;
+  height: 3.45rem;
   vertical-align: middle;
   box-sizing: border-box;
   overflow: visible;
   white-space: nowrap;
-  padding: 0.35rem 0.6rem;
+  padding: 0.55rem 0.9rem;
 }
 
 .asset-data-table thead th {
   white-space: nowrap;
-  padding: 0.4rem 0.6rem;
+  padding: 0.7rem 0.9rem;
 }
 
 .cell-oneline {
@@ -2535,7 +2597,7 @@ a {
 }
 
 .asset-row-click:hover td {
-  background: var(--bg-elevated);
+  background: transparent;
 }
 
 .exp2-filters {
