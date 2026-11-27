@@ -1,6 +1,7 @@
 import { FormEvent, useState, type ReactNode } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import ThemeToggle from '../components/ThemeToggle';
 
 function EyeIcon({ open }: { open: boolean }): ReactNode {
   if (open) {
@@ -58,6 +59,9 @@ export default function RegisterPage() {
 
   return (
     <main className="auth-shell">
+      <div className="auth-theme-slot">
+        <ThemeToggle />
+      </div>
       <form className="auth-card" onSubmit={(e) => void onSubmit(e)}>
         <p className="eyebrow">Indra Group · ITAM</p>
         <h1>Create account</h1>

@@ -1,6 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function LoginPage() {
   const { user, login } = useAuth();
@@ -27,6 +28,9 @@ export default function LoginPage() {
 
   return (
     <main className="auth-shell">
+      <div className="auth-theme-slot">
+        <ThemeToggle />
+      </div>
       <form className="auth-card" onSubmit={(e) => void onSubmit(e)}>
         <p className="eyebrow">Indra Group · Central IT</p>
         <h1>Sign in to ITAM</h1>
