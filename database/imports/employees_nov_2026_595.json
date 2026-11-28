@@ -1,0 +1,57 @@
+[
+  {
+    "company_code": "IT",
+    "staff_id": "595",
+    "name": "Rathnayakage Shane Dilhara",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Stores Assistant",
+    "work_location": "ITL - FOTON WORKSHOP",
+    "department_name": "Support Services"
+  },
+  {
+    "company_code": "ISP",
+    "staff_id": "596",
+    "name": "Yovindu Nudam Banula Liyanagamage",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Service Advisor - BYD",
+    "work_location": "ISP - Kandy",
+    "department_name": "Operation"
+  },
+  {
+    "company_code": "IMS",
+    "staff_id": "597",
+    "name": "Makavita Gamageilage Sanhitha Janeesh Gamage",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Trainee Sales Officer",
+    "work_location": "IMS - Hydpark",
+    "department_name": "Sales"
+  },
+  {
+    "company_code": "ISP",
+    "staff_id": "598",
+    "name": "Kinigama Acharilage Rasith Nimsara Amarathunga",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Purchasing Assistant",
+    "work_location": "ISP - Kelaniya",
+    "department_name": "Stores"
+  },
+  {
+    "company_code": "IT",
+    "staff_id": "599",
+    "name": "Anumathi Gedara Shamali Dilrukshi Dissanayake",
+    "title": null,
+    "epf_number": null,
+    "employment_status": "Probation",
+    "designation": "Accounts Assistant",
+    "work_location": "Head Office - Kandy",
+    "department_name": "Accounts"
+  }
+]
